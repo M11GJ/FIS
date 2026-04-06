@@ -42,9 +42,33 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
   const selectedCount = courses.filter(c => selectedCourses.has(c.id)).length;
 
   const filteredCourses = useMemo(() => {
-    if (!enableYearFilter || selectedYear === 'すべて') return courses;
-    return courses.filter(c => getYear(c.term) === selectedYear);
-  }, [courses, selectedYear, enableYearFilter]);
+    let result = courses;
+    if (enableYearFilter && selectedYear !== 'すべて') {
+      result = courses.filter(c => getYear(c.term) === selectedYear);
+    }
+    
+    const pKey = program.toLowerCase();
+    const resultWithIndex = result.map((c, i) => ({ course: c, index: i }));
+    
+    resultWithIndex.sort((a, b) => {
+      const aType = a.course.programMapping ? a.course.programMapping[pKey] : null;
+      const bType = b.course.programMapping ? b.course.programMapping[pKey] : null;
+
+      const getRank = (type) => {
+        if (type === '必修') return 1;
+        if (type === '選択') return 2;
+        return 3;
+      };
+
+      const rankA = getRank(aType);
+      const rankB = getRank(bType);
+
+      if (rankA !== rankB) return rankA - rankB;
+      return a.index - b.index;
+    });
+    
+    return resultWithIndex.map(item => item.course);
+  }, [courses, selectedYear, enableYearFilter, program]);
 
   const availableYears = useMemo(() => {
     if (!enableYearFilter) return [];
