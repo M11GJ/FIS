@@ -10,6 +10,12 @@ export function useGraduationCheck(selectedCourseIds, targetProgram) {
     let otherCredits = 0;
     let practicalEnglishCredits = 0;
     
+    const selectedSet = new Set(selectedCourseIds);
+    const missingGeneral = coursesData.filter(c => c.category === 'general' && c.required && !selectedSet.has(c.id)).map(c => c.name);
+    const missingBasic = coursesData.filter(c => (c.category === 'basic' || c.category === 'basic_english') && c.required && !selectedSet.has(c.id)).map(c => c.name);
+    const missingProgram = coursesData.filter(c => c.category === 'program' && c.programMapping && c.programMapping[targetProgram.toLowerCase()] === '必修' && !selectedSet.has(c.id)).map(c => c.name);
+    const missingExercise = coursesData.filter(c => c.category === 'exercise' && c.required && !selectedSet.has(c.id)).map(c => c.name);
+
     // Calculate credits from selected courses
     selectedCourseIds.forEach(id => {
       const course = coursesData.find(c => c.id === id);
@@ -46,12 +52,12 @@ export function useGraduationCheck(selectedCourseIds, targetProgram) {
 
     return {
       status: {
-        total: { current: totalCredits, required: 124, ok: totalCredits >= 124 },
-        general: { current: generalCredits, required: 19, ok: generalCredits >= 19 },
-        basicAndProgram: { current: totalProgramAndBasic, required: 80, ok: totalProgramAndBasic >= 80 },
+        total: { current: totalCredits, required: 124, ok: totalCredits >= 124 && missingGeneral.length === 0 && missingBasic.length === 0 && missingProgram.length === 0 && missingExercise.length === 0 },
+        general: { current: generalCredits, required: 19, ok: generalCredits >= 19 && missingGeneral.length === 0, missingList: missingGeneral },
+        basicAndProgram: { current: totalProgramAndBasic, required: 80, ok: totalProgramAndBasic >= 80 && missingBasic.length === 0 && missingProgram.length === 0, missingList: [...missingBasic, ...missingProgram] },
         practicalEnglish: { current: practicalEnglishCredits, required: 4, ok: practicalEnglishCredits >= 4 },
-        programSpecific: { current: programCredits, required: 22, ok: programCredits >= 22 },
-        exercise: { current: exerciseCredits, required: 8, ok: exerciseCredits >= 8 },
+        programSpecific: { current: programCredits, required: 22, ok: programCredits >= 22 && missingProgram.length === 0, missingList: missingProgram },
+        exercise: { current: exerciseCredits, required: 8, ok: exerciseCredits >= 8 && missingExercise.length === 0, missingList: missingExercise },
         other: { current: otherCredits, required: 4, ok: otherCredits >= 4 },
         freeElective: { current: freeElectiveCredits, required: 13, ok: freeElectiveCredits >= 13 }
       },

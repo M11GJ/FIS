@@ -5,7 +5,7 @@
     "term": "1前",
     "credits": 2,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -23,7 +23,7 @@
     "term": "1前",
     "credits": 1,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -77,7 +77,7 @@
     "term": "2前",
     "credits": 2,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -265,8 +265,8 @@
     "name": "教養ゼミ",
     "term": "1前",
     "credits": 2,
-    "category": "exercise",
-    "required": false,
+    "category": "general",
+    "required": true,
     "marks": ""
   },
   {
@@ -293,7 +293,7 @@
     "term": "1前",
     "credits": 2,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -302,7 +302,7 @@
     "term": "1前",
     "credits": 1,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -311,7 +311,7 @@
     "term": "1通",
     "credits": 2,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -329,7 +329,7 @@
     "term": "1後",
     "credits": 1,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -347,7 +347,7 @@
     "term": "1後",
     "credits": 2,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -365,7 +365,7 @@
     "term": "2前",
     "credits": 2,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -374,7 +374,7 @@
     "term": "2前",
     "credits": 1,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -392,7 +392,7 @@
     "term": "2後",
     "credits": 1,
     "category": "general",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -437,7 +437,7 @@
     "term": "1①",
     "credits": 2,
     "category": "basic",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -446,7 +446,7 @@
     "term": "1①",
     "credits": 2,
     "category": "basic",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -455,7 +455,7 @@
     "term": "1②",
     "credits": 2,
     "category": "basic",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -464,7 +464,7 @@
     "term": "1②",
     "credits": 2,
     "category": "basic",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -473,7 +473,7 @@
     "term": "1②",
     "credits": 2,
     "category": "basic",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -482,7 +482,7 @@
     "term": "1③",
     "credits": 2,
     "category": "basic",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -518,7 +518,7 @@
     "term": "1④",
     "credits": 2,
     "category": "basic",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -536,7 +536,7 @@
     "term": "2①",
     "credits": 2,
     "category": "basic",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -1204,7 +1204,7 @@
     "term": "3①②(通)",
     "credits": 2,
     "category": "exercise",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -1213,7 +1213,7 @@
     "term": "3③④(通)",
     "credits": 2,
     "category": "exercise",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
@@ -1222,7 +1222,7 @@
     "term": "4①②③④(通)",
     "credits": 4,
     "category": "exercise",
-    "required": false,
+    "required": true,
     "marks": ""
   },
   {
