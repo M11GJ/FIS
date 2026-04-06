@@ -2,7 +2,7 @@ import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Handbook from './pages/Handbook';
 import Checker from './pages/Checker';
-import { BookOpen, CheckSquare, Sun, Moon } from 'lucide-react';
+import { BookOpen, CheckSquare, Sun, Moon, ExternalLink } from 'lucide-react';
 import pkg from '../package.json';
 
 function App() {
@@ -38,6 +38,16 @@ function App() {
               <CheckSquare size={18} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-bottom' }} />
               履修チェック
             </NavLink>
+            <a 
+              href="https://gakuseibinran.actibookone.com/content/detail?param=eyJjb250ZW50TnVtIjo1Njc1ODQsImNhdGVnb3J5TnVtIjo1NjE0Mn0=&pNo=1" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="nav-link"
+              title="実際の公式便覧PDFを開く"
+            >
+              <ExternalLink size={18} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-bottom' }} />
+              公式PDF
+            </a>
             <button 
               onClick={toggleTheme} 
               style={{
