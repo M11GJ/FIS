@@ -198,9 +198,48 @@ input[type="number"]:focus, select:focus {
   gap: 2rem;
 }
 
+.sticky-sidebar {
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
 @media (max-width: 768px) {
+  .app-container {
+    padding: 1rem 4vw;
+  }
+
+  header {
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  header h1 {
+    font-size: 1.25rem;
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .glass-panel {
+    padding: 16px;
+  }
+
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 1.5rem;
+  }
+
+  .sticky-sidebar {
+    position: static;
+  }
+
+  .progress-labels {
+    font-size: 0.75rem;
   }
 }
 

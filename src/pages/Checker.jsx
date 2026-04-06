@@ -280,7 +280,7 @@ function Checker() {
       </div>
 
       {/* Right Column: Dashboard */}
-      <div className="glass-panel" style={{ height: 'fit-content', position: 'sticky', top: '2rem' }}>
+      <div className="glass-panel sticky-sidebar">
         <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)', borderBottom: '2px solid var(--border)', paddingBottom: '0.75rem' }}>
           卒業要件ダッシュボード
         </h2>
