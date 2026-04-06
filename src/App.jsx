@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Handbook from './pages/Handbook';
 import Checker from './pages/Checker';
@@ -24,7 +24,7 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="app-container">
         <header>
           <h1>情報科学部 卒業要件ポータル</h1>
@@ -59,7 +59,7 @@ function App() {
           </Routes>
         </main>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
