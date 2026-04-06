@@ -81,19 +81,23 @@ function Handbook() {
         
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2.5rem' }}>
           {Object.values(groupedCourses).map(group => (
-            <a 
+            <button 
               key={group.id} 
-              href={`#${group.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById(group.id);
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
               style={{
                 background: 'var(--surface-hover)', border: '1px solid var(--border)', 
                 color: 'var(--text-main)', padding: '0.5rem 1rem', borderRadius: '20px', fontSize: '0.9rem',
-                display: 'flex', alignItems: 'center', gap: '0.3rem', transition: 'all 0.2s'
+                display: 'flex', alignItems: 'center', gap: '0.3rem', transition: 'all 0.2s', cursor: 'pointer'
               }}
               onMouseOver={e => e.currentTarget.style.background = 'var(--border)'}
               onMouseOut={e => e.currentTarget.style.background = 'var(--surface-hover)'}
             >
               <Hash size={14} /> {group.title} <span style={{opacity: 0.8}}>({group.courses.length})</span>
-            </a>
+            </button>
           ))}
         </div>
 

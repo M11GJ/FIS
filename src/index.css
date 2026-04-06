@@ -183,6 +183,7 @@ input[type="number"]:focus, select:focus {
   color: var(--text-muted);
   font-weight: 600;
   border: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 .badge.req {
