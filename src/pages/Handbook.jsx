@@ -143,13 +143,17 @@ function Handbook() {
                         </td>
                         <td>
                           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            {course.required && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>必修</span>}
+                            {course.category !== 'program' && course.required && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>必修</span>}
+                            {course.category === 'program' && course.programMapping?.ds === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>DS必修</span>}
+                            {course.category === 'program' && course.programMapping?.ie === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>IE必修</span>}
+                            {course.category === 'program' && course.programMapping?.ba === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>BA必修</span>}
                             {course.marks && course.marks !== "◎" && (
                               <span className="badge" style={{ background: 'var(--border)', color: 'var(--text-main)', padding: '0.3rem 0.6rem' }}>
                                 {course.marks.replace(/ /g, ' / ')}
                               </span>
                             )}
-                            {!course.required && !course.marks && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>}
+                            {course.category !== 'program' && !course.required && !course.marks && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>}
+                            {course.category === 'program' && (!course.programMapping || !Object.values(course.programMapping).includes('必修')) && !course.marks && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>}
                           </div>
                         </td>
                       </tr>

@@ -113,9 +113,9 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
                   <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem', flexWrap: 'wrap' }}>
                     <span className="badge" style={{ background: 'var(--surface)' }}>{formatTerm(course.term)}</span>
                     <span className="badge" style={{ background: 'var(--surface)' }}>{course.credits}単位</span>
-                    {course.required && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>必修</span>}
-                    {pType === '必修' && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>{program}必修</span>}
-                    {pType === '選択' && <span className="badge" style={{ border: '1px solid var(--primary)', color: 'var(--primary)' }}>{program}選択</span>}
+                    {course.category !== 'program' && course.required && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>必修</span>}
+                    {course.category === 'program' && pType === '必修' && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>{program}必修</span>}
+                    {course.category === 'program' && pType === '選択' && <span className="badge" style={{ border: '1px solid var(--primary)', color: 'var(--primary)' }}>{program}選択</span>}
                   </div>
                 </div>
               </label>

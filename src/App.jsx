@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Handbook from './pages/Handbook';
 import Checker from './pages/Checker';
 import { BookOpen, CheckSquare, Sun, Moon } from 'lucide-react';
+import pkg from '../package.json';
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -50,6 +51,9 @@ function App() {
             >
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </button>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--surface-hover)', padding: '0.2rem 0.5rem', borderRadius: '12px', fontWeight: 600 }}>
+              v{pkg.version}
+            </div>
           </nav>
         </header>
         <main>
