@@ -30,7 +30,23 @@ function App() {
     <HashRouter>
       <div className="app-container">
         <header>
-          <h1>情報科学部 卒業要件ポータル</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <h1>情報科学部 卒業要件ポータル</h1>
+            <button 
+              onClick={() => setShowChangelog(true)}
+              style={{ 
+                fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--surface-hover)', 
+                padding: '0.2rem 0.5rem', borderRadius: '12px', fontWeight: 600,
+                border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+                marginTop: '0.2rem'
+              }}
+              onMouseOver={e => e.currentTarget.style.color = 'var(--primary)'}
+              onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
+              title="更新履歴を表示"
+            >
+              v{pkg.version}
+            </button>
+          </div>
           <nav style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <BookOpen size={18} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-bottom' }} />
@@ -61,19 +77,6 @@ function App() {
               title="テーマを切り替える"
             >
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-            </button>
-            <button 
-              onClick={() => setShowChangelog(true)}
-              style={{ 
-                fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--surface-hover)', 
-                padding: '0.2rem 0.5rem', borderRadius: '12px', fontWeight: 600,
-                border: 'none', cursor: 'pointer', transition: 'all 0.2s'
-              }}
-              onMouseOver={e => e.currentTarget.style.color = 'var(--primary)'}
-              onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
-              title="更新履歴を表示"
-            >
-              v{pkg.version}
             </button>
           </nav>
         </header>
