@@ -2,14 +2,16 @@ import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Handbook from './pages/Handbook';
 import Checker from './pages/Checker';
-import { BookOpen, CheckSquare, Sun, Moon, ExternalLink } from 'lucide-react';
+import { BookOpen, CheckSquare, Sun, Moon, ExternalLink, X } from 'lucide-react';
 import pkg from '../package.json';
+import changelogData from './data/changelog.json';
 
 function App() {
   const [theme, setTheme] = useState(() => {
     // Check local storage or default to light
     return localStorage.getItem('theme') || 'light';
   });
+  const [showChangelog, setShowChangelog] = useState(false);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -60,9 +62,19 @@ function App() {
             >
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </button>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--surface-hover)', padding: '0.2rem 0.5rem', borderRadius: '12px', fontWeight: 600 }}>
+            <button 
+              onClick={() => setShowChangelog(true)}
+              style={{ 
+                fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--surface-hover)', 
+                padding: '0.2rem 0.5rem', borderRadius: '12px', fontWeight: 600,
+                border: 'none', cursor: 'pointer', transition: 'all 0.2s'
+              }}
+              onMouseOver={e => e.currentTarget.style.color = 'var(--primary)'}
+              onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
+              title="更新履歴を表示"
+            >
               v{pkg.version}
-            </div>
+            </button>
           </nav>
         </header>
         <main>
@@ -71,6 +83,30 @@ function App() {
             <Route path="/checker" element={<Checker />} />
           </Routes>
         </main>
+
+        {showChangelog && (
+          <div className="modal-overlay" onClick={() => setShowChangelog(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => setShowChangelog(false)}>
+                <X size={20} />
+              </button>
+              <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)' }}>更新履歴</h2>
+              {changelogData.map((item, index) => (
+                <div key={index} className="changelog-item">
+                  <div className="changelog-header">
+                    <span className="changelog-version">v{item.version}</span>
+                    <span className="changelog-date">{item.date}</span>
+                  </div>
+                  <ul className="changelog-list">
+                    {item.changes.map((change, i) => (
+                      <li key={i}>{change}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </HashRouter>
   );
