@@ -23,6 +23,18 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  // モーダル表示時の背景スクロールロック
+  useEffect(() => {
+    if (showChangelog || showPdfInfo) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showChangelog, showPdfInfo]);
+
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
@@ -94,20 +106,24 @@ function App() {
               <button className="modal-close" onClick={() => setShowChangelog(false)}>
                 <X size={20} />
               </button>
-              <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)' }}>更新履歴</h2>
-              {changelogData.map((item, index) => (
-                <div key={index} className="changelog-item">
-                  <div className="changelog-header">
-                    <span className="changelog-version">v{item.version}</span>
-                    <span className="changelog-date">{item.date}</span>
+              <div className="modal-header">
+                <h2 style={{ color: 'var(--primary)', margin: 0 }}>更新履歴</h2>
+              </div>
+              <div className="modal-body">
+                {changelogData.map((item, index) => (
+                  <div key={index} className="changelog-item">
+                    <div className="changelog-header">
+                      <span className="changelog-version">v{item.version}</span>
+                      <span className="changelog-date">{item.date}</span>
+                    </div>
+                    <ul className="changelog-list">
+                      {item.changes.map((change, i) => (
+                        <li key={i}>{change}</li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="changelog-list">
-                    {item.changes.map((change, i) => (
-                      <li key={i}>{change}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -118,32 +134,38 @@ function App() {
               <button className="modal-close" onClick={() => setShowPdfInfo(false)}>
                 <X size={20} />
               </button>
-              <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <ExternalLink size={24} />
-                公式便覧の確認方法
-              </h2>
-              <div style={{ lineHeight: '1.8', color: 'var(--text-main)' }}>
-                <p style={{ marginBottom: '1rem', fontWeight: 600, color: '#EF4444' }}>※ActiBookによる公開は廃止されました。</p>
-                <div style={{ background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid var(--primary)' }}>
-                  <p>学内学外問わず、以下の手順で最新のPDFを確認できます：</p>
-                  <ol style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
-                    <li><strong>AAA</strong> にログイン</li>
-                    <li>画面左上の<strong>「掲示板」</strong>をクリック</li>
-                    <li>一覧の中から<strong>「Webフォルダ」</strong>を選択</li>
-                    <li>「学生便覧」フォルダ内のPDFを参照</li>
-                  </ol>
+              <div className="modal-header">
+                <h2 style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                  <ExternalLink size={24} />
+                  公式便覧の確認方法
+                </h2>
+              </div>
+              <div className="modal-body">
+                <div style={{ lineHeight: '1.8', color: 'var(--text-main)' }}>
+                  <p style={{ marginBottom: '1rem', fontWeight: 600, color: '#EF4444' }}>※ActiBookによる公開は廃止されました。</p>
+                  <div style={{ background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid var(--primary)' }}>
+                    <p>学内学外問わず、以下の手順で最新のPDFを確認できます：</p>
+                    <ol style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+                      <li><strong>AAA</strong> にログイン</li>
+                      <li>画面左上の<strong>「掲示板」</strong>をクリック</li>
+                      <li>一覧の中から<strong>「Webフォルダ」</strong>を選択</li>
+                      <li>「学生便覧」フォルダ内のPDFを参照</li>
+                    </ol>
+                  </div>
                 </div>
               </div>
-              <button 
-                onClick={() => setShowPdfInfo(false)}
-                style={{ 
-                  marginTop: '1.5rem', width: '100%', padding: '0.75rem', 
-                  background: 'var(--primary)', color: 'white', border: 'none', 
-                  borderRadius: '6px', fontWeight: 600, cursor: 'pointer' 
-                }}
-              >
-                閉じる
-              </button>
+              <div className="modal-footer">
+                <button 
+                  onClick={() => setShowPdfInfo(false)}
+                  style={{ 
+                    width: '100%', padding: '0.75rem', 
+                    background: 'var(--primary)', color: 'white', border: 'none', 
+                    borderRadius: '6px', fontWeight: 600, cursor: 'pointer' 
+                  }}
+                >
+                  閉じる
+                </button>
+              </div>
             </div>
           </div>
         )}
