@@ -9,7 +9,9 @@ function Handbook() {
     const groups = {
       general: { id: 'cat-general', title: '総合科目', courses: [] },
       basic: { id: 'cat-basic', title: '学科基礎科目等', courses: [] },
+      program: { id: 'cat-program', title: 'プログラム科目', courses: [] },
       exercise: { id: 'cat-exercise', title: '演習・ゼミ等', courses: [] },
+      other: { id: 'cat-other', title: '他学科専門科目', courses: [] },
       teaching: { id: 'cat-teaching', title: '教職課程関連', courses: [] },
     };
     coursesData.forEach(c => {
