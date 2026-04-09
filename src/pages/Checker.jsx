@@ -55,10 +55,10 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
       const bType = b.course.programMapping ? b.course.programMapping[pKey] : null;
 
       const getRank = (course, type) => {
-        if (course.required) return 0; // 最優先（全プログラム共通必修）
-        if (type === '必修') return 1; // プログラム必修
-        if (type === '選択') return 2; // プログラム選択
-        return 3; // その他
+        if (type === '必修') return 0;
+        if (type === '選択') return 1;
+        if (course.category !== 'program' && course.required) return 0;
+        return 2;
       };
 
       const rankA = getRank(a.course, aType);

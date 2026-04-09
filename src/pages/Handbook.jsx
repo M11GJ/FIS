@@ -24,10 +24,15 @@ function Handbook() {
 
     Object.values(groups).forEach(group => {
       group.courses.sort((a, b) => {
-        if (a.required !== b.required) return a.required ? -1 : 1;
-        const isAReq = a.programMapping && Object.values(a.programMapping).includes('必修');
-        const isBReq = b.programMapping && Object.values(b.programMapping).includes('必修');
-        if (isAReq !== isBReq) return isAReq ? -1 : 1;
+        const getRank = (c) => {
+          if (c.marks?.includes('◎')) return 0;
+          if (c.category !== 'program' && c.required) return 0;
+          if (c.marks?.includes('〇')) return 1;
+          return 2;
+        };
+        const rankA = getRank(a);
+        const rankB = getRank(b);
+        if (rankA !== rankB) return rankA - rankB;
         return 0;
       });
     });
