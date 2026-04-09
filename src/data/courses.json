@@ -7,7 +7,7 @@
     "category": "general",
     "required": true,
     "marks": "",
-    "schedule": "火23",
+    "schedule": "火3",
     "room": "1125",
     "instructor": "喜入 暁"
   },
@@ -31,7 +31,7 @@
     "category": "general",
     "required": true,
     "marks": "",
-    "schedule": "水45",
+    "schedule": "水4",
     "room": "記念館 他",
     "instructor": "複数教員"
   },
@@ -79,7 +79,7 @@
     "category": "general",
     "required": false,
     "marks": "",
-    "schedule": "水45",
+    "schedule": "水4",
     "room": "1125",
     "instructor": "大平 光子 他"
   },
@@ -355,7 +355,7 @@
     "category": "general",
     "required": true,
     "marks": "",
-    "schedule": "水34",
+    "schedule": "水3",
     "room": "各演習室 / 他",
     "instructor": "複数教員"
   },
@@ -415,7 +415,7 @@
     "category": "general",
     "required": true,
     "marks": "",
-    "schedule": "金34/45",
+    "schedule": "金3",
     "room": "1125",
     "instructor": "寺田 篤史・中嶋 克成"
   },
@@ -487,7 +487,7 @@
     "category": "general",
     "required": true,
     "marks": "",
-    "schedule": "水45",
+    "schedule": "水4",
     "room": "1142",
     "instructor": "渡部 明"
   },

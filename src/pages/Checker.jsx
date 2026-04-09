@@ -2,7 +2,9 @@ import React, { useState, useMemo } from 'react';
 import coursesData from '../data/courses.json';
 import { useGraduationCheck } from '../hooks/useGraduationCheck';
 import { formatTerm } from '../utils/formatTerm';
-import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste } from 'lucide-react';
+import { isCourseActiveInQuarter } from '../utils/parseSchedule';
+import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar } from 'lucide-react';
+import Timetable from '../components/Timetable';
 
 const ProgressBar = ({ label, current, target, minRequiredLabel, missingList }) => {
   const percent = Math.min(100, (current / target) * 100);
@@ -262,12 +264,48 @@ const AutoImportPanel = ({ selectedCourses, setSelectedCourses }) => {
 function Checker() {
   const [selectedCourses, setSelectedCourses] = useState(new Set());
   const [program, setProgram] = useState('DS');
+  const [activeTab, setActiveTab] = useState('progress'); // 'progress' or 'timetable'
 
   const handleToggle = (id) => {
     setSelectedCourses(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+      return next;
+    });
+  };
+
+  const handleBatchSelectMandatory = (targetYear = null, targetQuarter = null) => {
+    const mandatoryIds = coursesData.filter(course => {
+      // 1. 学年・クォーターフィルタリング
+      if (targetYear && targetQuarter) {
+        if (!isCourseActiveInQuarter(course.term, targetYear, targetQuarter)) return false;
+      } else if (targetYear) {
+        if (!course.term.startsWith(targetYear.toString())) return false;
+      }
+
+      // 2. 必修判定
+      const isGlobalMandatory = course.required === true;
+      const isProgramMandatory = course.category === 'program' && 
+                                course.programMapping && 
+                                course.programMapping[program.toLowerCase()] === '必修';
+      
+      return isGlobalMandatory || isProgramMandatory;
+    }).map(c => c.id);
+
+    if (mandatoryIds.length === 0) return;
+
+    setSelectedCourses(prev => {
+      const next = new Set(prev);
+      const allExist = mandatoryIds.every(id => next.has(id));
+      
+      if (allExist) {
+        // すべて存在する場合は全解除
+        mandatoryIds.forEach(id => next.delete(id));
+      } else {
+        // 一つでも欠けている場合は全登録
+        mandatoryIds.forEach(id => next.add(id));
+      }
       return next;
     });
   };
@@ -319,43 +357,69 @@ function Checker() {
 
       {/* Right Column: Dashboard */}
       <div className="glass-panel sticky-sidebar">
-        <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)', borderBottom: '2px solid var(--border)', paddingBottom: '0.75rem' }}>
-          卒業要件ダッシュボード
-        </h2>
-        
-        <div style={{ textAlign: 'center', padding: '2rem 1rem', marginBottom: '1.5rem', background: 'var(--surface-hover)', borderRadius: '8px' }}>
-          <div style={{ fontSize: '3.5rem', fontWeight: '800', color: status.total.ok ? '#10B981' : 'var(--text-main)', lineHeight: 1 }}>
-            {status.total.current} <span style={{ fontSize: '1.5rem', color: 'var(--text-muted)', fontWeight: '500' }}>/ 124</span>
-          </div>
-          <p style={{ color: status.total.ok ? '#10B981' : (missingCredits === 0 ? '#EF4444' : 'var(--text-muted)'), marginTop: '0.75rem', fontWeight: 600, fontSize: '1.1rem' }}>
-            {status.total.ok 
-              ? '🎉 卒業要件を見事クリア！' 
-              : (missingCredits === 0 
-                  ? '⚠️ 単位数は足っていますが、未取得の必修科目があります' 
-                  : `卒業まであと ${missingCredits} 単位`
-                )
-            }
-          </p>
+        <div className="dashboard-tabs">
+          <button 
+            className={`tab-button ${activeTab === 'progress' ? 'active' : ''}`}
+            onClick={() => setActiveTab('progress')}
+          >
+            <Layout size={18} /> 単位進捗
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'timetable' ? 'active' : ''}`}
+            onClick={() => setActiveTab('timetable')}
+          >
+            <Calendar size={18} /> 時間割
+          </button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <ProgressBar label="総合科目" current={status.general.current} target={status.general.required} minRequiredLabel="19単位以上" missingList={status.general.missingList} />
-          <ProgressBar label="学科基礎 + プログラム科目" current={status.basicAndProgram.current} target={status.basicAndProgram.required} minRequiredLabel="計80単位以上" missingList={status.basicAndProgram.missingList} />
-          <div style={{ paddingLeft: '1.5rem', marginTop: '-0.5rem', marginBottom: '0.5rem' }}>
-            <ProgressBar label="↳ うち実践英語" current={status.practicalEnglish.current} target={status.practicalEnglish.required} minRequiredLabel="4単位必修" />
-          </div>
-          <ProgressBar label={`${program}プログラム必修`} current={status.programSpecific.current} target={status.programSpecific.required} minRequiredLabel="22単位以上" missingList={status.programSpecific.missingList} />
-          <ProgressBar label="演習科目" current={status.exercise.current} target={status.exercise.required} minRequiredLabel="必修8単位" missingList={status.exercise.missingList} />
-          <ProgressBar label="他学科専門科目" current={status.other.current} target={status.other.required} minRequiredLabel="4単位" />
-          <ProgressBar label="自由選択枠" current={status.freeElective.current} target={status.freeElective.required} minRequiredLabel="13単位（各分野の超過分等）" />
-        </div>
-        
-        <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--accent-light)', borderRadius: '8px', borderLeft: '4px solid var(--primary)', display: 'flex', gap: '0.75rem', alignItems: 'start' }}>
-          <AlertCircle size={20} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
-            ※このシミュレーターは目安です。詳細な必修科目の取りこぼしや、具体的な卒業可否については、所属する学部の教務担当窓口、あるいは学生便覧の最新版を必ず確認してください。
-          </p>
-        </div>
+        {activeTab === 'progress' ? (
+          <>
+            <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)', borderBottom: '2px solid var(--border)', paddingBottom: '0.75rem' }}>
+              卒業要件ダッシュボード
+            </h2>
+            
+            <div style={{ textAlign: 'center', padding: '2rem 1rem', marginBottom: '1.5rem', background: 'var(--surface-hover)', borderRadius: '8px' }}>
+              <div style={{ fontSize: '3.5rem', fontWeight: '800', color: status.total.ok ? '#10B981' : 'var(--text-main)', lineHeight: 1 }}>
+                {status.total.current} <span style={{ fontSize: '1.5rem', color: 'var(--text-muted)', fontWeight: '500' }}>/ 124</span>
+              </div>
+              <p style={{ color: status.total.ok ? '#10B981' : (missingCredits === 0 ? '#EF4444' : 'var(--text-muted)'), marginTop: '0.75rem', fontWeight: 600, fontSize: '1.1rem' }}>
+                {status.total.ok 
+                  ? '🎉 卒業要件を見事クリア！' 
+                  : (missingCredits === 0 
+                      ? '⚠️ 単位数は足っていますが、未取得の必修科目があります' 
+                      : `卒業まであと ${missingCredits} 単位`
+                    )
+                }
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <ProgressBar label="総合科目" current={status.general.current} target={status.general.required} minRequiredLabel="19単位以上" missingList={status.general.missingList} />
+              <ProgressBar label="学科基礎 + プログラム科目" current={status.basicAndProgram.current} target={status.basicAndProgram.required} minRequiredLabel="計80単位以上" missingList={status.basicAndProgram.missingList} />
+              <div style={{ paddingLeft: '1.5rem', marginTop: '-0.5rem', marginBottom: '0.5rem' }}>
+                <ProgressBar label="↳ うち実践英語" current={status.practicalEnglish.current} target={status.practicalEnglish.required} minRequiredLabel="4単位必修" />
+              </div>
+              <ProgressBar label={`${program}プログラム必修`} current={status.programSpecific.current} target={status.programSpecific.required} minRequiredLabel="22単位以上" missingList={status.programSpecific.missingList} />
+              <ProgressBar label="演習科目" current={status.exercise.current} target={status.exercise.required} minRequiredLabel="必修8単位" missingList={status.exercise.missingList} />
+              <ProgressBar label="他学科専門科目" current={status.other.current} target={status.other.required} minRequiredLabel="4単位" />
+              <ProgressBar label="自由選択枠" current={status.freeElective.current} target={status.freeElective.required} minRequiredLabel="13単位（各分野の超過分等）" />
+            </div>
+            
+            <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--accent-light)', borderRadius: '8px', borderLeft: '4px solid var(--primary)', display: 'flex', gap: '0.75rem', alignItems: 'start' }}>
+              <AlertCircle size={20} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
+                ※このシミュレーターは目安です。詳細な必修科目の取りこぼしや、具体的な卒業可否については、所属する学部の教務担当窓口、あるいは学生便覧の最新版を必ず確認してください。
+              </p>
+            </div>
+          </>
+        ) : (
+          <Timetable 
+            selectedCourseIds={selectedCourses} 
+            handleToggle={handleToggle} 
+            program={program}
+            onBatchSelectMandatory={handleBatchSelectMandatory}
+          />
+        )}
       </div>
     </div>
   );
