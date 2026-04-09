@@ -12,6 +12,7 @@ function App() {
     return localStorage.getItem('theme') || 'light';
   });
   const [showChangelog, setShowChangelog] = useState(false);
+  const [showPdfInfo, setShowPdfInfo] = useState(false);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -57,7 +58,7 @@ function App() {
               履修チェック
             </NavLink>
             <button 
-              onClick={() => alert('ActiBookは廃止されました。\nAAAを開き左上の掲示板の中からWebフォルダを選択してください。')}
+              onClick={() => setShowPdfInfo(true)}
               className="nav-link"
               style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
               title="公式便覧の確認方法を表示"
@@ -107,6 +108,42 @@ function App() {
                   </ul>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {showPdfInfo && (
+          <div className="modal-overlay" onClick={() => setShowPdfInfo(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => setShowPdfInfo(false)}>
+                <X size={20} />
+              </button>
+              <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <ExternalLink size={24} />
+                公式便覧の確認方法
+              </h2>
+              <div style={{ lineHeight: '1.8', color: 'var(--text-main)' }}>
+                <p style={{ marginBottom: '1rem', fontWeight: 600, color: '#EF4444' }}>※ActiBookによる公開は廃止されました。</p>
+                <div style={{ background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid var(--primary)' }}>
+                  <p>学内学外問わず、以下の手順で最新のPDFを確認できます：</p>
+                  <ol style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+                    <li><strong>AAA</strong> にログイン</li>
+                    <li>画面左上の<strong>「掲示板」</strong>をクリック</li>
+                    <li>一覧の中から<strong>「Webフォルダ」</strong>を選択</li>
+                    <li>「学生便覧」フォルダ内のPDFを参照</li>
+                  </ol>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowPdfInfo(false)}
+                style={{ 
+                  marginTop: '1.5rem', width: '100%', padding: '0.75rem', 
+                  background: 'var(--primary)', color: 'white', border: 'none', 
+                  borderRadius: '6px', fontWeight: 600, cursor: 'pointer' 
+                }}
+              >
+                閉じる
+              </button>
             </div>
           </div>
         )}
