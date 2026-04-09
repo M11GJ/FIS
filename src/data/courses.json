@@ -987,7 +987,7 @@
   {
     "id": "c_858a9164",
     "name": "人間とロボットの共生",
-    "term": "3②",
+    "term": "3③",
     "credits": 2,
     "category": "program",
     "required": false,
@@ -1476,5 +1476,40 @@
     "category": "teaching",
     "required": false,
     "marks": "1 2 93 11 01 31-2-93-11-01"
+  },
+  {
+    "id": "c_14751b09",
+    "name": "オブジェクト指向プログラミング",
+    "term": "3②",
+    "credits": 2,
+    "category": "basic",
+    "required": false,
+    "marks": ""
+  },
+  {
+    "id": "c_3016f954",
+    "name": "データベース応用",
+    "term": "3①",
+    "credits": 2,
+    "category": "program",
+    "programType": "IE",
+    "programRequired": false,
+    "programMapping": {
+      "ie": "選択"
+    },
+    "marks": ""
+  },
+  {
+    "id": "c_3c3e2630",
+    "name": "金融工学",
+    "term": "3②",
+    "credits": 2,
+    "category": "program",
+    "programType": "BA",
+    "programRequired": false,
+    "programMapping": {
+      "ba": "選択"
+    },
+    "marks": ""
   }
 ]

@@ -19,6 +19,16 @@ function Handbook() {
         groups.general.courses.push(c);
       }
     });
+
+    Object.values(groups).forEach(group => {
+      group.courses.sort((a, b) => {
+        if (a.required !== b.required) return a.required ? -1 : 1;
+        const isAReq = a.programMapping && Object.values(a.programMapping).includes('必修');
+        const isBReq = b.programMapping && Object.values(b.programMapping).includes('必修');
+        if (isAReq !== isBReq) return isAReq ? -1 : 1;
+        return 0;
+      });
+    });
     return groups;
   }, []);
 

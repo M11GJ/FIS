@@ -54,14 +54,15 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
       const aType = a.course.programMapping ? a.course.programMapping[pKey] : null;
       const bType = b.course.programMapping ? b.course.programMapping[pKey] : null;
 
-      const getRank = (type) => {
-        if (type === '必修') return 1;
-        if (type === '選択') return 2;
-        return 3;
+      const getRank = (course, type) => {
+        if (course.required) return 0; // 最優先（全プログラム共通必修）
+        if (type === '必修') return 1; // プログラム必修
+        if (type === '選択') return 2; // プログラム選択
+        return 3; // その他
       };
 
-      const rankA = getRank(aType);
-      const rankB = getRank(bType);
+      const rankA = getRank(a.course, aType);
+      const rankB = getRank(b.course, bType);
 
       if (rankA !== rankB) return rankA - rankB;
       return a.index - b.index;
