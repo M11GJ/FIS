@@ -149,9 +149,26 @@ function Handbook() {
                       <tr key={course.id}>
                         <td style={{ fontWeight: 600 }}>{course.name}</td>
                         <td>
-                          <span className="badge" style={{ background: 'var(--surface-hover)', color: 'var(--text-main)', fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>
-                            {formatTerm(course.term)}
-                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', alignItems: 'flex-start' }}>
+                            <span className="badge" style={{ background: 'var(--surface-hover)', color: 'var(--text-main)', fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>
+                              {formatTerm(course.term)}
+                            </span>
+                            {course.schedule && (
+                              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary)', marginLeft: '0.2rem' }}>
+                                {course.schedule}
+                              </span>
+                            )}
+                            {course.room && course.room !== 'オンデマンド' && (
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: '0.2rem' }}>
+                                {course.room}教室
+                              </span>
+                            )}
+                            {course.instructor && course.category !== 'teaching' && course.category !== 'exercise' && (
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: '0.2rem', fontStyle: 'italic', borderTop: '1px solid var(--border)', paddingTop: '0.2rem', marginTop: '0.2rem' }}>
+                                {course.instructor}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td>
                           <span className="badge" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>

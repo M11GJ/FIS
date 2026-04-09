@@ -136,11 +136,18 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
                     {course.name}
                   </span>
                   <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem', flexWrap: 'wrap' }}>
-                    <span className="badge" style={{ background: 'var(--surface)' }}>{formatTerm(course.term)}</span>
-                    <span className="badge" style={{ background: 'var(--surface)' }}>{course.credits}単位</span>
                     {course.category !== 'program' && course.required && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>必修</span>}
                     {course.category === 'program' && pType === '必修' && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>{program}必修</span>}
                     {course.category === 'program' && pType === '選択' && <span className="badge" style={{ border: '1px solid var(--primary)', color: 'var(--primary)' }}>{program}選択</span>}
+                    <span className="badge" style={{ background: 'var(--surface)' }}>{formatTerm(course.term)}</span>
+                    <span className="badge" style={{ background: 'var(--surface)' }}>{course.credits}単位</span>
+                    {course.schedule && <span className="badge" style={{ background: 'var(--surface-hover)', border: '1px solid var(--border)' }}>{course.schedule}</span>}
+                    {course.room && course.room !== 'オンデマンド' && <span className="badge" style={{ background: 'var(--surface-hover)', color: 'var(--text-muted)' }}>{course.room}教室</span>}
+                    {course.instructor && course.category !== 'teaching' && course.category !== 'exercise' && (
+                      <span className="badge" style={{ background: 'transparent', color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.75rem' }}>
+                        {course.instructor}
+                      </span>
+                    )}
                   </div>
                 </div>
               </label>
