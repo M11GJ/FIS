@@ -38,16 +38,15 @@ function App() {
               <CheckSquare size={18} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-bottom' }} />
               履修チェック
             </NavLink>
-            <a 
-              href="https://gakuseibinran.actibookone.com/content/detail?param=eyJjb250ZW50TnVtIjo1Njc1ODQsImNhdGVnb3J5TnVtIjo1NjE0Mn0=&pNo=1" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <button 
+              onClick={() => alert('ActiBookは廃止されました。\nAAAを開き左上の掲示板の中からWebフォルダを選択してください。')}
               className="nav-link"
-              title="実際の公式便覧PDFを開く"
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
+              title="公式便覧の確認方法を表示"
             >
               <ExternalLink size={18} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-bottom' }} />
               公式PDF
-            </a>
+            </button>
             <button 
               onClick={toggleTheme} 
               style={{
