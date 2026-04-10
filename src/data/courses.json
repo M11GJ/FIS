@@ -1,6 +1,6 @@
 [
   {
-    "version": "1.4.6",
+    "version": "1.5.2",
     "date": "2026.04.10",
     "description": "講義データの更新",
     "changes": [
@@ -1145,7 +1145,7 @@
   },
   {
     "id": "c_d7ce5895",
-    "name": "アルゴリズムとデータ分析",
+    "name": "アルゴリズムとデータ構造",
     "term": "2①②(通)",
     "credits": 2,
     "category": "program",
