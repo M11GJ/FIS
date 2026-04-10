@@ -3,7 +3,7 @@ import coursesData from '../data/courses.json';
 import { useGraduationCheck } from '../hooks/useGraduationCheck';
 import { formatTerm } from '../utils/formatTerm';
 import { isCourseActiveInQuarter } from '../utils/parseSchedule';
-import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2 } from 'lucide-react';
 import Timetable from '../components/Timetable';
 
 const ProgressBar = ({ label, current, target, minRequiredLabel, missingList }) => {
@@ -288,6 +288,33 @@ function Checker() {
   const [selectedCourses, setSelectedCourses] = useState(new Set());
   const [program, setProgram] = useState('DS');
   const [activeTab, setActiveTab] = useState('progress'); // 'progress' or 'timetable'
+  const [shareCopied, setShareCopied] = useState(false);
+
+  // URL共有データの復元
+  useEffect(() => {
+    const hash = window.location.hash;
+    const queryString = hash.includes('?') ? hash.split('?')[1] : '';
+    if (!queryString) return;
+
+    const params = new URLSearchParams(queryString);
+    const pParam = params.get('p');
+    const sParam = params.get('s');
+
+    if (pParam) {
+      setProgram(pParam.toUpperCase());
+    }
+
+    if (sParam) {
+      const ids = sParam.split(',').filter(id => id).map(id => `c_${id}`);
+      // 存在するIDのみをフィルタリング
+      const validIds = ids.filter(id => coursesData.some(c => c.id === id));
+      if (validIds.length > 0) {
+        setSelectedCourses(new Set(validIds));
+        // 開発者向けログ
+        console.log(`Shared data loaded: ${validIds.length} courses`);
+      }
+    }
+  }, []);
 
   const handleToggle = (id) => {
     setSelectedCourses(prev => {
@@ -364,6 +391,24 @@ function Checker() {
       }
       return next;
     });
+    });
+  };
+
+  const handleShare = () => {
+    const ids = Array.from(selectedCourses).map(id => id.replace('c_', ''));
+    const s = ids.join(',');
+    const p = program;
+    
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareUrl = `${baseUrl}#/checker?p=${p}&s=${s}`;
+    
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    }).catch(err => {
+      console.error('Failed to copy URL:', err);
+      alert('URLのコピーに失敗しました。ブラウザの権限を確認してください。');
+    });
   };
 
   const { status, missingCredits } = useGraduationCheck(Array.from(selectedCourses), program);
@@ -385,6 +430,22 @@ function Checker() {
           <CheckCircle2 /> 修得科目を選択
         </h2>
         
+        <div style={{ marginBottom: '1.25rem', display: 'flex', gap: '0.5rem' }}>
+          <button
+            onClick={handleShare}
+            className="glass-button"
+            style={{
+              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+              padding: '0.75rem', borderRadius: '8px', background: shareCopied ? '#10B981' : 'var(--accent-light)',
+              color: shareCopied ? 'white' : 'var(--primary)', border: 'none', cursor: 'pointer',
+              fontWeight: 600, fontSize: '0.9rem', transition: 'all 0.3s'
+            }}
+          >
+            <Share2 size={18} />
+            {shareCopied ? 'コピーしました！' : '現在の履修状況を共有'}
+          </button>
+        </div>
+
         <AutoImportPanel selectedCourses={selectedCourses} setSelectedCourses={setSelectedCourses} />
 
         <div style={{ marginBottom: '1.5rem', background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px' }}>
