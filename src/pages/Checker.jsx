@@ -37,6 +37,52 @@ const getYear = (termStr) => {
   return match ? `${match[1]}年` : 'その他';
 };
 
+// 科目名の正規化（AAA読み込みの安定性向上・名称変更対応）
+const normalizeCourseName = (name) => {
+  if (!name) return '';
+  return name.replace(/\s+/g, '')
+             .replace(/[（）()]/g, '')
+             .replace(/[ⅠI]/g, '1')
+             .replace(/[ⅡII]/g, '2')
+             .replace(/[ⅢIII]/g, '3')
+             .replace('大学が独自に設定する科目', '');
+};
+
+// URL共有用の固定順ソート済みリスト
+const sortedCoursesForSharing = [...coursesData].sort((a, b) => a.id.localeCompare(b.id));
+
+const B64_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+const encodeBits = (selectedIds) => {
+  let bits = '';
+  sortedCoursesForSharing.forEach(c => {
+    bits += selectedIds.has(c.id) ? '1' : '0';
+  });
+  let encoded = '';
+  for (let i = 0; i < bits.length; i += 6) {
+    const segment = bits.substring(i, i + 6).padEnd(6, '0');
+    encoded += B64_CHARS[parseInt(segment, 2)];
+  }
+  return encoded;
+};
+
+const decodeBits = (encoded) => {
+  let bits = '';
+  for (let i = 0; i < encoded.length; i++) {
+    const val = B64_CHARS.indexOf(encoded[i]);
+    if (val === -1) continue;
+    bits += val.toString(2).padStart(6, '0');
+  }
+  
+  const selectedIds = new Set();
+  sortedCoursesForSharing.forEach((c, index) => {
+    if (bits[index] === '1') {
+      selectedIds.add(c.id);
+    }
+  });
+  return selectedIds;
+};
+
 const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, program, enableYearFilter, onBatchToggle }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('すべて');
@@ -214,8 +260,8 @@ const AutoImportPanel = ({ selectedCourses, setSelectedCourses }) => {
       const isFailed = parts.some(p => p === '不');
 
       if (isPassed && !isFailed) {
-        const normalizedInput = courseNameRaw.replace(/\s+/g,'');
-        const course = coursesData.find(c => c.name.replace(/\s+/g,'') === normalizedInput);
+        const normalizedInput = normalizeCourseName(courseNameRaw);
+        const course = coursesData.find(c => normalizeCourseName(c.name) === normalizedInput);
         
         if (course && !newSelected.has(course.id)) {
           newSelected.add(course.id);
@@ -298,20 +344,21 @@ function Checker() {
 
     const params = new URLSearchParams(queryString);
     const pParam = params.get('p');
-    const sParam = params.get('s');
+    const sParam = params.get('s'); // 短縮文字列方式へ移行
 
     if (pParam) {
       setProgram(pParam.toUpperCase());
     }
 
     if (sParam) {
-      const ids = sParam.split(',').filter(id => id).map(id => `c_${id}`);
-      // 存在するIDのみをフィルタリング
-      const validIds = ids.filter(id => coursesData.some(c => c.id === id));
-      if (validIds.length > 0) {
-        setSelectedCourses(new Set(validIds));
-        // 開発者向けログ
-        console.log(`Shared data loaded: ${validIds.length} courses`);
+      try {
+        const decodedSet = decodeBits(sParam);
+        if (decodedSet.size > 0) {
+          setSelectedCourses(decodedSet);
+          console.log(`Shared status loaded: ${decodedSet.size} courses (v1.5.1 compressed)`);
+        }
+      } catch (err) {
+        console.error('Failed to decode share URL:', err);
       }
     }
   }, []);
@@ -394,12 +441,11 @@ function Checker() {
   };
 
   const handleShare = () => {
-    const ids = Array.from(selectedCourses).map(id => id.replace('c_', ''));
-    const s = ids.join(',');
+    const shardData = encodeBits(selectedCourses);
     const p = program;
     
     const baseUrl = window.location.origin + window.location.pathname;
-    const shareUrl = `${baseUrl}#/checker?p=${p}&s=${s}`;
+    const shareUrl = `${baseUrl}#/checker?p=${p}&s=${shardData}`;
     
     navigator.clipboard.writeText(shareUrl).then(() => {
       setShareCopied(true);
