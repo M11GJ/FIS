@@ -1744,7 +1744,10 @@
     "credits": 3,
     "category": "teaching",
     "required": false,
-    "marks": "1 2 92 21 02 31-2-92-21-02"
+    "marks": "1 2 92 21 02 31-2-92-21-02",
+    "schedule": "金5",
+    "room": "S1302",
+    "instructor": "-"
   },
   {
     "id": "c_c5da6e00",
@@ -1765,7 +1768,10 @@
     "credits": 3,
     "category": "teaching",
     "required": false,
-    "marks": "1 2 92 21 04 31-2-92-21-04"
+    "marks": "1 2 92 21 04 31-2-92-21-04",
+    "schedule": "火5",
+    "room": "1141",
+    "instructor": "大坂・安藤"
   },
   {
     "id": "c_4f7b12d6",
@@ -1880,7 +1886,7 @@
   },
   {
     "id": "c_787468b0",
-    "name": "大学が独自に設定する科目 学校体験活動",
+    "name": "学校体験活動",
     "term": "2通",
     "credits": 3,
     "category": "teaching",

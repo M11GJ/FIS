@@ -37,7 +37,7 @@ const getYear = (termStr) => {
   return match ? `${match[1]}年` : 'その他';
 };
 
-const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, program, enableYearFilter }) => {
+const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, program, enableYearFilter, onBatchToggle }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('すべて');
   
@@ -93,8 +93,29 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
           {isOpen ? <ChevronDown size={20} color="var(--primary)" /> : <ChevronRight size={20} color="var(--text-muted)" />}
           {title}
         </span>
-        <span style={{ fontSize: '0.85rem', color: selectedCount > 0 ? 'var(--primary)' : 'var(--text-muted)', background: selectedCount > 0 ? 'var(--accent-light)' : 'var(--border)', padding: '0.2rem 0.6rem', borderRadius: '12px' }}>
-          {selectedCount} / {courses.length} 選択中
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: 'auto' }}>
+          {onBatchToggle && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onBatchToggle();
+              }}
+              style={{
+                fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px',
+                background: courses.every(c => selectedCourses.has(c.id)) ? 'var(--primary)' : 'var(--surface)',
+                color: courses.every(c => selectedCourses.has(c.id)) ? 'white' : 'var(--text-muted)',
+                border: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s',
+                fontWeight: 600
+              }}
+              onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.color = 'var(--primary)'; if (courses.every(c => selectedCourses.has(c.id))) e.currentTarget.style.color = 'white'; }}
+              onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; if (!courses.every(c => selectedCourses.has(c.id))) e.currentTarget.style.color = 'var(--text-muted)'; }}
+            >
+              {courses.every(c => selectedCourses.has(c.id)) ? '全て解除' : '全て履修'}
+            </button>
+          )}
+          <span style={{ fontSize: '0.85rem', color: selectedCount > 0 ? 'var(--primary)' : 'var(--text-muted)', background: selectedCount > 0 ? 'var(--accent-light)' : 'var(--border)', padding: '0.2rem 0.6rem', borderRadius: '12px', whiteSpace: 'nowrap' }}>
+            {selectedCount} / {courses.length} 選択中
+          </span>
         </span>
       </button>
       
@@ -142,7 +163,9 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
                     {course.category === 'program' && pType === '必修' && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>{program}必修</span>}
                     {course.category === 'program' && pType === '選択' && <span className="badge" style={{ border: '1px solid var(--primary)', color: 'var(--primary)' }}>{program}選択</span>}
                     <span className="badge" style={{ background: 'var(--surface)' }}>{formatTerm(course.term)}</span>
-                    <span className="badge" style={{ background: 'var(--surface)' }}>{course.credits}単位</span>
+                    {course.category !== 'teaching' && (
+                      <span className="badge" style={{ background: 'var(--surface)' }}>{course.credits}単位</span>
+                    )}
                     {course.schedule && <span className="badge" style={{ background: 'var(--surface-hover)', border: '1px solid var(--border)' }}>{course.schedule}</span>}
                     {course.room && course.room !== 'オンデマンド' && <span className="badge" style={{ background: 'var(--surface-hover)', color: 'var(--text-muted)' }}>{course.room}教室</span>}
                     {course.instructor && course.category !== 'teaching' && course.category !== 'exercise' && (
@@ -275,6 +298,20 @@ function Checker() {
     });
   };
 
+  const handleBatchToggleCategory = (courses) => {
+    setSelectedCourses(prev => {
+      const next = new Set(prev);
+      const allSelected = courses.every(c => next.has(c.id));
+      
+      if (allSelected) {
+        courses.forEach(c => next.delete(c.id));
+      } else {
+        courses.forEach(c => next.add(c.id));
+      }
+      return next;
+    });
+  };
+
   const handleBatchSelectMandatory = (targetYear = null, targetQuarter = null) => {
     const mandatoryFullList = coursesData.filter(course => {
       // 1. 学年・クォーターフィルタリング
@@ -369,6 +406,7 @@ function Checker() {
               handleToggle={handleToggle}
               program={program}
               enableYearFilter={cat.filter}
+              onBatchToggle={cat.key === 'teaching' ? () => handleBatchToggleCategory(coursesData.filter(c => c.category === 'teaching')) : null}
             />
           ))}
         </div>
