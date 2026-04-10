@@ -1,6 +1,6 @@
 [
   {
-    "version": "1.4.5",
+    "version": "1.4.6",
     "date": "2026.04.10",
     "description": "講義データの更新",
     "changes": [
@@ -1708,7 +1708,10 @@
     "credits": 3,
     "category": "teaching",
     "required": false,
-    "marks": "1 1 92 21 01 31-1-92-21-01"
+    "marks": "1 1 92 21 01 31-1-92-21-01",
+    "schedule": "月5",
+    "room": "1141",
+    "instructor": "-"
   },
   {
     "id": "c_ae0e3a70",
