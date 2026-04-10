@@ -169,16 +169,29 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
     const pKey = program.toLowerCase();
     
     // 全学年の必修
-    const globalMandatory = coursesData.filter(c => 
-      c.required === true || (c.category === 'program' && c.programMapping?.[pKey] === '必修')
-    );
+    const globalMandatory = coursesData.filter(c => {
+      const isProgramCourse = c.category === 'program';
+      const isProgramMandatory = isProgramCourse && c.programMapping?.[pKey] === '必修';
+      const isGlobalMandatory = !isProgramCourse && c.required === true;
+      return isGlobalMandatory || isProgramMandatory;
+    });
     const allGlobal = globalMandatory.length > 0 && globalMandatory.every(c => selectedCourseIds.has(c.id));
 
     // 現在のクォーターの必修
     const quarterMandatory = globalMandatory.filter(c => 
       isCourseActiveInQuarter(c.term, selectedYear, selectedQuarter)
     );
-    const allQuarter = quarterMandatory.length > 0 && quarterMandatory.every(c => selectedCourseIds.has(c.id));
+    
+    // ボタンの表示（アクティブ状態）の判定。
+    // 通年科目は他クォーターの解除操作で消える可能性があるため、
+    // 判定では「そのクォーター固有（通年でない）の必修」が全て選択されているかを重視し、
+    // それによってボタンが勝手に「未登録」っぽく見えるのを防ぐ。
+    const quarterSpecificMandatory = quarterMandatory.filter(c => !c.term.includes('通'));
+    const allQuarter = quarterMandatory.length > 0 && (
+      quarterSpecificMandatory.length > 0 
+        ? quarterSpecificMandatory.every(c => selectedCourseIds.has(c.id))
+        : quarterMandatory.every(c => selectedCourseIds.has(c.id))
+    );
 
     return { allGlobalMandatorySelected: allGlobal, allQuarterMandatorySelected: allQuarter };
   }, [selectedCourseIds, selectedYear, selectedQuarter, program]);

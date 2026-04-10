@@ -285,10 +285,14 @@ function Checker() {
       }
 
       // 2. 必修判定
-      const isGlobalMandatory = course.required === true;
-      const isProgramMandatory = course.category === 'program' && 
+      const isProgramCourse = course.category === 'program';
+      const isProgramMandatory = isProgramCourse && 
                                 course.programMapping && 
                                 course.programMapping[program.toLowerCase()] === '必修';
+      
+      // 専門科目の場合は、自身のプログラムで必修設定されている場合のみを対象とする。
+      // 総合・基礎などの共通科目は、全体の required フラグを参照する。
+      const isGlobalMandatory = !isProgramCourse && course.required === true;
       
       return isGlobalMandatory || isProgramMandatory;
     }).map(c => c.id);
