@@ -276,7 +276,7 @@ function Checker() {
   };
 
   const handleBatchSelectMandatory = (targetYear = null, targetQuarter = null) => {
-    const mandatoryIds = coursesData.filter(course => {
+    const mandatoryFullList = coursesData.filter(course => {
       // 1. 学年・クォーターフィルタリング
       if (targetYear && targetQuarter) {
         if (!isCourseActiveInQuarter(course.term, targetYear, targetQuarter)) return false;
@@ -295,19 +295,34 @@ function Checker() {
       const isGlobalMandatory = !isProgramCourse && course.required === true;
       
       return isGlobalMandatory || isProgramMandatory;
-    }).map(c => c.id);
+    });
 
+    const mandatoryIds = mandatoryFullList.map(c => c.id);
     if (mandatoryIds.length === 0) return;
 
     setSelectedCourses(prev => {
       const next = new Set(prev);
-      const allExist = mandatoryIds.every(id => next.has(id));
       
-      if (allExist) {
-        // すべて存在する場合は全解除
+      // ボタンの表示状態（Timetable.jsx）と動作を合わせる
+      let shouldUnregister = false;
+      if (targetYear && targetQuarter) {
+        // クォーター別の場合は、通年科目を除いた「そのクォーター固有の必修」が揃っているかで判定
+        const specificIds = mandatoryFullList.filter(c => !c.term.includes('通')).map(c => c.id);
+        if (specificIds.length > 0) {
+          shouldUnregister = specificIds.every(id => next.has(id));
+        } else {
+          shouldUnregister = mandatoryIds.every(id => next.has(id));
+        }
+      } else {
+        // 全学年などの場合は、全科目が存在するかで判定
+        shouldUnregister = mandatoryIds.every(id => next.has(id));
+      }
+      
+      if (shouldUnregister) {
+        // 揃っている場合は全解除（通年も含むそのクォーターに関係する全必修を外す）
         mandatoryIds.forEach(id => next.delete(id));
       } else {
-        // 一つでも欠けている場合は全登録
+        // 足りない場合は全登録
         mandatoryIds.forEach(id => next.add(id));
       }
       return next;
