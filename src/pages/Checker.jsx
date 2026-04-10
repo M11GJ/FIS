@@ -391,7 +391,6 @@ function Checker() {
       }
       return next;
     });
-    });
   };
 
   const handleShare = () => {
