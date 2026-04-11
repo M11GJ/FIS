@@ -1,5 +1,13 @@
 [
   {
+    "version": "1.7.1",
+    "date": "2026.04.12",
+    "description": "アクセス解析（Google Analytics）の導入",
+    "changes": [
+      "ポータル全体に Google Analytics (gtag.js) を実装し、利用者のニーズ把握とサービス向上のための動線分析を開始"
+    ]
+  },
+  {
     "version": "1.7.0",
     "date": "2026.04.11",
     "description": "システム全体のブランド刷新とレスポンシブUIの極致",
