@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useSearchParams } from 'react-router-dom';
 import coursesInfo from '../data/courses_info.json';
 import coursesEcon from '../data/courses_economics.json';
@@ -220,7 +221,7 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
                     padding: '0.35rem 0.8rem', borderRadius: '16px', fontSize: '0.85rem', fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'all 0.2s',
                     background: selectedYear === year ? 'var(--primary)' : 'var(--surface)',
                     color: selectedYear === year ? 'white' : 'var(--text-main)',
-                    boxShadow: selectedYear === year ? '0 2px 4px rgba(226, 4, 27, 0.2)' : 'none'
+                    boxShadow: selectedYear === year ? '0 2px 4px rgba(var(--primary-rgb), 0.2)' : 'none'
                   }}
                 >
                   {year}
@@ -417,6 +418,7 @@ function Checker() {
   const [program, setProgram] = useState('DS');
   const [activeTab, setActiveTab] = useState('progress');
   const [shareCopied, setShareCopied] = useState(false);
+  const [isDrawerExpanded, setIsDrawerExpanded] = useState(false);
 
   // URL共有データの復元
   useEffect(() => {
@@ -720,6 +722,79 @@ function Checker() {
           />
         )}
       </div>
+      {/* Mobile-only Status Drawer (createPortal for stability) */}
+      {createPortal(
+        <div className={`mobile-status-drawer ${isDrawerExpanded ? 'expanded' : ''}`}>
+          <div 
+            className="drawer-header" 
+            onClick={() => setIsDrawerExpanded(!isDrawerExpanded)}
+            style={{ 
+              padding: '1rem 1.25rem', 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              cursor: 'pointer'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>
+                {status.total.current}
+              </span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                {status.total.ok ? '卒業OK' : `あと ${missingCredits} 単位`}
+              </span>
+            </div>
+            <ChevronDown 
+              size={24} 
+              style={{ 
+                transform: isDrawerExpanded ? 'rotate(180deg)' : 'none', 
+                transition: 'transform 0.3s',
+                color: 'var(--text-muted)'
+              }} 
+            />
+          </div>
+          
+          {isDrawerExpanded && (
+            <div style={{ 
+              padding: '0 1.25rem 1.25rem', 
+              maxHeight: '60vh', 
+              overflowY: 'auto' 
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {facultyId === 'info' ? (
+                  <>
+                    <ProgressBar label="総合" current={status.general.current} target={status.general.required} />
+                    <ProgressBar label="基礎+専" current={status.basicAndProgram.current} target={status.basicAndProgram.required} />
+                    <ProgressBar label="必修" current={status.programSpecific.current} target={status.programSpecific.required} />
+                  </>
+                ) : (
+                  <>
+                    <ProgressBar label="総合" current={status.general.current} target={status.general.required} />
+                    <ProgressBar label="専基" current={status.specBasic.current} target={status.specBasic.required} />
+                    <ProgressBar label="専門" current={status.specialized.current} target={status.specialized.required} />
+                  </>
+                )}
+                <button 
+                  onClick={() => setIsDrawerExpanded(false)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.75rem', 
+                    background: 'var(--accent-light)', 
+                    color: 'var(--primary)', 
+                    border: 'none', 
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    marginTop: '0.5rem'
+                  }}
+                >
+                  閉じる
+                </button>
+              </div>
+            </div>
+          )}
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

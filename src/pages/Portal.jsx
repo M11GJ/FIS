@@ -1,29 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 
 import changelogEcon from '../data/changelog_econ.json';
 import changelogInfo from '../data/changelog_info.json';
-
-// 各学部の履歴をマージしてお知らせリストを生成
-const generateNewsFromChangelogs = () => {
-  const econNews = changelogEcon.map(item => ({
-    date: item.date,
-    title: '経済経営学部',
-    detail: item.description || item.changes[0]
-  }));
-  
-  const infoNews = changelogInfo.map(item => ({
-    date: item.date,
-    title: '情報科学部',
-    detail: item.description || item.changes[0]
-  }));
-
-  // 日付順（降順）にソート
-  return [...econNews, ...infoNews].sort((a, b) => b.date.localeCompare(a.date));
-};
-
-const NEWS = generateNewsFromChangelogs();
 
 const FACULTIES = [
   {
@@ -78,6 +58,26 @@ const Portal = () => {
   const navigate = useNavigate();
   const [showNewsModal, setShowNewsModal] = useState(false);
 
+  // 各学部の履歴をマージしてお知らせリストを生成
+  const NEWS = useMemo(() => {
+    const econNews = changelogEcon.map(item => ({
+      date: item.date,
+      title: '経済経営学部',
+      type: 'econ',
+      detail: item.description || item.changes[0]
+    }));
+    
+    const infoNews = changelogInfo.map(item => ({
+      date: item.date,
+      title: '情報科学部',
+      type: 'info',
+      detail: item.description || item.changes[0]
+    }));
+
+    // 日付順（降順）にソート
+    return [...econNews, ...infoNews].sort((a, b) => b.date.localeCompare(a.date));
+  }, []);
+
   // お知らせモーダルコンポーネント
   const NewsModal = () => (
     <div className="modal-overlay" onClick={() => setShowNewsModal(false)}>
@@ -94,7 +94,12 @@ const Portal = () => {
           {NEWS.map((item, idx) => (
             <div key={idx} style={{ paddingBottom: '1rem', marginBottom: '1rem', borderBottom: idx !== NEWS.length - 1 ? '1px solid var(--border)' : 'none' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', background: 'var(--accent-light)', padding: '2px 8px', borderRadius: '4px' }}>
+                <span style={{ 
+                  fontSize: '0.75rem', fontWeight: 700, 
+                  color: item.type === 'econ' ? 'var(--color-econ)' : 'var(--color-info)', 
+                  background: item.type === 'econ' ? 'rgba(18, 118, 54, 0.1)' : 'rgba(226, 4, 11, 0.08)', 
+                  padding: '2px 8px', borderRadius: '4px' 
+                }}>
                   {item.title}
                 </span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{item.date}</span>
@@ -117,14 +122,7 @@ const Portal = () => {
     <div className="portal-container">
 
       {/* タイトル */}
-      <div className="portal-title-area">
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', letterSpacing: '0.12em', fontWeight: 600, marginBottom: '0.25rem', textTransform: 'uppercase' }}>
-          周南公立大学
-        </p>
-        <h2 className="portal-title-text">
-          あなたの学部を選んでください
-        </h2>
-      </div>
+      {/* タイトルエリアは削除しました */}
 
       {/* モバイル版 お知らせ行 (学部リストと同じデザイン・同じ高さ) */}
       <div className="portal-faculty-row mobile-only" style={{ marginBottom: '1.5rem', border: '2px solid var(--accent-light)' }}>
@@ -146,14 +144,31 @@ const Portal = () => {
           <div key={fac.id} className="portal-faculty-row" style={{ opacity: fac.ready ? 1 : 0.6 }}>
             <span className="faculty-icon-sm">{fac.emoji}</span>
             <div className="faculty-name-sm">
-              {fac.name}
-              {fac.beta && <span style={{ fontSize: '0.6rem', marginLeft: '0.4rem', color: 'var(--text-muted)', border: '1px solid var(--border)', padding: '1px 3px', borderRadius: '3px' }}>BETA</span>}
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{fac.name}</span>
+              {fac.beta && <span style={{ fontSize: '0.6rem', flexShrink: 0, color: 'var(--text-muted)', border: '1px solid var(--border)', padding: '1px 4px', borderRadius: '3px', background: 'var(--surface-hover)' }}>BETA</span>}
             </div>
             <div className="faculty-actions-sm">
               {fac.ready ? (
                 <>
-                  <button className="btn-checker-sm" onClick={() => navigate(`/${fac.id}/checker`)}>✓ チェック</button>
-                  <button className="btn-handbook-sm" onClick={() => navigate(`/${fac.id}/handbook`)} title="学生便覧">📖</button>
+                  <button 
+                    className="btn-checker-sm" 
+                    onClick={() => navigate(`/${fac.id}/checker`)}
+                    style={{ background: fac.color }}
+                  >
+                    ✓ チェック
+                  </button>
+                  <button 
+                    className="btn-handbook-sm" 
+                    onClick={() => navigate(`/${fac.id}/handbook`)} 
+                    title="学生便覧"
+                    style={{ 
+                      color: fac.color, 
+                      background: `rgba(${fac.colorRgb}, 0.08)`,
+                      borderColor: `rgba(${fac.colorRgb}, 0.1)`
+                    }}
+                  >
+                    📖
+                  </button>
                 </>
               ) : (
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>準備中</span>
@@ -190,23 +205,28 @@ const Portal = () => {
                 padding: '0.3rem 0.6rem', borderRadius: '6px',
                 display: 'flex', alignItems: 'center', gap: '0.2rem', transition: 'all 0.2s'
               }}
-              onMouseOver={e => e.currentTarget.style.background = 'rgba(226, 4, 11, 0.15)'}
+              onMouseOver={e => e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.15)'}
               onMouseOut={e => e.currentTarget.style.background = 'var(--accent-light)'}
             >
               一覧 <span>›</span>
             </button>
           </div>
           
-          <div style={{ flex: 1, minHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', paddingRight: '0.4rem' }} className="news-scroll">
-            {NEWS.slice(0, 6).map((item, idx) => (
-              <div key={idx} style={{ paddingBottom: '0.8rem', borderBottom: idx !== Math.min(NEWS.length, 6) - 1 ? '1px solid var(--border)' : 'none' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--primary)', background: 'rgba(226, 4, 11, 0.08)', padding: '2px 8px', borderRadius: '4px' }}>
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.6rem', paddingRight: '0.4rem' }} className="news-scroll">
+            {NEWS.slice(0, 8).map((item, idx) => (
+              <div key={idx} className="portal-news-item" style={{ paddingBottom: '0.5rem', borderBottom: idx !== Math.min(NEWS.length, 8) - 1 ? '1px solid var(--border)' : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.1rem' }}>
+                  <span style={{ 
+                    fontSize: '0.6rem', fontWeight: 800, 
+                    color: item.type === 'econ' ? 'var(--color-econ)' : 'var(--color-info)', 
+                    background: item.type === 'econ' ? 'rgba(18, 118, 54, 0.1)' : 'rgba(226, 4, 11, 0.08)', 
+                    padding: '1px 5px', borderRadius: '3px' 
+                  }}>
                     {item.title}
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{item.date}</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{item.date}</span>
                 </div>
-                <p style={{ fontSize: '0.85rem', margin: 0, lineHeight: 1.5, color: 'var(--text-main)' }}>
+                <p style={{ fontSize: '0.78rem', margin: 0, lineHeight: 1.35, color: 'var(--text-main)' }}>
                   {item.detail}
                 </p>
               </div>
@@ -252,16 +272,16 @@ const Portal = () => {
             )}
 
             {/* アイコン */}
-            <div style={{ fontSize: '2.5rem', lineHeight: 1, marginBottom: '1rem' }}>
+            <div className="faculty-card-emoji" style={{ fontSize: '2.5rem', lineHeight: 1, marginBottom: '1rem' }}>
               {fac.emoji}
             </div>
 
             {/* 学部名・説明 — flex: 1 で余白を吸収 */}
-            <div style={{ flex: 1 }}>
-              <h3 style={{
-                fontSize: '1.15rem', fontWeight: 700,
+            <div style={{ flex: 1, minHeight: 0 }}>
+              <h3 className="faculty-card-title" style={{
+                fontSize: '1.1rem', fontWeight: 700,
                 color: fac.ready ? 'var(--text-main)' : 'var(--text-muted)',
-                marginBottom: '0.5rem',
+                marginBottom: '0.4rem',
                 display: 'flex', alignItems: 'center', gap: '0.5rem'
               }}>
                 {fac.name}
@@ -273,14 +293,14 @@ const Portal = () => {
                 )}
               </h3>
               {fac.sub && (
-                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                <p className="faculty-sub-text">
                   {fac.sub}
                 </p>
               )}
             </div>
 
             {/* ボタン */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1.2rem' }}>
+            <div className="faculty-actions" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1.2rem' }}>
               {fac.ready ? (
                 <>
                   <button

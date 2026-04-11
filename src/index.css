@@ -3,6 +3,7 @@
 :root {
   --primary: #E2041B; /* Default (Info) */
   --primary-hover: #c40316;
+  --primary-rgb: 226, 4, 27; /* Added for dynamic accent colors */
   
   /* Faculty Colors */
   --color-info: #E2041B;
@@ -10,13 +11,17 @@
   --color-econ: #127636;
   --color-econ-hover: #0e5e2b;
 
+  /* Portal Theme Color (Black) */
+  --color-portal: #111827;
+  --color-portal-hover: #1f2937;
+
   --background: #f9fafb;
   --surface: #ffffff;
   --surface-hover: #f3f4f6;
   --text-main: #111827;
   --text-muted: #4b5563;
   --border: #e5e7eb;
-  --accent-light: rgba(226, 4, 27, 0.08);
+  --accent-light: rgba(var(--primary-rgb), 0.08); /* Now dynamic */
 }
 
 [data-theme="dark"] {
@@ -25,13 +30,17 @@
   --color-econ: #4ade80;
   --color-econ-hover: #22c55e;
 
+  /* Portal Theme Color (Dark Mode - Silver/White) */
+  --color-portal: #f8fafc;
+  --color-portal-hover: #e2e8f0;
+
   --background: #111827;
   --surface: #1f2937;
   --surface-hover: #374151;
   --text-main: #f9fafb;
   --text-muted: #9ca3af;
   --border: #374151;
-  --accent-light: rgba(226, 4, 27, 0.15);
+  --accent-light: rgba(var(--primary-rgb), 0.15); /* Now dynamic */
 }
 
 * {
@@ -73,6 +82,9 @@ a:hover {
   max-width: 100%;
   margin: 0 auto;
   padding: 2rem 3vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
@@ -88,6 +100,17 @@ header h1 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary);
+}
+
+.site-footer {
+  margin-top: auto;
+  padding: 0.75rem 0 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+  border-top: 1px solid var(--border);
+  letter-spacing: 0.02em;
 }
 
 nav {
@@ -263,45 +286,82 @@ input[type="number"]:focus, select:focus {
 /* Portal Layout */
 .portal-container {
   margin: -2rem -3vw 0;
-  height: calc(100vh - 80px); /* Adjust based on header */
-  overflow: hidden;
+  flex: 1; /* Allow it to take up all available space */
   display: flex;
   flex-direction: column;
-  padding: 2rem 3vw;
+  padding: 1rem 3vw 0.5rem;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
-.portal-title-area {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  flex-shrink: 0;
-}
+
 
 .portal-grid {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr); /* Balanced rows */
   gap: 1.2rem;
   min-height: 0;
 }
 
-.portal-title-text {
-  font-size: clamp(1.3rem, 4vw, 1.9rem);
-  font-weight: 800;
-  color: var(--text-main);
-  margin: 0;
-  line-height: 1.25;
-}
 
-@media (max-width: 1024px) {
+
+@media (max-width: 1100px) {
   .portal-grid {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto;
-    overflow-y: auto;
-    padding-bottom: 2rem;
+    grid-template-rows: repeat(3, 1fr);
   }
 }
+
+.faculty-sub-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-height: 900px) {
+  .faculty-sub-text {
+    display: none; /* Hide if screen height is small to prioritize buttons */
+  }
+  .faculty-actions {
+    flex-direction: row !important;
+    gap: 0.4rem !important;
+  }
+  .faculty-actions button {
+    padding: 0.5rem 0.25rem !important;
+    font-size: 0.8rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .portal-grid {
+    gap: 0.6rem;
+  }
+  .faculty-card-emoji {
+    font-size: 1.8rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .faculty-card-title {
+    font-size: 1rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+  .portal-container {
+    padding: 1rem 3vw;
+  }
+}
+
+/* Smart News Content Hiding */
+@media (max-height: 950px) { .portal-news-item:nth-child(n+6) { display: none; } }
+@media (max-height: 850px) { .portal-news-item:nth-child(n+5) { display: none; } }
+@media (max-height: 780px) { .portal-news-item:nth-child(n+4) { display: none; } }
+@media (max-height: 700px) { .portal-news-item:nth-child(n+3) { display: none; } }
+@media (max-height: 620px) { .portal-news-item:nth-child(n+2) { display: none; } }
 
 @media (max-width: 768px) {
   .portal-container {
@@ -401,9 +461,14 @@ input[type="number"]:focus, select:focus {
 
 .faculty-name-sm {
   flex: 1;
-  font-size: 0.95rem;
+  font-size: 0.9rem; /* Slightly smaller to fit everything */
   font-weight: 700;
   color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .faculty-actions-sm {
@@ -1417,4 +1482,33 @@ input[type="number"]:focus, select:focus {
   .extra-grid {
     gap: 0.4rem;
   }
+}
+
+/* --- Mobile Course Checker UX Improvements --- */
+.mobile-status-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: none;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateZ(0);
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .mobile-status-drawer {
+    display: flex !important;
+  }
+}
+
+[data-theme="dark"] .mobile-status-drawer {
+  background: rgba(31, 41, 55, 0.95);
+  backdrop-filter: blur(10px);
 }

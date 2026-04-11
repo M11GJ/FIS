@@ -13,11 +13,13 @@ const FACULTY_INFO = {
   info: { 
     name: '情報科学部', 
     colorName: 'var(--color-info)', 
+    rgb: '226, 4, 27',
     pdfUrl: 'https://aaa.shunan-u.ac.jp/' // 仮のURL、実際はモーダル表示などで対応
   },
   econ: { 
     name: '経済経営学部', 
     colorName: 'var(--color-econ)', 
+    rgb: '18, 118, 54',
     pdfUrl: 'https://aaa.shunan-u.ac.jp/',
     beta: true
   }
@@ -91,10 +93,12 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
     if (!isPortal && faculty && FACULTY_INFO[faculty]) {
       document.documentElement.style.setProperty('--primary', `var(--color-${faculty})`);
       document.documentElement.style.setProperty('--primary-hover', `var(--color-${faculty}-hover)`);
+      document.documentElement.style.setProperty('--primary-rgb', FACULTY_INFO[faculty].rgb);
     } else {
-      // ポータル画面や未定義の学部の場合は情報科学部のカラーをデフォルトに
-      document.documentElement.style.setProperty('--primary', 'var(--color-info)');
-      document.documentElement.style.setProperty('--primary-hover', 'var(--color-info-hover)');
+      // ポータル画面や未定義の学部の場合はポータル専用カラー（ブラック）をデフォルトに
+      document.documentElement.style.setProperty('--primary', 'var(--color-portal)');
+      document.documentElement.style.setProperty('--primary-hover', 'var(--color-portal-hover)');
+      document.documentElement.style.setProperty('--primary-rgb', '17, 24, 39'); // Slate 900
     }
   }, [faculty, isPortal]);
 
@@ -192,8 +196,10 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
           <Route path="/handbook" element={<Navigate to="/info/handbook" replace />} />
         </Routes>
       </main>
-      {/* 経済学部ベータ版警告ポップアップ */}
-      {showEconWarning && <EconWarningModal onClose={handleCloseEconWarning} />}
+
+      <footer className="site-footer">
+        Developed by KosukeGuntani using Gemini 3 Flash
+      </footer>
     </div>
   );
 }
