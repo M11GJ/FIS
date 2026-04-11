@@ -442,12 +442,13 @@ input[type="number"]:focus, select:focus {
 }
 
 .version-badge {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   background: var(--surface-hover);
-  padding: 0.15rem 0.45rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 12px;
-  fontWeight: 600;
+  font-weight: 700;
+  font-family: inherit;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
