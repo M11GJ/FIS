@@ -1,12 +1,26 @@
 import React, { useMemo } from 'react';
-import handbookData from '../data/handbook.json';
-import coursesData from '../data/courses.json';
+import { useParams } from 'react-router-dom';
+import handbookInfo from '../data/handbook_info.json';
+import handbookEcon from '../data/handbook_econ.json';
+import coursesInfo from '../data/courses_info.json';
+import coursesEcon from '../data/courses_economics.json';
 import { formatTerm } from '../utils/formatTerm';
 import { BookOpen, Calendar, GraduationCap, ListTree, Hash } from 'lucide-react';
 
 function Handbook() {
+  const { faculty: facultyId = 'info' } = useParams();
+  
+  const hData = facultyId === 'econ' ? handbookEcon : handbookInfo;
+  const cData = facultyId === 'econ' ? coursesEcon : coursesInfo;
+
   const groupedCourses = useMemo(() => {
-    const groups = {
+    const groups = facultyId === 'econ' ? {
+      general: { id: 'cat-general', title: '総合科目', courses: [] },
+      specialized_basic: { id: 'cat-spec-basic', title: '専門基礎科目', courses: [] },
+      specialized: { id: 'cat-spec', title: '専門科目', courses: [] },
+      other_dept: { id: 'cat-other-dept', title: '他学科科目', courses: [] },
+      teaching: { id: 'cat-teaching', title: '教職課程', courses: [] },
+    } : {
       general: { id: 'cat-general', title: '総合科目', courses: [] },
       basic: { id: 'cat-basic', title: '学科基礎科目等', courses: [] },
       program: { id: 'cat-program', title: 'プログラム科目', courses: [] },
@@ -14,7 +28,8 @@ function Handbook() {
       other: { id: 'cat-other', title: '他学科専門科目', courses: [] },
       teaching: { id: 'cat-teaching', title: '教職課程関連', courses: [] },
     };
-    coursesData.forEach(c => {
+
+    cData.forEach(c => {
       if (groups[c.category]) {
         groups[c.category].courses.push(c);
       } else {
@@ -33,11 +48,22 @@ function Handbook() {
         const rankA = getRank(a);
         const rankB = getRank(b);
         if (rankA !== rankB) return rankA - rankB;
+
+        // 第2優先順位: ABCD群 / 専門区分の順序
+        const subRank = { 
+          'intro': 1, 'A': 2, 'B': 3, 'C': 4, 'D': 5, 'intl': 6,
+          'econ': 7, 'mgmt': 8, 'global': 9, 'region': 10, 
+          'law': 11, 'exercise': 12 
+        };
+        const sRankA = subRank[a.subCategory] || 99;
+        const sRankB = subRank[b.subCategory] || 99;
+        if (sRankA !== sRankB) return sRankA - sRankB;
+
         return 0;
       });
     });
     return groups;
-  }, []);
+  }, [facultyId, cData]);
 
   return (
     <div className="handbook-page" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
@@ -49,7 +75,7 @@ function Handbook() {
             <GraduationCap size={24} /> 3つのポリシー
           </h2>
           <div style={{ display: 'grid', gap: '1.5rem', marginTop: '1rem' }}>
-            {handbookData.policies.map((policy, idx) => (
+            {hData.policies.map((policy, idx) => (
               <div key={idx} style={{ background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px' }}>
                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.5rem', color: 'var(--text-main)', borderBottom: '1px solid var(--border)', paddingBottom: '0.25rem' }}>
                   {policy.title}
@@ -64,20 +90,20 @@ function Handbook() {
           {/* 学期の考え方 Section */}
           <div className="glass-panel">
             <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Calendar size={24} /> {handbookData.semesters.title}
+              <Calendar size={24} /> {hData.semesters.title}
             </h2>
             <p style={{ color: 'var(--text-muted)', background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px' }}>
-              {handbookData.semesters.content}
+              {hData.semesters.content}
             </p>
           </div>
 
           {/* 専門ゼミ・卒業論文 Section */}
           <div className="glass-panel" style={{ flexGrow: 1 }}>
             <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <BookOpen size={24} /> {handbookData.seminars.title}
+              <BookOpen size={24} /> {hData.seminars.title}
             </h2>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {handbookData.seminars.timeline.map((item, idx) => (
+              {hData.seminars.timeline.map((item, idx) => (
                 <li key={idx} style={{ background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <div style={{ flexShrink: 0, background: 'var(--primary)', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 600, color: 'white' }}>
                     {item.year}
@@ -171,23 +197,51 @@ function Handbook() {
                           </div>
                         </td>
                         <td>
-                          <span className="badge" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>
-                            {course.credits}単位
+                          <span className="badge">
+                            {course.credits !== null ? `${course.credits}単位` : 'ー'}
                           </span>
                         </td>
                         <td>
                           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            {course.category !== 'program' && course.required && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>必修</span>}
-                            {course.category === 'program' && course.programMapping?.ds === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>DS必修</span>}
-                            {course.category === 'program' && course.programMapping?.ie === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>IE必修</span>}
-                            {course.category === 'program' && course.programMapping?.ba === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>BA必修</span>}
-                            {course.marks && course.marks !== "◎" && (
+                            {course.required && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>必修</span>}
+                            {facultyId === 'info' && course.category === 'program' && course.programMapping?.ds === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>DS必修</span>}
+                            {facultyId === 'info' && course.category === 'program' && course.programMapping?.ie === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>IE必修</span>}
+                            {facultyId === 'info' && course.category === 'program' && course.programMapping?.ba === '必修' && <span className="badge req" style={{ padding: '0.3rem 0.6rem' }}>BA必修</span>}
+                            {course.subCategory && (
+                              <span className="badge" style={{ 
+                                background: 'var(--surface-hover)', 
+                                border: '1px solid var(--primary)', 
+                                color: 'var(--primary)',
+                                padding: '0.3rem 0.6rem',
+                                fontWeight: '600'
+                              }}>
+                                {facultyId === 'econ' ? (
+                                  <>
+                                    {course.subCategory === 'A' && 'A群'}
+                                    {course.subCategory === 'B' && 'B群'}
+                                    {course.subCategory === 'C' && 'C群'}
+                                    {course.subCategory === 'D' && 'D群'}
+                                    {course.subCategory === 'intro' && '入門'}
+                                    {course.subCategory === 'econ' && '経済系統'}
+                                    {course.subCategory === 'mgmt' && '経営系統'}
+                                    {course.subCategory === 'global' && 'グローバル'}
+                                    {course.subCategory === 'region' && '地域デザイン'}
+                                    {course.subCategory === 'law' && '法学科目'}
+                                    {course.subCategory === 'exercise' && '演習科目'}
+                                    {course.subCategory === 'intl' && '留学生'}
+                                    {!['A','B','C','D','intro','econ','mgmt','global','region','law','exercise','intl'].includes(course.subCategory) && course.subCategory}
+                                  </>
+                                ) : (
+                                  course.subCategory
+                                )}
+                              </span>
+                            )}
+                            {course.marks && !course.marks.includes('◎') && (
                               <span className="badge" style={{ background: 'var(--border)', color: 'var(--text-main)', padding: '0.3rem 0.6rem' }}>
                                 {course.marks.replace(/ /g, ' / ')}
                               </span>
                             )}
-                            {course.category !== 'program' && !course.required && !course.marks && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>}
-                            {course.category === 'program' && (!course.programMapping || !Object.values(course.programMapping).includes('必修')) && !course.marks && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>}
+                            {!course.required && !course.marks && !course.subCategory && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>}
                           </div>
                         </td>
                       </tr>

@@ -1,8 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
 :root {
-  --primary: #E2041B;
+  --primary: #E2041B; /* Default (Info) */
   --primary-hover: #c40316;
+  
+  /* Faculty Colors */
+  --color-info: #E2041B;
+  --color-info-hover: #c40316;
+  --color-econ: #127636;
+  --color-econ-hover: #0e5e2b;
+
   --background: #f9fafb;
   --surface: #ffffff;
   --surface-hover: #f3f4f6;
@@ -13,6 +20,11 @@
 }
 
 [data-theme="dark"] {
+  --color-info: #f87171;
+  --color-info-hover: #ef4444;
+  --color-econ: #4ade80;
+  --color-econ-hover: #22c55e;
+
   --background: #111827;
   --surface: #1f2937;
   --surface-hover: #374151;
@@ -177,7 +189,11 @@ input[type="number"]:focus, select:focus {
 
 .badge {
   font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
+  padding: 0 0.6rem;
+  height: 1.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
   background: var(--surface-hover);
   color: var(--text-muted);
@@ -617,16 +633,22 @@ input[type="number"]:focus, select:focus {
 /* Category Colors */
 .cat-general { background: #E0F2FE; border-left-color: #0EA5E9; color: #0369A1; }
 .cat-basic { background: #FFEDD5; border-left-color: #F97316; color: #9A3412; }
+.cat-specialized_basic { background: #FFEDD5; border-left-color: #F97316; color: #9A3412; } /* Econ Specialized Basic */
 .cat-program { background: #FEE2E2; border-left-color: #EF4444; color: #991B1B; }
+.cat-specialized { background: #FEE2E2; border-left-color: #EF4444; color: #991B1B; } /* Econ Specialized */
 .cat-exercise { background: #DCFCE7; border-left-color: #22C55E; color: #166534; }
 .cat-other { background: #F3E8FF; border-left-color: #A855F7; color: #6B21A8; }
+.cat-other_dept { background: #F3E8FF; border-left-color: #A855F7; color: #6B21A8; } /* Econ Other Dept */
 .cat-teaching { background: #F3F4F6; border-left-color: #9CA3AF; color: #374151; }
 
 [data-theme="dark"] .cat-general { background: #082F49; color: #7DD3FC; }
 [data-theme="dark"] .cat-basic { background: #431407; color: #FDBA74; }
+[data-theme="dark"] .cat-specialized_basic { background: #431407; color: #FDBA74; }
 [data-theme="dark"] .cat-program { background: #450A0A; color: #FCA5A5; }
+[data-theme="dark"] .cat-specialized { background: #450A0A; color: #FCA5A5; }
 [data-theme="dark"] .cat-exercise { background: #052E16; color: #86EFAC; }
 [data-theme="dark"] .cat-other { background: #2E1065; color: #D8B4FE; }
+[data-theme="dark"] .cat-other_dept { background: #2E1065; color: #D8B4FE; }
 [data-theme="dark"] .cat-teaching { background: #1F2937; color: #D1D5DB; }
 
 .timetable-extra {

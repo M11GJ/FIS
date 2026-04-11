@@ -1,12 +1,11 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import coursesData from '../data/courses.json';
 import { isCourseActiveInQuarter, parseSchedule } from '../utils/parseSchedule';
 import { Calendar, Clock, Plus, Check, Zap, Milestone } from 'lucide-react';
 
 const DAYS = ['月', '火', '水', '木', '金'];
 const PERIODS = [1, 2, 3, 4, 5];
 
-export default function Timetable({ selectedCourseIds, handleToggle, program, onBatchSelectMandatory }) {
+export default function Timetable({ facultyId, selectedCourseIds, handleToggle, program, onBatchSelectMandatory, coursesData }) {
   const [selectedYear, setSelectedYear] = useState(1);
   const [selectedQuarter, setSelectedQuarter] = useState(1);
   
@@ -20,11 +19,12 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
 
   // 選択中のクォーターに該当する登録済み科目を抽出
   const activeSelectedCourses = useMemo(() => {
+    if (!coursesData) return [];
     return coursesData.filter(c => 
       selectedCourseIds.has(c.id) && 
       isCourseActiveInQuarter(c.term, selectedYear, selectedQuarter)
     );
-  }, [selectedCourseIds, selectedYear, selectedQuarter]);
+  }, [coursesData, selectedCourseIds, selectedYear, selectedQuarter]);
 
   // グリッドデータの構築 (登録済み科目のみ)
   const grid = useMemo(() => {
@@ -59,27 +59,27 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
     for (let d = 1; d <= 5; d++) {
       map[d] = {};
       for (let p = 1; p <= 5; p++) {
-        const count = coursesData.filter(c => {
+        const count = coursesData ? coursesData.filter(c => {
           if (!isCourseActiveInQuarter(c.term, selectedYear, selectedQuarter)) return false;
           const schedule = parseSchedule(c.schedule);
           return schedule.days.includes(d) && schedule.periods.includes(p);
-        }).length;
+        }).length : 0;
         map[d][p] = count;
       }
     }
     return map;
-  }, [selectedYear, selectedQuarter]);
+  }, [coursesData, selectedYear, selectedQuarter]);
 
   // ホバー中のスロットで選択可能な全科目を抽出
   const availableCoursesForHovered = useMemo(() => {
-    if (!hoveredSlot) return [];
+    if (!hoveredSlot || !coursesData) return [];
     
     return coursesData.filter(c => {
       if (!isCourseActiveInQuarter(c.term, selectedYear, selectedQuarter)) return false;
       const schedule = parseSchedule(c.schedule);
       return schedule.days.includes(hoveredSlot.day) && schedule.periods.includes(hoveredSlot.period);
     });
-  }, [hoveredSlot, selectedYear, selectedQuarter]);
+  }, [hoveredSlot, coursesData, selectedYear, selectedQuarter]);
 
   const handleCellMouseEnter = (e, day, period) => {
     if (leaveTimer.current) clearTimeout(leaveTimer.current);
@@ -107,6 +107,7 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
   };
 
   const getAvailableCoursesAt = (day, period) => {
+    if (!coursesData) return [];
     return coursesData.filter(c => {
       if (!isCourseActiveInQuarter(c.term, selectedYear, selectedQuarter)) return false;
       const schedule = parseSchedule(c.schedule);
@@ -155,7 +156,14 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isLocked]);
 
-  const categoryLabels = {
+  const categoryLabels = facultyId === 'econ' ? {
+    general: '総合',
+    specialized_basic: '専基',
+    specialized: '専門',
+    exercise: '演習',
+    other_dept: '他',
+    teaching: '教職',
+  } : {
     general: '総合',
     basic: '基礎',
     program: '専門',
@@ -166,14 +174,20 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
 
   // 一括登録ボタンの状態判定
   const { allGlobalMandatorySelected, allQuarterMandatorySelected } = useMemo(() => {
-    const pKey = program.toLowerCase();
+    if (!coursesData) return { allGlobalMandatorySelected: false, allQuarterMandatorySelected: false };
+
+    const pKey = program?.toLowerCase();
     
     // 全学年の必修
     const globalMandatory = coursesData.filter(c => {
-      const isProgramCourse = c.category === 'program';
-      const isProgramMandatory = isProgramCourse && c.programMapping?.[pKey] === '必修';
-      const isGlobalMandatory = !isProgramCourse && c.required === true;
-      return isGlobalMandatory || isProgramMandatory;
+      if (facultyId === 'info') {
+        const isProgramCourse = c.category === 'program';
+        const isProgramMandatory = isProgramCourse && c.programMapping?.[pKey] === '必修';
+        const isGlobalMandatory = !isProgramCourse && c.required === true;
+        return isGlobalMandatory || isProgramMandatory;
+      } else {
+        return c.required === true;
+      }
     });
     const allGlobal = globalMandatory.length > 0 && globalMandatory.every(c => selectedCourseIds.has(c.id));
 
@@ -182,10 +196,6 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
       isCourseActiveInQuarter(c.term, selectedYear, selectedQuarter)
     );
     
-    // ボタンの表示（アクティブ状態）の判定。
-    // 通年科目は他クォーターの解除操作で消える可能性があるため、
-    // 判定では「そのクォーター固有（通年でない）の必修」が全て選択されているかを重視し、
-    // それによってボタンが勝手に「未登録」っぽく見えるのを防ぐ。
     const quarterSpecificMandatory = quarterMandatory.filter(c => !c.term.includes('通'));
     const allQuarter = quarterMandatory.length > 0 && (
       quarterSpecificMandatory.length > 0 
@@ -194,18 +204,17 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
     );
 
     return { allGlobalMandatorySelected: allGlobal, allQuarterMandatorySelected: allQuarter };
-  }, [selectedCourseIds, selectedYear, selectedQuarter, program]);
+  }, [coursesData, selectedCourseIds, selectedYear, selectedQuarter, program, facultyId]);
 
   // 時間割グリッド外（オンデマンド、集中講義等）の開講科目を抽出
   const availableExtraCourses = useMemo(() => {
+    if (!coursesData) return [];
     return coursesData.filter(c => {
-      // 現在の年・クォーターに該当するもの
       if (!isCourseActiveInQuarter(c.term, selectedYear, selectedQuarter)) return false;
       const schedule = parseSchedule(c.schedule);
-      // グリッドに載らない（曜日も時限もない、またはオンデマンド）ものを対象
       return schedule.isOnDemand || (schedule.days.length === 0 && schedule.periods.length === 0);
     });
-  }, [selectedYear, selectedQuarter]);
+  }, [coursesData, selectedYear, selectedQuarter]);
 
   return (
     <div className="timetable-container" onMouseLeave={handleMouseLeave}>
@@ -217,7 +226,7 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
             <div className="button-row">
               {[1, 2, 3, 4].map(y => (
                 <button 
-                  key={y} 
+                   key={y} 
                   onClick={() => setSelectedYear(y)}
                   className={selectedYear === y ? 'active' : ''}
                 >
@@ -328,7 +337,9 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
             {availableCoursesForHovered.length > 0 ? (
               availableCoursesForHovered.map(course => {
                 const isSelected = selectedCourseIds.has(course.id);
-                const isMandatory = course.required || (course.category === 'program' && course.programMapping && course.programMapping[program.toLowerCase()] === '必修');
+                const isMandatory = facultyId === 'info' 
+                  ? (course.required || (course.category === 'program' && course.programMapping && course.programMapping[program?.toLowerCase()] === '必修'))
+                  : course.required;
 
                 return (
                   <div 
@@ -369,7 +380,9 @@ export default function Timetable({ selectedCourseIds, handleToggle, program, on
           <div className="extra-grid">
             {availableExtraCourses.map(course => {
               const isSelected = selectedCourseIds.has(course.id);
-              const isMandatory = course.required || (course.category === 'program' && course.programMapping && course.programMapping[program.toLowerCase()] === '必修');
+              const isMandatory = facultyId === 'info' 
+                ? (course.required || (course.category === 'program' && course.programMapping && course.programMapping[program?.toLowerCase()] === '必修'))
+                : course.required;
               
               return (
                 <div 

@@ -1,27 +1,56 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import coursesData from '../data/courses.json';
+import { useParams, useSearchParams } from 'react-router-dom';
+import coursesInfo from '../data/courses_info.json';
+import coursesEcon from '../data/courses_economics.json';
 import { useGraduationCheck } from '../hooks/useGraduationCheck';
 import { formatTerm } from '../utils/formatTerm';
 import { isCourseActiveInQuarter } from '../utils/parseSchedule';
-import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2, Info } from 'lucide-react';
 import Timetable from '../components/Timetable';
 
-const ProgressBar = ({ label, current, target, minRequiredLabel, missingList }) => {
-  const percent = Math.min(100, (current / target) * 100);
-  const isOk = current >= target && (!missingList || missingList.length === 0);
+const ProgressBar = ({ label, current, target, minRequiredLabel, missingList, detail, subStatus, color }) => {
+  const percent = target ? Math.min(100, (current / target) * 100) : 0;
+  const isOk = target ? (current >= target && (!missingList || missingList.length === 0)) : false;
   
   return (
     <div className="progress-container" style={{ marginBottom: missingList && missingList.length > 0 ? '2rem' : '1.5rem' }}>
       <div className="progress-labels">
-        <span>{label} {minRequiredLabel && <span style={{fontSize: '0.75rem', opacity: 0.7}}>({minRequiredLabel})</span>}</span>
-        <strong>{current} / {target} 単位</strong>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          {label} 
+          {minRequiredLabel && <span style={{fontSize: '0.75rem', opacity: 0.7}}>({minRequiredLabel})</span>}
+          {detail && <span style={{ fontSize: '0.7rem', color: 'var(--primary)', fontWeight: 600 }}>{detail}</span>}
+        </span>
+        <strong>{current}{target ? ` / ${target}` : ''} 単位</strong>
       </div>
       <div className="progress-track" style={{ background: 'var(--border)' }}>
         <div 
           className={`progress-fill ${isOk ? 'success' : ''}`} 
-          style={{ width: `${percent}%`, background: isOk ? '#10B981' : 'var(--primary)' }}
+          style={{ 
+            width: target ? `${percent}%` : '0%', 
+            background: isOk ? '#10B981' : (color || 'var(--primary)') 
+          }}
         />
       </div>
+      {subStatus && subStatus.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.6rem' }}>
+          {subStatus.map((ss, idx) => (
+            <div key={idx} style={{ 
+              fontSize: '0.7rem', 
+              padding: '0.1rem 0.5rem', 
+              borderRadius: '12px', 
+              background: ss.ok ? 'rgba(16, 185, 129, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+              color: ss.ok ? '#059669' : 'var(--text-muted)',
+              border: `1px solid ${ss.ok ? 'rgba(16, 185, 129, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.2rem'
+            }}>
+              {ss.ok && <CheckCircle2 size={10} />}
+              <span>{ss.label}: {ss.current}/{ss.target}</span>
+            </div>
+          ))}
+        </div>
+      )}
       {missingList && missingList.length > 0 && (
         <div style={{ marginTop: '0.5rem', color: '#EF4444', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'flex-start', gap: '0.25rem' }}>
           <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
@@ -45,17 +74,18 @@ const normalizeCourseName = (name) => {
              .replace(/[ⅠI]/g, '1')
              .replace(/[ⅡII]/g, '2')
              .replace(/[ⅢIII]/g, '3')
-             .replace('大学が独自に設定する科目', '');
+             .replace('大学が独自に設定する科目', '')
+             .replace('※通年', ''); // 経済学部便覧用
 };
 
-// URL共有用の固定順ソート済みリスト
-const sortedCoursesForSharing = [...coursesData].sort((a, b) => a.id.localeCompare(b.id));
+// URL共有用の固定順ソート済みリスト生成関数
+const getSortedCourses = (courses) => [...courses].sort((a, b) => a.id.localeCompare(b.id));
 
 const B64_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
-const encodeBits = (selectedIds) => {
+const encodeBits = (selectedIds, sortedCourses) => {
   let bits = '';
-  sortedCoursesForSharing.forEach(c => {
+  sortedCourses.forEach(c => {
     bits += selectedIds.has(c.id) ? '1' : '0';
   });
   let encoded = '';
@@ -66,7 +96,7 @@ const encodeBits = (selectedIds) => {
   return encoded;
 };
 
-const decodeBits = (encoded) => {
+const decodeBits = (encoded, sortedCourses) => {
   let bits = '';
   for (let i = 0; i < encoded.length; i++) {
     const val = B64_CHARS.indexOf(encoded[i]);
@@ -75,7 +105,7 @@ const decodeBits = (encoded) => {
   }
   
   const selectedIds = new Set();
-  sortedCoursesForSharing.forEach((c, index) => {
+  sortedCourses.forEach((c, index) => {
     if (bits[index] === '1') {
       selectedIds.add(c.id);
     }
@@ -83,7 +113,7 @@ const decodeBits = (encoded) => {
   return selectedIds;
 };
 
-const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, program, enableYearFilter, onBatchToggle }) => {
+const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, program, enableYearFilter, onBatchToggle, facultyId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('すべて');
   
@@ -113,6 +143,19 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
       const rankB = getRank(b.course, bType);
 
       if (rankA !== rankB) return rankA - rankB;
+
+      // 第2優先順位: ABCD群 / 専門区分の順序
+      const subRank = { 
+        'intro': 1, 'A': 2, 'B': 3, 'C': 4, 'D': 5, 'intl': 6,
+        'econ': 7, 'mgmt': 8, 'global': 9, 'region': 10, 
+        'law': 11, 'exercise': 12,
+        'econ_s': 7, 'mgmt_s': 8, 'global_s': 9, 'region_s': 10, 
+        'law_s': 11, 'exercise_s': 12
+      };
+      const sRankA = subRank[a.course.subCategory] || 99;
+      const sRankB = subRank[b.course.subCategory] || 99;
+      if (sRankA !== sRankB) return sRankA - sRankB;
+
       return a.index - b.index;
     });
     
@@ -208,9 +251,36 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
                     {course.category !== 'program' && course.required && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>必修</span>}
                     {course.category === 'program' && pType === '必修' && <span className="badge req" style={{ background: 'var(--primary)', color: 'white' }}>{program}必修</span>}
                     {course.category === 'program' && pType === '選択' && <span className="badge" style={{ border: '1px solid var(--primary)', color: 'var(--primary)' }}>{program}選択</span>}
+                    
+                    {/* 経済学部の詳細区分バッジ */}
+                    {facultyId === 'econ' && course.subCategory && (
+                      <span className="badge" style={{ 
+                        background: 'var(--surface-hover)', 
+                        border: '1px solid var(--primary)', 
+                        color: 'var(--primary)',
+                        fontWeight: '600'
+                      }}>
+                        {course.subCategory === 'A' && 'A群'}
+                        {course.subCategory === 'B' && 'B群'}
+                        {course.subCategory === 'C' && 'C群'}
+                        {course.subCategory === 'D' && 'D群'}
+                        {course.subCategory === 'intro' && '入門'}
+                        {(course.subCategory === 'econ' || course.subCategory === 'econ_s') && '経済系統'}
+                        {(course.subCategory === 'mgmt' || course.subCategory === 'mgmt_s') && '経営系統'}
+                        {(course.subCategory === 'global' || course.subCategory === 'global_s') && 'グローバル'}
+                        {(course.subCategory === 'region' || course.subCategory === 'region_s') && '地域デザイン'}
+                        {(course.subCategory === 'law' || course.subCategory === 'law_s') && '法学科目'}
+                        {(course.subCategory === 'exercise' || course.subCategory === 'exercise_s') && '演習科目'}
+                        {course.subCategory === 'intl' && '留学生'}
+                        {!['A','B','C','D','intro','econ','econ_s','mgmt','mgmt_s','global','global_s','region','region_s','law','law_s','exercise','exercise_s','intl'].includes(course.subCategory) && course.subCategory}
+                      </span>
+                    )}
+
                     <span className="badge" style={{ background: 'var(--surface)' }}>{formatTerm(course.term)}</span>
                     {course.category !== 'teaching' && (
-                      <span className="badge" style={{ background: 'var(--surface)' }}>{course.credits}単位</span>
+                      <span className="badge">
+                        {course.credits !== null ? `${course.credits}単位` : 'ー'}
+                      </span>
                     )}
                     {course.schedule && <span className="badge" style={{ background: 'var(--surface-hover)', border: '1px solid var(--border)' }}>{course.schedule}</span>}
                     {course.room && course.room !== 'オンデマンド' && <span className="badge" style={{ background: 'var(--surface-hover)', color: 'var(--text-muted)' }}>{course.room}教室</span>}
@@ -236,7 +306,7 @@ const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, progra
   );
 };
 
-const AutoImportPanel = ({ selectedCourses, setSelectedCourses }) => {
+const AutoImportPanel = ({ facultyId, selectedCourses, setSelectedCourses, coursesData }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [importText, setImportText] = useState('');
   const [importResult, setImportResult] = useState('');
@@ -251,10 +321,12 @@ const AutoImportPanel = ({ selectedCourses, setSelectedCourses }) => {
     lines.forEach(line => {
       const parts = line.split('\t').map(s => s.trim());
       
-      if (!parts[0] || !parts[0].startsWith('◆')) return;
-      if (parts.length < 2) return;
+      // AAAのコピー形式判定
+      const hasBullet = parts.some(p => p.startsWith('◆')); // 文理共通
+      if (!hasBullet && parts.length < 2) return;
 
-      const courseNameRaw = parts[1];
+      const courseNameRaw = parts.find(p => p.length > 2 && !p.startsWith('◆') && !'秀優良可不'.includes(p));
+      if (!courseNameRaw) return;
       
       const isPassed = parts.some(p => ['秀', '優', '良', '可'].includes(p));
       const isFailed = parts.some(p => p === '不');
@@ -331,20 +403,25 @@ const AutoImportPanel = ({ selectedCourses, setSelectedCourses }) => {
 };
 
 function Checker() {
+  const { faculty: facultyParam } = useParams();
+  const [searchParams] = useSearchParams();
+  const facultyId = facultyParam || 'info';
+  
+  const coursesData = useMemo(() => {
+    return facultyId === 'econ' ? coursesEcon : coursesInfo;
+  }, [facultyId]);
+
+  const sortedCourses = useMemo(() => getSortedCourses(coursesData), [coursesData]);
+
   const [selectedCourses, setSelectedCourses] = useState(new Set());
   const [program, setProgram] = useState('DS');
-  const [activeTab, setActiveTab] = useState('progress'); // 'progress' or 'timetable'
+  const [activeTab, setActiveTab] = useState('progress');
   const [shareCopied, setShareCopied] = useState(false);
 
   // URL共有データの復元
   useEffect(() => {
-    const hash = window.location.hash;
-    const queryString = hash.includes('?') ? hash.split('?')[1] : '';
-    if (!queryString) return;
-
-    const params = new URLSearchParams(queryString);
-    const pParam = params.get('p');
-    const sParam = params.get('s'); // 短縮文字列方式へ移行
+    const sParam = searchParams.get('s');
+    const pParam = searchParams.get('p');
 
     if (pParam) {
       setProgram(pParam.toUpperCase());
@@ -352,16 +429,15 @@ function Checker() {
 
     if (sParam) {
       try {
-        const decodedSet = decodeBits(sParam);
+        const decodedSet = decodeBits(sParam, sortedCourses);
         if (decodedSet.size > 0) {
           setSelectedCourses(decodedSet);
-          console.log(`Shared status loaded: ${decodedSet.size} courses (v1.5.1 compressed)`);
         }
       } catch (err) {
         console.error('Failed to decode share URL:', err);
       }
     }
-  }, []);
+  }, [searchParams, sortedCourses]);
 
   const handleToggle = (id) => {
     setSelectedCourses(prev => {
@@ -388,24 +464,23 @@ function Checker() {
 
   const handleBatchSelectMandatory = (targetYear = null, targetQuarter = null) => {
     const mandatoryFullList = coursesData.filter(course => {
-      // 1. 学年・クォーターフィルタリング
       if (targetYear && targetQuarter) {
         if (!isCourseActiveInQuarter(course.term, targetYear, targetQuarter)) return false;
       } else if (targetYear) {
         if (!course.term.startsWith(targetYear.toString())) return false;
       }
 
-      // 2. 必修判定
-      const isProgramCourse = course.category === 'program';
-      const isProgramMandatory = isProgramCourse && 
-                                course.programMapping && 
-                                course.programMapping[program.toLowerCase()] === '必修';
-      
-      // 専門科目の場合は、自身のプログラムで必修設定されている場合のみを対象とする。
-      // 総合・基礎などの共通科目は、全体の required フラグを参照する。
-      const isGlobalMandatory = !isProgramCourse && course.required === true;
-      
-      return isGlobalMandatory || isProgramMandatory;
+      if (facultyId === 'info') {
+        const isProgramCourse = course.category === 'program';
+        const isProgramMandatory = isProgramCourse && 
+                                  course.programMapping && 
+                                  course.programMapping[program.toLowerCase()] === '必修';
+        const isGlobalMandatory = !isProgramCourse && course.required === true;
+        return isGlobalMandatory || isProgramMandatory;
+      } else {
+        // 経済学部はフラグのみ
+        return course.required === true;
+      }
     });
 
     const mandatoryIds = mandatoryFullList.map(c => c.id);
@@ -413,11 +488,8 @@ function Checker() {
 
     setSelectedCourses(prev => {
       const next = new Set(prev);
-      
-      // ボタンの表示状態（Timetable.jsx）と動作を合わせる
       let shouldUnregister = false;
       if (targetYear && targetQuarter) {
-        // クォーター別の場合は、通年科目を除いた「そのクォーター固有の必修」が揃っているかで判定
         const specificIds = mandatoryFullList.filter(c => !c.term.includes('通')).map(c => c.id);
         if (specificIds.length > 0) {
           shouldUnregister = specificIds.every(id => next.has(id));
@@ -425,15 +497,12 @@ function Checker() {
           shouldUnregister = mandatoryIds.every(id => next.has(id));
         }
       } else {
-        // 全学年などの場合は、全科目が存在するかで判定
         shouldUnregister = mandatoryIds.every(id => next.has(id));
       }
       
       if (shouldUnregister) {
-        // 揃っている場合は全解除（通年も含むそのクォーターに関係する全必修を外す）
         mandatoryIds.forEach(id => next.delete(id));
       } else {
-        // 足りない場合は全登録
         mandatoryIds.forEach(id => next.add(id));
       }
       return next;
@@ -441,31 +510,42 @@ function Checker() {
   };
 
   const handleShare = () => {
-    const shardData = encodeBits(selectedCourses);
+    const shardData = encodeBits(selectedCourses, sortedCourses);
     const p = program;
-    
     const baseUrl = window.location.origin + window.location.pathname;
-    const shareUrl = `${baseUrl}#/checker?p=${p}&s=${shardData}`;
+    const shareUrl = `${baseUrl}#/${facultyId}/checker?p=${p}&s=${shardData}`;
     
     navigator.clipboard.writeText(shareUrl).then(() => {
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
     }).catch(err => {
       console.error('Failed to copy URL:', err);
-      alert('URLのコピーに失敗しました。ブラウザの権限を確認してください。');
     });
   };
 
-  const { status, missingCredits } = useGraduationCheck(Array.from(selectedCourses), program);
+  const { status, missingCredits, missingList } = useGraduationCheck(facultyId, Array.from(selectedCourses), program, coursesData) || { status: null, missingCredits: 0 };
 
-  const categories = [
-    { key: 'general', title: '総合科目', filter: true },
-    { key: 'basic', title: '学科基礎科目', filter: true },
-    { key: 'program', title: 'プログラム科目', filter: true },
-    { key: 'exercise', title: '演習・ゼミ等', filter: false },
-    { key: 'other', title: '他学科専門科目', filter: false },
-    { key: 'teaching', title: '教職課程関連', filter: false },
-  ];
+  const categories = useMemo(() => {
+    if (facultyId === 'econ') {
+      return [
+        { key: 'general', title: '総合科目', filter: true },
+        { key: 'specialized_basic', title: '専門基礎科目', filter: true },
+        { key: 'specialized', title: '専門科目', filter: true },
+        { key: 'other_dept', title: '他学科科目（自由科目枠）', filter: false },
+        { key: 'teaching', title: '教職課程', filter: false },
+      ];
+    }
+    return [
+      { key: 'general', title: '総合科目', filter: true },
+      { key: 'basic', title: '学科基礎科目', filter: true },
+      { key: 'program', title: 'プログラム科目', filter: true },
+      { key: 'exercise', title: '演習・ゼミ等', filter: false },
+      { key: 'other', title: '他学科専門科目', filter: false },
+      { key: 'teaching', title: '教職課程関連', filter: false },
+    ];
+  }, [facultyId]);
+
+  if (!status) return <div style={{ padding: '2rem', textAlign: 'center' }}>読み込み中...</div>;
 
   return (
     <div className="dashboard-grid">
@@ -491,16 +571,18 @@ function Checker() {
           </button>
         </div>
 
-        <AutoImportPanel selectedCourses={selectedCourses} setSelectedCourses={setSelectedCourses} />
+        <AutoImportPanel facultyId={facultyId} selectedCourses={selectedCourses} setSelectedCourses={setSelectedCourses} coursesData={coursesData} />
 
-        <div style={{ marginBottom: '1.5rem', background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: 600 }}>所属プログラム</label>
-          <select value={program} onChange={e => setProgram(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--surface)' }}>
-            <option value="DS">データサイエンス (DS)</option>
-            <option value="IE">情報エンジニアリング (IE)</option>
-            <option value="BA">ビジネスアナリティクス (BA)</option>
-          </select>
-        </div>
+        {facultyId === 'info' && (
+          <div style={{ marginBottom: '1.5rem', background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: 600 }}>所属プログラム</label>
+            <select value={program} onChange={e => setProgram(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--surface)' }}>
+              <option value="DS">データサイエンス (DS)</option>
+              <option value="IE">情報エンジニアリング (IE)</option>
+              <option value="BA">ビジネスアナリティクス (BA)</option>
+            </select>
+          </div>
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {categories.map(cat => (
@@ -512,7 +594,8 @@ function Checker() {
               handleToggle={handleToggle}
               program={program}
               enableYearFilter={cat.filter}
-              onBatchToggle={cat.key === 'teaching' ? () => handleBatchToggleCategory(coursesData.filter(c => c.category === 'teaching')) : null}
+              facultyId={facultyId}
+              onBatchToggle={null}
             />
           ))}
         </div>
@@ -542,13 +625,13 @@ function Checker() {
             </h2>
             
             <div style={{ textAlign: 'center', padding: '2rem 1rem', marginBottom: '1.5rem', background: 'var(--surface-hover)', borderRadius: '8px' }}>
-              <div style={{ fontSize: '3.5rem', fontWeight: '800', color: status.total.ok ? '#10B981' : 'var(--text-main)', lineHeight: 1 }}>
-                {status.total.current} <span style={{ fontSize: '1.5rem', color: 'var(--text-muted)', fontWeight: '500' }}>/ 124</span>
+              <div style={{ fontSize: '3rem', fontWeight: '800', color: status.total.ok ? '#10B981' : 'var(--text-main)', lineHeight: 1 }}>
+                {status.total.current} <span style={{ fontSize: '1.3rem', color: 'var(--text-muted)', fontWeight: '500' }}>/ 124</span>
               </div>
-              <p style={{ color: status.total.ok ? '#10B981' : (missingCredits === 0 ? '#EF4444' : 'var(--text-muted)'), marginTop: '0.75rem', fontWeight: 600, fontSize: '1.1rem' }}>
+              <p style={{ color: status.total.ok ? '#10B981' : (missingCredits === 0 ? '#EF4444' : 'var(--text-muted)'), marginTop: '0.75rem', fontWeight: 600, fontSize: '1rem' }}>
                 {status.total.ok 
                   ? '🎉 卒業要件を見事クリア！' 
-                  : (missingCredits === 0 
+                  : (missingCredits === 0 && missingList.length > 0
                       ? '⚠️ 単位数は足っていますが、未取得の必修科目があります' 
                       : `卒業まであと ${missingCredits} 単位`
                     )
@@ -556,31 +639,59 @@ function Checker() {
               </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <ProgressBar label="総合科目" current={status.general.current} target={status.general.required} minRequiredLabel="19単位以上" missingList={status.general.missingList} />
-              <ProgressBar label="学科基礎 + プログラム科目" current={status.basicAndProgram.current} target={status.basicAndProgram.required} minRequiredLabel="計80単位以上" missingList={status.basicAndProgram.missingList} />
-              <div style={{ paddingLeft: '1.5rem', marginTop: '-0.5rem', marginBottom: '0.5rem' }}>
-                <ProgressBar label="↳ うち実践英語" current={status.practicalEnglish.current} target={status.practicalEnglish.required} minRequiredLabel="4単位必修" />
-              </div>
-              <ProgressBar label={`${program}プログラム必修`} current={status.programSpecific.current} target={status.programSpecific.required} minRequiredLabel="22単位以上" missingList={status.programSpecific.missingList} />
-              <ProgressBar label="演習科目" current={status.exercise.current} target={status.exercise.required} minRequiredLabel="必修8単位" missingList={status.exercise.missingList} />
-              <ProgressBar label="他学科専門科目" current={status.other.current} target={status.other.required} minRequiredLabel="4単位" />
-              <ProgressBar label="自由選択枠" current={status.freeElective.current} target={status.freeElective.required} minRequiredLabel="13単位（各分野の超過分等）" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              {facultyId === 'info' ? (
+                <>
+                  <ProgressBar label="総合科目" current={status.general.current} target={status.general.required} minRequiredLabel="19単位以上" missingList={status.general.missingList} />
+                  <ProgressBar label="学科基礎 + プログラム科目" current={status.basicAndProgram.current} target={status.basicAndProgram.required} minRequiredLabel="計80単位以上" missingList={status.basicAndProgram.missingList} />
+                  <div style={{ paddingLeft: '1.5rem', marginTop: '-0.3rem', marginBottom: '0.3rem' }}>
+                    <ProgressBar label="↳ うち実践英語" current={status.practicalEnglish.current} target={status.practicalEnglish.required} minRequiredLabel="4単位必修" />
+                  </div>
+                  <ProgressBar label={`${program}プログラム必修`} current={status.programSpecific.current} target={status.programSpecific.required} minRequiredLabel="22単位以上" missingList={status.programSpecific.missingList} />
+                  <ProgressBar label="演習科目" current={status.exercise.current} target={status.exercise.required} minRequiredLabel="必修8単位" missingList={status.exercise.missingList} />
+                  <ProgressBar label="他学科専門科目" current={status.other.current} target={status.other.required} minRequiredLabel="4単位" />
+                  <ProgressBar label="自由選択枠" current={status.freeElective.current} target={status.freeElective.required} minRequiredLabel="13単位（各分野の超過分等）" />
+                </>
+              ) : (
+                <>
+                  <ProgressBar label="総合科目" current={status.general.current} target={status.general.required} minRequiredLabel="29単位以上" subStatus={status.general.subStatus} />
+                  <ProgressBar label="専門基礎科目" current={status.specBasic.current} target={status.specBasic.required} minRequiredLabel="34単位以上" subStatus={status.specBasic.subStatus} />
+                  <ProgressBar label="専門科目" current={status.specialized.current} target={status.specialized.required} minRequiredLabel="28単位以上 (演習8含む)" subStatus={status.specialized.subStatus} />
+                  <ProgressBar label="自由科目枠" current={status.freeElective.current} target={status.freeElective.required} minRequiredLabel="33単位" />
+                  
+
+                </>
+              )}
             </div>
             
+            {missingList && missingList.length > 0 && (
+              <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                <div style={{ color: '#EF4444', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <AlertCircle size={18} /> 未取得の必修科目
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                  {missingList.map(name => (
+                    <span key={name} style={{ fontSize: '0.8rem', background: '#EF4444', color: 'white', padding: '0.1rem 0.5rem', borderRadius: '4px' }}>{name}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--accent-light)', borderRadius: '8px', borderLeft: '4px solid var(--primary)', display: 'flex', gap: '0.75rem', alignItems: 'start' }}>
-              <AlertCircle size={20} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
-                ※このシミュレーターは目安です。詳細な必修科目の取りこぼしや、具体的な卒業可否については、所属する学部の教務担当窓口、あるいは学生便覧の最新版を必ず確認してください。
+              <Info size={20} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
+                ※このシミュレーターは目安です。詳細な必修科目の取りこぼしや、具体的な卒業可否については、所属学部の教務窓口、あるいは学生便覧の最新版を必ず確認してください。
               </p>
             </div>
           </>
         ) : (
           <Timetable 
+            facultyId={facultyId}
             selectedCourseIds={selectedCourses} 
             handleToggle={handleToggle} 
             program={program}
             onBatchSelectMandatory={handleBatchSelectMandatory}
+            coursesData={coursesData}
           />
         )}
       </div>
