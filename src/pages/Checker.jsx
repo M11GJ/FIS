@@ -5,7 +5,7 @@ import coursesEcon from '../data/courses_economics.json';
 import { useGraduationCheck } from '../hooks/useGraduationCheck';
 import { formatTerm } from '../utils/formatTerm';
 import { isCourseActiveInQuarter } from '../utils/parseSchedule';
-import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2, Info } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2, Info, AlertTriangle } from 'lucide-react';
 import Timetable from '../components/Timetable';
 
 const ProgressBar = ({ label, current, target, minRequiredLabel, missingList, detail, subStatus, color }) => {
@@ -549,6 +549,31 @@ function Checker() {
 
   return (
     <div className="dashboard-grid">
+      {/* ベータ版警告（経済経営学部のみ） */}
+      {facultyId === 'econ' && (
+        <div style={{
+          gridColumn: '1 / -1',
+          background: 'rgba(245, 158, 11, 0.08)',
+          border: '1px solid rgba(245, 158, 11, 0.3)',
+          borderRadius: '12px',
+          padding: '1rem 1.25rem',
+          marginBottom: '1rem',
+          display: 'flex',
+          gap: '1rem',
+          alignItems: 'flex-start'
+        }}>
+          <AlertTriangle color="#d97706" size={24} style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div>
+            <h4 style={{ color: '#92400e', margin: '0 0 0.4rem 0', fontSize: '1rem', fontWeight: 800 }}>
+              ベータ版に関するご注意
+            </h4>
+            <p style={{ color: '#92400e', margin: 0, fontSize: '0.875rem', lineHeight: 1.6 }}>
+              経済経営学部の卒業要件判定は現在調整中のため、判定結果や科目データに一部誤りがある可能性があります。
+              最終的な卒業判定の確認は、必ずお手元の学生便覧および学務の案内に基づいて行ってください。
+            </p>
+          </div>
+        </div>
+      )}
       {/* Left Column: Input Panel */}
       <div className="glass-panel" style={{ height: 'fit-content' }}>
         <h2 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)', borderBottom: '2px solid var(--border)', paddingBottom: '0.75rem' }}>

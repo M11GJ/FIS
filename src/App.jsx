@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Handbook from './pages/Handbook';
 import Checker from './pages/Checker';
 import Portal from './pages/Portal';
-import { BookOpen, CheckSquare, Sun, Moon, ExternalLink, X, ArrowLeft } from 'lucide-react';
+import { BookOpen, CheckSquare, Sun, Moon, ExternalLink, X, ArrowLeft, AlertTriangle } from 'lucide-react';
 import pkg from '../package.json';
 import changelogEcon from './data/changelog_econ.json';
 import changelogInfo from './data/changelog_info.json';
@@ -23,9 +23,59 @@ const FACULTY_INFO = {
   }
 };
 
+const EconWarningModal = ({ onClose }) => (
+  <div className="modal-overlay" style={{ zIndex: 1100 }}>
+    <div className="modal-content" style={{ maxWidth: '450px', border: '3px solid #d97706' }}>
+      <div className="modal-header" style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)' }}>
+        <h2 style={{ color: '#d97706', margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <AlertTriangle size={28} /> ベータ版のご注意
+        </h2>
+      </div>
+      <div className="modal-body" style={{ padding: '1.5rem', textAlign: 'center' }}>
+        <p style={{ fontWeight: 700, color: 'var(--text-main)', marginBottom: '1rem', fontSize: '1.1rem' }}>
+          経済経営学部の判定機能は現在調整中（ベータ版）です。
+        </p>
+        <p style={{ color: 'var(--text-muted)', lineHeight: 1.7, fontSize: '0.9rem' }}>
+          判定結果や科目データに一部誤りがある可能性があるため、最終的な判定結果は必ずお手元の<strong style={{ color: 'var(--primary)' }}>学生便覧（PDF）</strong>および学務課の案内に基づいて判断してください。
+        </p>
+      </div>
+      <div className="modal-footer" style={{ borderTop: 'none', paddingTop: 0 }}>
+        <button 
+          onClick={onClose}
+          style={{
+            width: '100%', padding: '1rem', background: '#d97706', color: 'white',
+            border: 'none', borderRadius: '8px', fontWeight: 800, fontSize: '1rem',
+            cursor: 'pointer', transition: 'filter 0.2s'
+          }}
+          onMouseOver={e => e.currentTarget.style.filter = 'brightness(0.9)'}
+          onMouseOut={e => e.currentTarget.style.filter = 'brightness(1)'}
+        >
+          内容を理解して利用する
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, showPdfInfo, setShowPdfInfo }) {
+  const [showEconWarning, setShowEconWarning] = useState(false);
   const location = useLocation();
   const isPortal = location.pathname === '/';
+
+  // URLが変わった時に経済学部の警告を出すか判定
+  useEffect(() => {
+    const isEcon = location.pathname.includes('/econ/');
+    const hasSeen = sessionStorage.getItem('seenEconWarning');
+    
+    if (isEcon && !hasSeen) {
+      setShowEconWarning(true);
+    }
+  }, [location.pathname]);
+
+  const handleCloseEconWarning = () => {
+    setShowEconWarning(false);
+    sessionStorage.setItem('seenEconWarning', 'true');
+  };
   
   // URLから学部を特定 (例: /info/checker -> info)
   const facultyMatch = location.pathname.match(/^\/([^/]+)/);
@@ -53,16 +103,13 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
       <header style={{ borderBottom: isPortal ? '1px solid var(--border)' : `3px solid ${info.colorName}` }}>
         {isPortal ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <h1 style={{ margin: 0, fontSize: '1.4rem' }}>周南公立大学 卒業要件ポータル</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flex: 1, minWidth: 0 }}>
+              <h1 className="header-title-portal">
+                周南公立大学 卒業要件ポータル
+              </h1>
               <button 
                 onClick={() => setShowChangelog(true)}
-                style={{ 
-                  fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--surface-hover)', 
-                  padding: '0.2rem 0.5rem', borderRadius: '12px', fontWeight: 600,
-                  border: 'none', cursor: 'pointer', transition: 'all 0.2s',
-                  marginTop: '0.2rem'
-                }}
+                className="version-badge"
               >
                 v{displayVersion}
               </button>
@@ -145,6 +192,8 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
           <Route path="/handbook" element={<Navigate to="/info/handbook" replace />} />
         </Routes>
       </main>
+      {/* 経済学部ベータ版警告ポップアップ */}
+      {showEconWarning && <EconWarningModal onClose={handleCloseEconWarning} />}
     </div>
   );
 }
@@ -251,6 +300,9 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* 経済学部ベータ版警告ポップアップ */}
+      {/* LayoutWrapper内で管理するため、ここからは削除 */}
 
       {showPdfInfo && (
         <div className="modal-overlay" onClick={() => setShowPdfInfo(false)}>

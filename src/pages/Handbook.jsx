@@ -5,7 +5,7 @@ import handbookEcon from '../data/handbook_econ.json';
 import coursesInfo from '../data/courses_info.json';
 import coursesEcon from '../data/courses_economics.json';
 import { formatTerm } from '../utils/formatTerm';
-import { BookOpen, Calendar, GraduationCap, ListTree, Hash } from 'lucide-react';
+import { BookOpen, Calendar, GraduationCap, ListTree, Hash, AlertTriangle } from 'lucide-react';
 
 function Handbook() {
   const { faculty: facultyId = 'info' } = useParams();
@@ -66,7 +66,31 @@ function Handbook() {
   }, [facultyId, cData]);
 
   return (
-    <div className="handbook-page" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+    <div className="handbook-page" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      
+      {/* ベータ版警告（経済経営学部のみ） */}
+      {facultyId === 'econ' && (
+        <div style={{
+          background: 'rgba(245, 158, 11, 0.08)',
+          border: '1px solid rgba(245, 158, 11, 0.3)',
+          borderRadius: '12px',
+          padding: '1.25rem',
+          display: 'flex',
+          gap: '1rem',
+          alignItems: 'flex-start'
+        }}>
+          <AlertTriangle color="#d97706" size={24} style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div>
+            <h4 style={{ color: '#92400e', margin: '0 0 0.4rem 0', fontSize: '1rem', fontWeight: 800 }}>
+              ベータ版に関するご注意
+            </h4>
+            <p style={{ color: '#92400e', margin: 0, fontSize: '0.875rem', lineHeight: 1.6 }}>
+              経済経営学部の便覧データおよび卒業判定ロジックは現在ベータ版です。
+              内容に一部誤りがある可能性があるため、最終的な確認は必ずお手元の学生便覧（PDF等）に基づいて行ってください。
+            </p>
+          </div>
+        </div>
+      )}
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
         {/* 3つのポリシー Section */}

@@ -1,17 +1,19 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 import changelogEcon from '../data/changelog_econ.json';
 import changelogInfo from '../data/changelog_info.json';
 
 // 各学部の履歴をマージしてお知らせリストを生成
 const generateNewsFromChangelogs = () => {
-  const econNews = changelogEcon.slice(0, 3).map(item => ({
+  const econNews = changelogEcon.map(item => ({
     date: item.date,
     title: '経済経営学部',
     detail: item.description || item.changes[0]
   }));
   
-  const infoNews = changelogInfo.slice(0, 3).map(item => ({
+  const infoNews = changelogInfo.map(item => ({
     date: item.date,
     title: '情報科学部',
     detail: item.description || item.changes[0]
@@ -74,38 +76,95 @@ const FACULTIES = [
 
 const Portal = () => {
   const navigate = useNavigate();
+  const [showNewsModal, setShowNewsModal] = useState(false);
+
+  // お知らせモーダルコンポーネント
+  const NewsModal = () => (
+    <div className="modal-overlay" onClick={() => setShowNewsModal(false)}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <button className="modal-close" onClick={() => setShowNewsModal(false)}>
+          <X size={20} />
+        </button>
+        <div className="modal-header">
+          <h2 style={{ color: 'var(--primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span>📢</span> お知らせ一覧
+          </h2>
+        </div>
+        <div className="modal-body">
+          {NEWS.map((item, idx) => (
+            <div key={idx} style={{ paddingBottom: '1rem', marginBottom: '1rem', borderBottom: idx !== NEWS.length - 1 ? '1px solid var(--border)' : 'none' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', background: 'var(--accent-light)', padding: '2px 8px', borderRadius: '4px' }}>
+                  {item.title}
+                </span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{item.date}</span>
+              </div>
+              <p style={{ fontSize: '0.9rem', margin: 0, lineHeight: 1.6, color: 'var(--text-main)' }}>
+                {item.detail}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="modal-footer">
+          <button className="btn-checker-sm" style={{ width: '100%', padding: '0.8rem' }} onClick={() => setShowNewsModal(false)}>閉じる</button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     /* app-containerのpadding(3vw)を打ち消し、残りのビューポートいっぱいに表示 */
-    <div style={{
-      margin: '-2rem -3vw 0',
-      height: 'calc(100vh - 72px)',   /* ヘッダー分を引いた残り全体 */
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '2rem 3vw',
-      boxSizing: 'border-box',
-    }}>
+    <div className="portal-container">
 
       {/* タイトル */}
-      <div style={{ textAlign: 'center', marginBottom: '1.5rem', flexShrink: 0 }}>
+      <div className="portal-title-area">
         <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', letterSpacing: '0.12em', fontWeight: 600, marginBottom: '0.25rem', textTransform: 'uppercase' }}>
           周南公立大学
         </p>
-        <h2 style={{ fontSize: 'clamp(1.3rem, 2vw, 1.9rem)', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
+        <h2 className="portal-title-text">
           あなたの学部を選んでください
         </h2>
       </div>
 
-      {/* カードグリッド — 3列×2行 */}
-      <div style={{
-        flex: 1,
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gridTemplateRows: 'repeat(2, 1fr)',
-        gap: '1.2rem',
-        minHeight: 0,
-      }}>
+      {/* モバイル版 お知らせ行 (学部リストと同じデザイン・同じ高さ) */}
+      <div className="portal-faculty-row mobile-only" style={{ marginBottom: '1.5rem', border: '2px solid var(--accent-light)' }}>
+        <span className="faculty-icon-sm">📢</span>
+        <div className="faculty-name-sm" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', overflow: 'hidden' }}>
+          <span style={{ fontWeight: 800, flexShrink: 0 }}>お知らせ</span>
+          <span className="news-preview">
+            {NEWS[0].title}: {NEWS[0].detail}
+          </span>
+        </div>
+        <div className="faculty-actions-sm">
+          <button className="news-detail-btn" onClick={() => setShowNewsModal(true)}>詳細</button>
+        </div>
+      </div>
+
+      {/* モバイル版 学部リスト (一行形式・補助情報なし) */}
+      <div className="portal-mobile-list mobile-only">
+        {FACULTIES.map(fac => (
+          <div key={fac.id} className="portal-faculty-row" style={{ opacity: fac.ready ? 1 : 0.6 }}>
+            <span className="faculty-icon-sm">{fac.emoji}</span>
+            <div className="faculty-name-sm">
+              {fac.name}
+              {fac.beta && <span style={{ fontSize: '0.6rem', marginLeft: '0.4rem', color: 'var(--text-muted)', border: '1px solid var(--border)', padding: '1px 3px', borderRadius: '3px' }}>BETA</span>}
+            </div>
+            <div className="faculty-actions-sm">
+              {fac.ready ? (
+                <>
+                  <button className="btn-checker-sm" onClick={() => navigate(`/${fac.id}/checker`)}>✓ チェック</button>
+                  <button className="btn-handbook-sm" onClick={() => navigate(`/${fac.id}/handbook`)} title="学生便覧">📖</button>
+                </>
+              ) : (
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>準備中</span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* デスクトップ版 カードグリッド — 3列×2行 */}
+      <div className="portal-grid desktop-only">
         
         {/* ニュースフィードカード */}
         <div style={{
@@ -118,21 +177,36 @@ const Portal = () => {
           border: '2px solid var(--border)',
           overflow: 'hidden',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-            <span style={{ fontSize: '1.5rem' }}>📢</span>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>お知らせ</h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>📢</span>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>お知らせ</h3>
+            </div>
+            <button 
+              onClick={() => setShowNewsModal(true)}
+              style={{
+                background: 'var(--accent-light)', border: 'none', color: 'var(--primary)', 
+                fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer',
+                padding: '0.3rem 0.6rem', borderRadius: '6px',
+                display: 'flex', alignItems: 'center', gap: '0.2rem', transition: 'all 0.2s'
+              }}
+              onMouseOver={e => e.currentTarget.style.background = 'rgba(226, 4, 11, 0.15)'}
+              onMouseOut={e => e.currentTarget.style.background = 'var(--accent-light)'}
+            >
+              一覧 <span>›</span>
+            </button>
           </div>
           
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }} className="news-scroll">
-            {NEWS.map((item, idx) => (
-              <div key={idx} style={{ paddingBottom: '0.8rem', borderBottom: idx !== NEWS.length - 1 ? '1px solid var(--border)' : 'none' }}>
+          <div style={{ flex: 1, minHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', paddingRight: '0.4rem' }} className="news-scroll">
+            {NEWS.slice(0, 6).map((item, idx) => (
+              <div key={idx} style={{ paddingBottom: '0.8rem', borderBottom: idx !== Math.min(NEWS.length, 6) - 1 ? '1px solid var(--border)' : 'none' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--primary)', background: 'rgba(226, 4, 11, 0.08)', padding: '2px 6px', borderRadius: '4px' }}>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--primary)', background: 'rgba(226, 4, 11, 0.08)', padding: '2px 8px', borderRadius: '4px' }}>
                     {item.title}
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.date}</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{item.date}</span>
                 </div>
-                <p style={{ fontSize: '0.82rem', margin: 0, lineHeight: 1.5, color: 'var(--text-main)' }}>
+                <p style={{ fontSize: '0.85rem', margin: 0, lineHeight: 1.5, color: 'var(--text-main)' }}>
                   {item.detail}
                 </p>
               </div>
@@ -255,6 +329,8 @@ const Portal = () => {
           </div>
         ))}
       </div>
+      {/* お知らせモーダル */}
+      {showNewsModal && <NewsModal />}
     </div>
   );
 };

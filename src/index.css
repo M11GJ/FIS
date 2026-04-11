@@ -260,6 +260,206 @@ input[type="number"]:focus, select:focus {
   }
 }
 
+/* Portal Layout */
+.portal-container {
+  margin: -2rem -3vw 0;
+  height: calc(100vh - 80px); /* Adjust based on header */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 3vw;
+  box-sizing: border-box;
+}
+
+.portal-title-area {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+}
+
+.portal-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1.2rem;
+  min-height: 0;
+}
+
+.portal-title-text {
+  font-size: clamp(1.3rem, 4vw, 1.9rem);
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.25;
+}
+
+@media (max-width: 1024px) {
+  .portal-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    overflow-y: auto;
+    padding-bottom: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .portal-container {
+    margin: 0;
+    height: auto;
+    overflow: visible;
+    padding: 1.5rem 1rem;
+  }
+
+  .portal-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .portal-title-area {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Utils */
+.mobile-only { display: none !important; }
+@media (max-width: 768px) {
+  .mobile-only { display: flex !important; }
+  .desktop-only { display: none !important; }
+}
+
+/* Portal News Bar (Mobile) */
+.portal-news-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.news-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: white;
+  background: var(--primary);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.news-preview {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.news-detail-btn {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--accent-light);
+}
+
+/* Portal Faculty Row (Mobile) */
+.portal-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.portal-faculty-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: transform 0.1s;
+}
+
+.portal-faculty-row:active {
+  transform: scale(0.98);
+}
+
+.faculty-icon-sm {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.faculty-name-sm {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.faculty-actions-sm {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-checker-sm {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-handbook-sm {
+  color: var(--primary);
+  background: var(--accent-light);
+  border: 1px solid var(--accent-light);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.header-title-portal {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.version-badge {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--surface-hover);
+  padding: 0.15rem 0.45rem;
+  border-radius: 12px;
+  fontWeight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .header-title-portal {
+    font-size: 1.05rem;
+  }
+}
+
 /* Table Styles */
 .course-table-wrapper {
   overflow-y: auto;
