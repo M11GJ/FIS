@@ -3,11 +3,75 @@ import { useState, useEffect } from 'react';
 import Handbook from './pages/Handbook';
 import Checker from './pages/Checker';
 import Portal from './pages/Portal';
-import { BookOpen, CheckSquare, Sun, Moon, ExternalLink, X, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { BookOpen, CheckSquare, Sun, Moon, ExternalLink, X, ArrowLeft, AlertTriangle, Hammer } from 'lucide-react';
 import pkg from '../package.json';
 import changelogEcon from './data/changelog_econ.json';
 import changelogInfo from './data/changelog_info.json';
 import changelogPortal from './data/changelog_portal.json';
+
+// --- メンテナンスモード設定 ---
+// true にするとメンテナンス画面が表示されます
+const MAINTENANCE_MODE = false;
+
+const MaintenanceScreen = () => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    backgroundColor: 'var(--background)',
+    color: 'var(--text-main)',
+    textAlign: 'center',
+    padding: '2rem',
+    fontFamily: 'Inter, "Noto Sans JP", sans-serif'
+  }}>
+    <div style={{ 
+      background: 'var(--surface)', 
+      padding: '3rem 2rem', 
+      borderRadius: '24px', 
+      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+      border: '1px solid var(--border)',
+      maxWidth: '500px',
+      width: '100%'
+    }}>
+      <div style={{ 
+        display: 'inline-flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        width: '80px', 
+        height: '80px', 
+        borderRadius: '20px', 
+        background: 'var(--accent-light)', 
+        color: 'var(--primary)',
+        marginBottom: '2rem'
+      }}>
+        <Hammer size={40} />
+      </div>
+      <h1 style={{ 
+        fontSize: '1.8rem', 
+        fontWeight: 800, 
+        color: 'var(--text-main)', 
+        marginBottom: '1rem',
+        letterSpacing: '-0.02em'
+      }}>
+        現在メンテナンス中です
+      </h1>
+      <p style={{ 
+        fontSize: '1rem', 
+        color: 'var(--text-muted)', 
+        lineHeight: 1.6,
+        marginBottom: '0'
+      }}>
+        より良いサービス提供のため、システムメンテナンスを実施しております。<br />
+        恐れ入りますが、終了までしばらくお待ちください。
+      </p>
+    </div>
+    <div style={{ marginTop: '2rem', fontSize: '0.8rem', color: 'var(--text-muted)', opacity: 0.6 }}>
+      Shunan University Graduation Checker
+    </div>
+  </div>
+);
 
 const FACULTY_INFO = {
   info: { 
@@ -236,6 +300,10 @@ function App() {
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
+
+  if (MAINTENANCE_MODE) {
+    return <MaintenanceScreen />;
+  }
 
   return (
     <HashRouter>
