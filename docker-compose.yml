@@ -5,3 +5,16 @@ services:
     ports:
       - "8080:80"
     restart: always
+    volumes:
+      - ./logs:/var/log/nginx
+      - ./stats:/usr/share/nginx/html/admin:ro
+      - ./update_history.log:/usr/share/nginx/html/admin/history.txt:ro
+
+  goaccess:
+    image: allinone/goaccess
+    container_name: graduation-checker-stats
+    restart: always
+    volumes:
+      - ./logs:/opt/goaccess/logs
+      - ./stats:/opt/goaccess/output
+    command: ["goaccess", "--log-file=/opt/goaccess/logs/access.log", "--output=/opt/goaccess/output/stats.html", "--log-format=COMBINED", "--real-time-html", "--no-global-config"]
