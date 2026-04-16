@@ -1,0 +1,7 @@
+services:
+  graduation-checker:
+    build: .
+    container_name: graduation-checker-app
+    ports:
+      - "8080:80"
+    restart: always
