@@ -493,22 +493,3 @@ const PremiumStatCard = ({ title, value, icon, color, description }) => (
 );
 
 export default AdminPortal;
-
-const StatCard = ({ icon, label, value, sub }) => (
-  <motion.div 
-    whileHover={{ y: -5 }}
-    className="card" 
-    style={{ margin: 0, padding: '1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'center' }}
-  >
-    <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
-      {icon}
-    </div>
-    <div>
-      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>{label}</div>
-      <div style={{ fontSize: '1.75rem', fontWeight: 800 }}>{typeof value === 'number' ? value.toLocaleString() : value}</div>
-      <div style={{ color: '#64748b', fontSize: '0.7rem' }}>{sub}</div>
-    </div>
-  </motion.div>
-);
-
-export default AdminPortal;
