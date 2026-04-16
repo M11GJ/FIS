@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Handbook from './pages/Handbook';
 import Checker from './pages/Checker';
 import Portal from './pages/Portal';
+import AdminPortal from './pages/AdminPortal';
 import { BookOpen, CheckSquare, Sun, Moon, ExternalLink, X, ArrowLeft, AlertTriangle, Hammer } from 'lucide-react';
 import pkg from '../package.json';
 import changelogEcon from './data/changelog_econ.json';
@@ -68,7 +69,7 @@ const MaintenanceScreen = () => (
       </p>
     </div>
     <div style={{ marginTop: '2rem', fontSize: '0.8rem', color: 'var(--text-muted)', opacity: 0.6 }}>
-      Shunan University Graduation Checker
+      {/* 削除 */}
     </div>
   </div>
 );
@@ -253,6 +254,7 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
       <main>
         <Routes>
           <Route path="/" element={<Portal />} />
+          <Route path="/admin" element={<AdminPortal />} />
           <Route path="/:faculty/handbook" element={<Handbook />} />
           <Route path="/:faculty/checker" element={<Checker />} />
           {/* 旧URLからのリダイレクト設定 */}
@@ -263,6 +265,7 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
 
       <footer className="site-footer">
         Developed by KosukeGuntani using Gemini 3 Flash
+        <Link to="/admin" style={{ opacity: 0, position: 'absolute', right: 0, cursor: 'default' }}>.</Link>
       </footer>
     </div>
   );

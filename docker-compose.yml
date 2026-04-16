@@ -9,11 +9,12 @@ services:
       - ./logs:/var/log/nginx
       - ./stats:/usr/share/nginx/html/admin:ro
 
-  goaccess:
-    image: allinurl/goaccess
-    container_name: graduation-checker-stats
+  admin-api:
+    build: ./admin-api
+    container_name: graduation-checker-admin-api
     restart: always
     volumes:
-      - ./logs:/opt/goaccess/logs
-      - ./stats:/opt/goaccess/output
-    command: ["sh", "-c", "mkdir -p /opt/goaccess/logs && touch /opt/goaccess/logs/access.log && goaccess --log-file=/opt/goaccess/logs/access.log --output=/opt/goaccess/output/stats.html --log-format=COMBINED --real-time-html --no-global-config"]
+      - ./logs:/var/log/nginx:ro
+      - ./stats:/stats:ro
+    environment:
+      - NODE_ENV=production
