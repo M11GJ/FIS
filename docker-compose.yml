@@ -16,4 +16,4 @@ services:
     volumes:
       - ./logs:/opt/goaccess/logs
       - ./stats:/opt/goaccess/output
-    command: ["goaccess", "--log-file=/opt/goaccess/logs/access.log", "--output=/opt/goaccess/output/stats.html", "--log-format=COMBINED", "--real-time-html", "--no-global-config"]
+    command: ["sh", "-c", "mkdir -p /opt/goaccess/logs && touch /opt/goaccess/logs/access.log && goaccess --log-file=/opt/goaccess/logs/access.log --output=/opt/goaccess/output/stats.html --log-format=COMBINED --real-time-html --no-global-config"]
