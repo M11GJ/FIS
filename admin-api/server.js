@@ -12,6 +12,13 @@ app.use(express.json());
 const ACCESS_LOG_PATH = '/var/log/nginx/access.log';
 const HISTORY_LOG_PATH = '/stats/update_history.log';
 
+// アセットファイル（JS, CSS, 画像など）を統計から除外する判定
+const isAsset = (url) => {
+    return url.match(/\.(js|css|png|jpg|svg|json|ico|webp|map)$/i) || 
+           url.includes('/@vite/') || 
+           url.includes('/node_modules/');
+};
+
 // Nginxログのパース関数
 function parseNginxLog(line) {
     // 形式: 192.168.11.2 - - [16/Apr/2026:06:27:18 +0000] "GET /shu-binran/ HTTP/1.1" 200 ...
@@ -19,14 +26,18 @@ function parseNginxLog(line) {
     const match = line.match(regex);
     if (!match) return null;
 
+    const requestLine = match[3];
+    const path = requestLine.split(' ')[1] || '';
+
+    // アセットへのアクセスは無視
+    if (isAsset(path)) return null;
+
     return {
         ip: match[1],
         timestamp: match[2],
-        request: match[3],
-        status: parseInt(match[4]),
-        bytes: parseInt(match[5]),
-        referer: match[6],
-        userAgent: match[7]
+        request: requestLine,
+        path: path,
+        status: parseInt(match[4])
     };
 }
 
@@ -38,17 +49,31 @@ app.get('/api/admin/stats', (req, res) => {
         }
 
         const lines = fs.readFileSync(ACCESS_LOG_PATH, 'utf8').split('\n').filter(l => l.trim());
-        const parsedLogs = lines.map(parseNginxLog).filter(l => l);
+        const rawLogs = lines.map(parseNginxLog).filter(l => l);
+
+        // 重複排除ロジック (IP + パス + 分単位 が同じなら1回とみなす)
+        const deduplicatedLogs = [];
+        const seenHits = new Set();
+
+        rawLogs.forEach(log => {
+            const minute = log.timestamp.substring(0, 17); // Group by "16/Apr/2026:15:30"
+            const key = `${log.ip}:${log.path}:${minute}`;
+            
+            if (!seenHits.has(key)) {
+                deduplicatedLogs.push(log);
+                seenHits.add(key);
+            }
+        });
 
         const ipStats = {};
         const hourlyStats = {};
         
-        parsedLogs.forEach(log => {
+        deduplicatedLogs.forEach(log => {
             // IP統計
             ipStats[log.ip] = (ipStats[log.ip] || 0) + 1;
             
-            // 時間別統計 (簡易版: 16/Apr/2026:06 形式)
-            const hour = log.timestamp.substring(0, 14); 
+            // 時間別統計 (グラフ用)
+            const hour = log.timestamp.substring(12, 14) + '時'; // "15時"
             hourlyStats[hour] = (hourlyStats[hour] || 0) + 1;
         });
 
@@ -57,12 +82,12 @@ app.get('/api/admin/stats', (req, res) => {
             .sort((a, b) => b.count - a.count)
             .slice(0, 10);
 
+        // 直近24時間の枠を作成
         const dailyHits = Object.entries(hourlyStats)
-            .map(([time, hits]) => ({ time, hits }))
-            .slice(-24); // 直近24履歴
+            .map(([time, hits]) => ({ time, hits }));
 
         res.json({
-            totalHits: parsedLogs.length,
+            totalHits: deduplicatedLogs.length,
             uniqueIps: Object.keys(ipStats).length,
             dailyHits,
             topIps: sortedIps
@@ -80,12 +105,15 @@ app.get('/api/admin/history', (req, res) => {
             return res.json({ history: [] });
         }
 
-        const lines = fs.readFileSync(HISTORY_LOG_PATH, 'utf8')
+        const stats = fs.statSync(HISTORY_LOG_PATH);
+        if (stats.size === 0) return res.json({ history: [] });
+
+        const history = fs.readFileSync(HISTORY_LOG_PATH, 'utf8')
             .split('\n')
             .filter(l => l.trim())
-            .reverse(); // 新しい順
+            .reverse();
 
-        res.json({ history: lines });
+        res.json({ history: history });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to read history' });

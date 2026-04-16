@@ -87,187 +87,275 @@ const AdminPortal = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="admin-login-container">
+      <div className="admin-login-fullscreen">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="admin-login-card"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="admin-login-glass"
         >
-          <div className="admin-login-icon">
-            <Shield size={48} />
+          <div className="admin-brand">
+            <div className="brand-icon">
+              <Shield size={32} />
+            </div>
+            <h2>ADMIN PORTAL</h2>
+            <p>System Command Center</p>
           </div>
-          <h1>管理者ログイン</h1>
-          <p>卒業要件チェッカー 管理ポータル</p>
           
-          <form onSubmit={handleLogin}>
-            <div className="input-group">
+          <form onSubmit={handleLogin} className="login-form">
+            <div className="input-glow-wrapper">
               <input 
                 type="password" 
-                placeholder="パスワードを入力" 
+                placeholder="ACCESS PASSWORD" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoFocus
               />
+              <div className="input-glow"></div>
             </div>
-            {error && <p className="error-message">{error}</p>}
-            <button type="submit" className="login-button">
-              認証
+            {error && (
+              <motion.p 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                className="error-text"
+              >
+                {error}
+              </motion.p>
+            )}
+            <button type="submit" className="neon-button">
+              認証開始
             </button>
           </form>
         </motion.div>
+        
+        <style jsx>{`
+          .admin-login-fullscreen {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-family: 'Inter', sans-serif;
+          }
+          .admin-login-glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          }
+          .admin-brand { margin-bottom: 2.5rem; text-align: center; }
+          .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, #ef4444 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 0 20px rgba(226, 4, 18, 0.3);
+            color: white;
+          }
+          .admin-brand h2 { font-size: 1.5rem; font-weight: 900; letter-spacing: 0.1em; color: white; margin-bottom: 0.5rem; }
+          .admin-brand p { color: #64748b; font-size: 0.875rem; font-weight: 600; }
+          
+          .input-glow-wrapper { position: relative; margin-bottom: 1.5rem; }
+          input {
+            width: 100%;
+            padding: 1.25rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 0.25em;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 2;
+          }
+          input:focus { border-color: var(--primary); outline: none; }
+          .input-glow {
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(90deg, var(--primary), #ef4444);
+            border-radius: 18px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
+          }
+          input:focus + .input-glow { opacity: 0.3; }
+          
+          .neon-button {
+            width: 100%;
+            padding: 1.25rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(226, 4, 18, 0.3);
+          }
+          .neon-button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(226, 4, 18, 0.4); }
+          .error-text { color: #ef4444; font-size: 0.875rem; margin-bottom: 1.5rem; font-weight: 600; }
+        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="admin-page">
-      <div className="admin-sidebar">
-        <div className="sidebar-header">
-          <div className="sidebar-logo">
-            <Terminal size={24} />
-            <span>ADMIN CTRL</span>
+    <div className="admin-dashboard-root">
+      <aside className="dashboard-sidebar">
+        <div className="sidebar-top">
+          <div className="brand-box">
+            <Terminal size={20} />
+            <span>CORE OPS</span>
           </div>
         </div>
-        <nav className="sidebar-nav">
-          <div className="nav-item active">
-            <Activity size={18} />
-            <span>ダッシュボード</span>
-          </div>
-          <button onClick={handleLogout} className="nav-item logout">
-            <LogOut size={18} />
-            <span>ログアウト</span>
-          </button>
-        </nav>
-      </div>
-
-      <main className="admin-main">
-        <header className="admin-header">
-          <div className="header-info">
-            <h1>システム統計ダッシュボード</h1>
-            <p>稼働状況とアクセス分析</p>
-          </div>
-          <div className="header-actions">
-            <div className={`status-badge ${stats ? 'status-online' : 'status-offline'}`}>
-              <div className="status-dot"></div>
-              {stats ? 'SYSTEM ONLINE' : 'FETCHING DATA...'}
+        
+        <nav className="sidebar-menu">
+          <div className="menu-group">
+            <label>SYSTEM</label>
+            <div className="menu-item active">
+              <Activity size={18} />
+              <span>ダッシュボード</span>
             </div>
+            <div className="menu-item disabled">
+              <Users size={18} />
+              <span>部員管理</span>
+            </div>
+          </div>
+        </nav>
+
+        <div className="sidebar-bottom">
+          <button onClick={handleLogout} className="logout-btn">
+            <LogOut size={18} />
+            <span>システム切断</span>
+          </button>
+        </div>
+      </aside>
+
+      <main className="dashboard-content">
+        <header className="content-header">
+          <div className="header-titles">
+            <h1>Analytics Overview</h1>
+            <p>システムの稼働状況と、重複を排除した正確な訪問統計です</p>
+          </div>
+          <div className="header-meta">
+            <div className="live-status">
+              <span className="pulse"></span>
+              LIVE DATA FEED
+            </div>
+            <button onClick={fetchData} className="refresh-icon-btn" title="データを更新">
+              <RefreshCw size={18} className={isLoading ? 'spinning' : ''} />
+            </button>
           </div>
         </header>
 
-        <section className="stats-grid">
-          <StatCard 
-            icon={<Users className="text-blue" />} 
-            label="合計アクセス" 
+        <div className="grid-summary">
+          <PremiumStatCard 
+            title="Page Views" 
             value={stats?.totalHits || 0} 
-            sub="累計リクエスト数"
+            icon={<Monitor />} 
+            color="#3b82f6"
+            description="重複を除いた純粋なアクセス"
           />
-          <StatCard 
-            icon={<Monitor className="text-purple" />} 
-            label="ユニークIP" 
+          <PremiumStatCard 
+            title="Unique Visitors" 
             value={stats?.uniqueIps || 0} 
-            sub="重複なしの接続数"
+            icon={<Users />} 
+            color="#a855f7"
+            description="接続された固有のIPアドレス数"
           />
-          <StatCard 
-            icon={<RefreshCw className="text-green" />} 
-            label="最新更新" 
-            value={history.length > 0 ? "SUCCESS" : "NO DATA"} 
-            sub={history[0]?.split(']')[0].replace('[', '') || '-'}
+          <PremiumStatCard 
+            title="Sync Status" 
+            value="SYNCED" 
+            icon={<CheckCircle2 />} 
+            color="#10b981"
+            description={history[0]?.split(']')[0].replace('[', '') || 'WAITING'}
           />
-        </section>
+        </div>
 
-        <div className="admin-content-layout">
-          <div className="content-left">
-            <div className="card chart-card">
-              <div className="card-header">
-                <h3><Activity size={18} /> アクセス推移 (直近24時間)</h3>
+        <div className="grid-main">
+          <div className="main-left">
+            <div className="glass-card chart-view">
+              <div className="card-top">
+                <h3><Activity size={16} /> アクセス推移（1時間毎）</h3>
               </div>
-              <div className="chart-container">
+              <div className="chart-wrapper">
                 {stats?.dailyHits && (
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={280}>
                     <BarChart data={stats.dailyHits}>
+                      <defs>
+                        <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="var(--primary)" stopOpacity={1}/>
+                          <stop offset="100%" stopColor="#ef4444" stopOpacity={0.6}/>
+                        </linearGradient>
+                      </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                      <XAxis 
-                        dataKey="time" 
-                        stroke="var(--text-muted)" 
-                        fontSize={12} 
-                        tickFormatter={(val) => val.split(':')[1] + '時'} 
-                      />
-                      <YAxis stroke="var(--text-muted)" fontSize={12} />
+                      <XAxis dataKey="time" stroke="#64748b" fontSize={11} axisLine={false} tickLine={false} />
+                      <YAxis stroke="#64748b" fontSize={11} axisLine={false} tickLine={false} />
                       <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: 'var(--surface)', 
-                          border: '1px solid var(--border)',
-                          borderRadius: '8px' 
-                        }} 
+                        cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
                       />
-                      <Bar dataKey="hits" radius={[4, 4, 0, 0]}>
-                        {stats.dailyHits.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill="var(--primary)" fillOpacity={0.8} />
-                        ))}
-                      </Bar>
+                      <Bar dataKey="hits" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 )}
               </div>
             </div>
 
-            <div className="card table-card">
-              <div className="card-header">
-                <h3><Users size={18} /> 上位接続 IP</h3>
+            <div className="glass-card ip-rank">
+              <div className="card-top">
+                <h3><Users size={16} /> 接続 IP ランキング</h3>
               </div>
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>順位</th>
-                      <th>IP アドレス</th>
-                      <th>リクエスト数</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats?.topIps?.map((item, idx) => (
-                      <tr key={item.ip}>
-                        <td>{idx + 1}</td>
-                        <td className="font-mono">{item.ip}</td>
-                        <td>{item.count}</td>
-                      </tr>
-                    ))}
-                    {(!stats?.topIps || stats.topIps.length === 0) && (
-                      <tr><td colSpan="3" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>データがありません</td></tr>
-                    )}
-                  </tbody>
-                </table>
+              <div className="rank-list">
+                {stats?.topIps?.map((item, idx) => (
+                  <div key={item.ip} className="rank-item">
+                    <span className="idx">{idx + 1}</span>
+                    <span className="ip">{item.ip}</span>
+                    <div className="bar-bg">
+                      <div className="bar-fill" style={{ width: `${(item.count / stats.topIps[0].count) * 100}%` }}></div>
+                    </div>
+                    <span className="val">{item.count} PV</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="content-right">
-            <div className="card timeline-card">
-              <div className="card-header">
-                <h3><Clock size={18} /> 更新ログ履歴</h3>
+          <div className="main-right">
+            <div className="glass-card history-feed">
+              <div className="card-top">
+                <h3><Clock size={16} /> システム更新履歴</h3>
               </div>
-              <div className="timeline-container">
-                <div className="timeline">
-                  {history.map((line, idx) => {
-                    const isSuccess = line.includes('成功') || line.includes('完了') || line.includes('更新はありませんでした');
-                    const isError = line.includes('エラー') || line.includes('失敗');
-                    const time = line.match(/\[(.*?)\]/)?.[1] || '';
-                    const message = line.replace(/\[.*?\]\s*/, '');
-                    
-                    return (
-                      <div key={idx} className="timeline-item">
-                        <div className={`timeline-icon ${isError ? 'bg-red' : (isSuccess ? 'bg-green' : 'bg-gray')}`}>
-                          {isError ? <AlertCircle size={14} /> : (isSuccess ? <CheckCircle2 size={14} /> : <Terminal size={14} />)}
-                        </div>
-                        <div className="timeline-content">
-                          <div className="timeline-time">{time}</div>
-                          <div className="timeline-msg">{message}</div>
-                        </div>
+              <div className="feed-list">
+                {history.map((line, idx) => {
+                  const isSuccess = line.includes('成功') || line.includes('完了') || line.includes('更新はありませんでした');
+                  const isError = line.includes('エラー') || line.includes('失敗');
+                  const time = line.match(/\[(.*?)\]/)?.[1] || '';
+                  const message = line.replace(/\[.*?\]\s*/, '');
+                  
+                  return (
+                    <div key={idx} className="feed-item">
+                      <div className={`dot ${isError ? 'err' : (isSuccess ? 'ok' : 'pending')}`}></div>
+                      <div className="feed-body">
+                        <span className="time">{time}</span>
+                        <p className="msg">{message}</p>
                       </div>
-                    );
-                  })}
-                  {history.length === 0 && <p className="text-center py-4 opacity-50">履歴がありません</p>}
-                </div>
+                    </div>
+                  );
+                })}
+                {history.length === 0 && <p className="empty">ログが空です</p>}
               </div>
             </div>
           </div>
@@ -275,253 +363,136 @@ const AdminPortal = () => {
       </main>
 
       <style jsx>{`
-        .admin-page {
+        .admin-dashboard-root {
           display: flex;
-          min-height: 100vh;
-          background-color: #0f172a;
-          color: #f8fafc;
+          height: 100vh;
+          background: #020617;
+          color: #f1f5f9;
           font-family: 'Inter', sans-serif;
+          overflow: hidden;
         }
 
         /* Sidebar */
-        .admin-sidebar {
-          width: 260px;
-          background: #1e293b;
+        .dashboard-sidebar {
+          width: 240px;
+          background: #0f172a;
           border-right: 1px solid rgba(255,255,255,0.05);
           display: flex;
           flex-direction: column;
-        }
-        .sidebar-header {
-          padding: 2rem;
-        }
-        .sidebar-logo {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          font-weight: 800;
-          font-size: 1.25rem;
-          color: var(--primary);
-          letter-spacing: -0.025em;
-        }
-        .sidebar-nav {
-          padding: 1rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          flex: 1;
-        }
-        .nav-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.75rem 1rem;
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.2s;
-          color: #94a3b8;
-          font-weight: 600;
-          background: transparent;
-          border: none;
-          width: 100%;
-          text-align: left;
-        }
-        .nav-item:hover {
-          background: rgba(255,255,255,0.05);
-          color: white;
-        }
-        .nav-item.active {
-          background: var(--primary);
-          color: white;
-        }
-        .nav-item.logout {
-          margin-top: auto;
-          color: #ef4444;
-        }
-
-        /* Main Content */
-        .admin-main {
-          flex: 1;
-          padding: 2rem;
-          overflow-y: auto;
-        }
-        .admin-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 2.5rem;
-        }
-        .header-info h1 {
-          font-size: 1.875rem;
-          font-weight: 800;
-          margin-bottom: 0.25rem;
-        }
-        .header-info p {
-          color: #94a3b8;
-        }
-
-        /* Status Badge */
-        .status-badge {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.5rem 1rem;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 800;
-          background: rgba(15, 23, 42, 0.5);
-          border: 1px solid rgba(255,255,255,0.1);
-        }
-        .status-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-        }
-        .status-online .status-dot { background: #10b981; box-shadow: 0 0 10px #10b981; }
-        .status-offline .status-dot { background: #ef4444; }
-
-        /* Stats Grid */
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2.5rem;
-        }
-
-        /* Card Layout */
-        .admin-content-layout {
-          display: grid;
-          grid-template-columns: 2fr 1fr;
-          gap: 1.5rem;
-        }
-        .card {
-          background: #1e293b;
-          border-radius: 20px;
-          border: 1px solid rgba(255,255,255,0.05);
-          overflow: hidden;
-          margin-bottom: 1.5rem;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .card-header {
-          padding: 1.25rem 1.5rem;
-          border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .card-header h3 {
-          margin: 0;
-          font-size: 1rem;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        /* Table */
-        .table-container { padding: 0.5rem; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        th { font-size: 0.75rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; color: var(--primary); }
-
-        /* Timeline */
-        .timeline-container { padding: 1.5rem; max-height: 600px; overflow-y: auto; }
-        .timeline { position: relative; }
-        .timeline-item { position: relative; padding-left: 2rem; margin-bottom: 1.5rem; }
-        .timeline-item::before {
-          content: '';
-          position: absolute;
-          left: 7px;
-          top: 20px;
-          bottom: -15px;
-          width: 2px;
-          background: rgba(255,255,255,0.05);
-        }
-        .timeline-item:last-child::before { display: none; }
-        .timeline-icon {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1;
-        }
-        .bg-green { background: #10b981; }
-        .bg-red { background: #ef4444; }
-        .bg-gray { background: #64748b; }
-        .timeline-time { font-size: 0.7rem; color: #64748b; margin-bottom: 0.25rem; }
-        .timeline-msg { font-size: 0.875rem; line-height: 1.4; color: #cbd5e1; }
-
-        /* Login */
-        .admin-login-container {
-          min-height: 100vh;
-          background: #0f172a;
-          display: flex;
-          align-items: center;
-          justify-content: center;
           padding: 1.5rem;
         }
-        .admin-login-card {
-          background: #1e293b;
-          padding: 3rem;
-          border-radius: 24px;
-          text-align: center;
-          width: 100%;
-          max-width: 400px;
-          border: 1px solid rgba(255,255,255,0.05);
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .brand-box {
+          display: flex; align-items: center; gap: 0.75rem; 
+          font-weight: 900; font-size: 1.1rem; color: var(--primary);
+          margin-bottom: 3rem;
         }
-        .admin-login-icon {
-          width: 80px;
-          height: 80px;
-          background: rgba(226, 4, 18, 0.1);
-          color: var(--primary);
-          border-radius: 24px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 2rem;
+        .sidebar-menu { flex: 1; }
+        .menu-group label { font-size: 0.65rem; font-weight: 800; color: #475569; letter-spacing: 0.1em; }
+        .menu-item {
+          display: flex; align-items: center; gap: 0.75rem;
+          padding: 0.8rem 1rem; margin-top: 0.5rem; border-radius: 12px;
+          cursor: pointer; color: #94a3b8; font-weight: 600; font-size: 0.9rem;
         }
-        .admin-login-card h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
-        .admin-login-card p { color: #64748b; margin-bottom: 2rem; }
-        input {
-          width: 100%;
-          padding: 1rem;
-          background: #0f172a;
-          border: 1px solid #334155;
-          border-radius: 12px;
-          color: white;
-          font-size: 1rem;
-          text-align: center;
-          letter-spacing: 0.5em;
-          margin-bottom: 1rem;
+        .menu-item.active { background: rgba(226, 4, 18, 0.1); color: var(--primary); }
+        .menu-item.disabled { opacity: 0.3; cursor: not-allowed; }
+        .logout-btn {
+          display: flex; align-items: center; gap: 0.75rem;
+          width: 100%; padding: 0.8rem; border-radius: 12px;
+          background: rgba(239, 68, 68, 0.1); color: #ef4444;
+          border: none; font-weight: 700; cursor: pointer; transition: 0.2s;
         }
-        .login-button {
-          width: 100%;
-          padding: 1rem;
-          background: var(--primary);
-          color: white;
-          border: none;
-          border-radius: 12px;
-          font-weight: 800;
-          cursor: pointer;
-        }
-        .error-message { color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; }
+        .logout-btn:hover { background: #ef4444; color: white; }
 
-        /* Utils */
-        .text-blue { color: #3b82f6; }
-        .text-purple { color: #a855f7; }
-        .text-green { color: #10b981; }
-
-        @media (max-width: 1024px) {
-          .admin-content-layout { grid-template-columns: 1fr; }
-          .admin-sidebar { display: none; }
+        /* Content */
+        .dashboard-content { flex: 1; padding: 2.5rem; overflow-y: auto; }
+        .content-header {
+          display: flex; justify-content: space-between; align-items: flex-start;
+          margin-bottom: 2.5rem;
         }
+        .header-titles h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+        .header-titles p { color: #64748b; font-weight: 500; }
+        
+        .header-meta { display: flex; align-items: center; gap: 1rem; }
+        .live-status {
+          display: flex; align-items: center; gap: 0.5rem;
+          background: #1e293b; padding: 0.5rem 1rem; border-radius: 99px;
+          font-size: 0.75rem; font-weight: 800; color: #10b981;
+        }
+        .pulse {
+          width: 8px; height: 8px; background: #10b981; border-radius: 50%;
+          animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 
+          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .refresh-icon-btn { 
+          background: #1e293b; border: none; color: white; padding: 0.6rem; 
+          border-radius: 10px; cursor: pointer; 
+        }
+        .spinning { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Stats cards */
+        .grid-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+
+        /* Layout Main */
+        .grid-main { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        .glass-card {
+          background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05);
+          border-radius: 24px; padding: 1.5rem;
+        }
+        .card-top h3 { 
+          display: flex; align-items: center; gap: 0.6rem;
+          font-size: 0.9rem; font-weight: 800; color: #94a3b8; margin-bottom: 1.5rem;
+          text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        
+        /* IP Rank */
+        .rank-list { display: flex; flex-direction: column; gap: 1.25rem; }
+        .rank-item { display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; }
+        .rank-item .idx { width: 24px; height: 24px; background: #1e293b; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #64748b; }
+        .rank-item .ip { font-family: 'JetBrains Mono', monospace; width: 120px; font-weight: 600; }
+        .bar-bg { flex: 1; height: 6px; background: #0f172a; border-radius: 3px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--primary); }
+        .rank-item .val { font-weight: 800; width: 60px; text-align: right; }
+
+        /* History */
+        .feed-list { display: flex; flex-direction: column; gap: 1.5rem; }
+        .feed-item { display: flex; gap: 1rem; }
+        .feed-item .dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+        .dot.ok { background: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.3); }
+        .dot.err { background: #ef4444; }
+        .dot.pending { background: #64748b; }
+        .feed-body .time { font-size: 0.7rem; font-weight: 700; color: #64748b; margin-bottom: 0.25rem; display: block; }
+        .feed-body .msg { font-size: 0.85rem; line-height: 1.5; color: #cbd5e1; }
       `}</style>
     </div>
   );
 };
+
+const PremiumStatCard = ({ title, value, icon, color, description }) => (
+  <motion.div 
+    whileHover={{ y: -4, backgroundColor: 'rgba(30, 41, 59, 0.6)' }}
+    className="glass-card" 
+    style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}
+  >
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ color }}>{icon}</div>
+      <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase' }}>STATS</div>
+    </div>
+    <div>
+      <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94a3b8', marginBottom: '0.5rem' }}>{title}</h4>
+      <div style={{ fontSize: '2.25rem', fontWeight: 900, letterSpacing: '-0.02em' }}>
+        {typeof value === 'number' ? value.toLocaleString() : value}
+      </div>
+      <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem' }}>{description}</p>
+    </div>
+  </motion.div>
+);
+
+export default AdminPortal;
 
 const StatCard = ({ icon, label, value, sub }) => (
   <motion.div 

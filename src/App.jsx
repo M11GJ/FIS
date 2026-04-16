@@ -167,6 +167,17 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
     }
   }, [faculty, isPortal]);
 
+  // 管理画面（/admin）の場合はヘッダー・フッターを含まない独立したレイアウトにする
+  if (location.pathname === '/admin') {
+    return (
+      <main style={{ padding: 0 }}>
+        <Routes>
+          <Route path="/admin" element={<AdminPortal />} />
+        </Routes>
+      </main>
+    );
+  }
+
   return (
     <div className="app-container">
       <header style={{ borderBottom: isPortal ? '1px solid var(--border)' : `3px solid ${info.colorName}` }}>
