@@ -11,7 +11,7 @@ services:
       - ./update_history.log:/usr/share/nginx/html/admin/history.txt:ro
 
   goaccess:
-    image: allinone/goaccess
+    image: allinurl/goaccess
     container_name: graduation-checker-stats
     restart: always
     volumes:
