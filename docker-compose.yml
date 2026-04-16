@@ -8,7 +8,6 @@ services:
     volumes:
       - ./logs:/var/log/nginx
       - ./stats:/usr/share/nginx/html/admin:ro
-      - ./update_history.log:/usr/share/nginx/html/admin/history.txt:ro
 
   goaccess:
     image: allinurl/goaccess

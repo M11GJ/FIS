@@ -2,7 +2,7 @@
 # 卒業要件チェッカー - 自動更新スクリプト
 # ==========================================
 
-$LogFile = "update_history.log"
+$LogFile = "stats/update_history.log"
 $MaxLogLines = 1000  # ログが肥大化しないように制限
 
 function Write-Log {
