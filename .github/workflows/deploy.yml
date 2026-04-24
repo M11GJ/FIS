@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Strip classroom data for production
+        run: node scripts/strip-rooms.js
+
       - name: Build
         run: npm run build
 
