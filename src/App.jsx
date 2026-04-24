@@ -275,17 +275,18 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
         </Routes>
       </main>
 
-      <footer className="site-footer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-        <div>
-          Developed by KosukeGuntani using Gemini 3 Flash
-          <Link to="/admin" style={{ opacity: 0, position: 'absolute', right: 0, cursor: 'default' }}>.</Link>
+      <footer className="site-footer" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <span>Developed by KosukeGuntani using Gemini 3 Flash</span>
+          <span style={{ color: 'var(--border)' }}>|</span>
+          <button 
+            onClick={() => setShowTerms(true)}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+          >
+            利用規約・プライバシーポリシー
+          </button>
         </div>
-        <button 
-          onClick={() => setShowTerms(true)}
-          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline' }}
-        >
-          利用規約・プライバシーポリシー
-        </button>
+        <Link to="/admin" style={{ opacity: 0, position: 'absolute', right: 0, cursor: 'default' }}>.</Link>
       </footer>
     </div>
   );
