@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ShieldCheck, AlertTriangle, Book, MapPinOff } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, Book, MapPinOff, X } from 'lucide-react';
 
-const TermsModal = ({ onAgree }) => {
-  const [canAgree, setCanAgree] = useState(false);
+const TermsModal = ({ onAgree, viewOnly = false }) => {
+  const [canAgree, setCanAgree] = useState(viewOnly);
   const contentRef = useRef(null);
 
   const handleScroll = () => {
+    if (viewOnly) return;
     if (contentRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
       // If user scrolled to the bottom (with a small 10px buffer)
@@ -16,6 +17,10 @@ const TermsModal = ({ onAgree }) => {
   };
 
   useEffect(() => {
+    if (viewOnly) {
+      setCanAgree(true);
+      return;
+    }
     // Check if the content is short enough that it doesn't need scrolling
     if (contentRef.current) {
       const { scrollHeight, clientHeight } = contentRef.current;
@@ -23,7 +28,7 @@ const TermsModal = ({ onAgree }) => {
         setCanAgree(true);
       }
     }
-  }, []);
+  }, [viewOnly]);
 
   return (
     <div className="modal-overlay" style={{ zIndex: 9999, backdropFilter: 'blur(8px)' }}>
@@ -38,11 +43,19 @@ const TermsModal = ({ onAgree }) => {
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
         }}
       >
-        <div className="modal-header" style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)' }}>
+        <div className="modal-header" style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', position: 'relative' }}>
           <h2 style={{ color: 'var(--primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.5rem' }}>
             <ShieldCheck size={28} />
             利用規約 および プライバシーポリシー
           </h2>
+          {viewOnly && (
+            <button 
+              onClick={onAgree} 
+              style={{ position: 'absolute', right: '1.5rem', top: '1.5rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+            >
+              <X size={24} />
+            </button>
+          )}
         </div>
         
         <div 
@@ -75,20 +88,10 @@ const TermsModal = ({ onAgree }) => {
                 本ツールが示す判定結果は参考情報です。<strong>最終的な卒業要件の確認および履修登録については、必ず各自の責任において、大学公式の「学生便覧」および「学務課」の案内に基づいて行ってください。</strong>本ツールの利用により生じたいかなる不利益や損害についても、開発者は一切の責任を負いかねます。
               </p>
             </section>
-
-            <section style={{ marginBottom: '1rem' }}>
-              <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '0.5rem' }}>
-                <Book size={18} color="var(--primary)" />
-                2. 情報のオーナーシップ（帰属）
-              </h4>
-              <p style={{ fontSize: '0.9rem' }}>
-                本ツール内で参照・表示される科目名、シラバス情報、配当学期、単位数、および利用者が入力・確認する成績データ等に関する管理責任および本来の権利（オーナーシップ）は、<strong>周南公立大学</strong>に帰属します。
-              </p>
-            </section>
           </div>
 
           <div style={{ padding: '0.5rem 1rem', background: 'rgba(22, 163, 74, 0.05)', borderRadius: '8px', borderLeft: '4px solid #16a34a', marginBottom: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.2rem', color: 'var(--text-main)', borderBottom: '2px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>【 プライバシーポリシー（データの安全性）】</h3>
+            <h3 style={{ fontSize: '1.2rem', color: 'var(--text-main)', borderBottom: '2px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>【 プライバシーポリシー 】</h3>
             
             <section style={{ marginBottom: '1.5rem' }}>
               <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '0.5rem' }}>
@@ -131,7 +134,7 @@ const TermsModal = ({ onAgree }) => {
           gap: '1rem',
           alignItems: 'center'
         }}>
-          {!canAgree && (
+          {!canAgree && !viewOnly && (
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
               ※規約を一番下までスクロールすると同意できるようになります。
             </div>
@@ -153,7 +156,7 @@ const TermsModal = ({ onAgree }) => {
               opacity: canAgree ? 1 : 0.7
             }}
           >
-            以上の利用規約およびプライバシーポリシーに同意して利用する
+            {viewOnly ? "閉じる" : "以上の利用規約およびプライバシーポリシーに同意して利用する"}
           </button>
         </div>
       </div>

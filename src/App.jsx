@@ -125,7 +125,7 @@ const EconWarningModal = ({ onClose }) => (
   </div>
 );
 
-function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, showPdfInfo, setShowPdfInfo }) {
+function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, showPdfInfo, setShowPdfInfo, setShowTerms }) {
   const [showEconWarning, setShowEconWarning] = useState(false);
   const location = useLocation();
   const isPortal = location.pathname === '/';
@@ -275,9 +275,17 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
         </Routes>
       </main>
 
-      <footer className="site-footer">
-        Developed by KosukeGuntani using Gemini 3 Flash
-        <Link to="/admin" style={{ opacity: 0, position: 'absolute', right: 0, cursor: 'default' }}>.</Link>
+      <footer className="site-footer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+        <div>
+          Developed by KosukeGuntani using Gemini 3 Flash
+          <Link to="/admin" style={{ opacity: 0, position: 'absolute', right: 0, cursor: 'default' }}>.</Link>
+        </div>
+        <button 
+          onClick={() => setShowTerms(true)}
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline' }}
+        >
+          利用規約・プライバシーポリシー
+        </button>
       </footer>
     </div>
   );
@@ -293,6 +301,7 @@ function App() {
   });
   const [showChangelog, setShowChangelog] = useState(false);
   const [showPdfInfo, setShowPdfInfo] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -305,7 +314,7 @@ function App() {
 
   // モーダル表示時の背景スクロールロック
   useEffect(() => {
-    if (showChangelog || showPdfInfo || !agreedToTos) {
+    if (showChangelog || showPdfInfo || (!agreedToTos && !showTerms) || showTerms) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -313,7 +322,7 @@ function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showChangelog, showPdfInfo, agreedToTos]);
+  }, [showChangelog, showPdfInfo, agreedToTos, showTerms]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
@@ -330,7 +339,15 @@ function App() {
 
   return (
     <HashRouter>
-      {!agreedToTos && <TermsModal onAgree={handleAgreeToTos} />}
+      {(!agreedToTos || showTerms) && (
+        <TermsModal 
+          onAgree={() => {
+            if (!agreedToTos) handleAgreeToTos();
+            setShowTerms(false);
+          }} 
+          viewOnly={agreedToTos} 
+        />
+      )}
       <LayoutWrapper 
         theme={theme} 
         toggleTheme={toggleTheme} 
@@ -338,6 +355,7 @@ function App() {
         setShowChangelog={setShowChangelog}
         showPdfInfo={showPdfInfo}
         setShowPdfInfo={setShowPdfInfo}
+        setShowTerms={setShowTerms}
       />
       
       {showChangelog && (
