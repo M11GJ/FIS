@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 
 import changelogEcon from '../data/changelog_econ.json';
 import changelogInfo from '../data/changelog_info.json';
+import changelogPortal from '../data/changelog_portal.json';
 
 const FACULTIES = [
   {
@@ -73,9 +74,16 @@ const Portal = () => {
       type: 'info',
       detail: item.description || item.changes[0]
     }));
+    
+    const portalNews = changelogPortal.map(item => ({
+      date: item.date,
+      title: 'システム',
+      type: 'portal',
+      detail: item.description || item.changes[0]
+    }));
 
     // 日付順（降順）にソート
-    return [...econNews, ...infoNews].sort((a, b) => b.date.localeCompare(a.date));
+    return [...econNews, ...infoNews, ...portalNews].sort((a, b) => b.date.localeCompare(a.date));
   }, []);
 
   // お知らせモーダルコンポーネント
@@ -96,8 +104,8 @@ const Portal = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
                 <span style={{ 
                   fontSize: '0.75rem', fontWeight: 700, 
-                  color: item.type === 'econ' ? 'var(--color-econ)' : 'var(--color-info)', 
-                  background: item.type === 'econ' ? 'rgba(18, 118, 54, 0.1)' : 'rgba(226, 4, 11, 0.08)', 
+                  color: item.type === 'econ' ? 'var(--color-econ)' : item.type === 'info' ? 'var(--color-info)' : 'var(--text-main)', 
+                  background: item.type === 'econ' ? 'rgba(18, 118, 54, 0.1)' : item.type === 'info' ? 'rgba(226, 4, 11, 0.08)' : 'var(--border)', 
                   padding: '2px 8px', borderRadius: '4px' 
                 }}>
                   {item.title}
@@ -188,21 +196,21 @@ const Portal = () => {
           boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
           display: 'flex',
           flexDirection: 'column',
-          padding: '1.8rem 1.5rem 1.5rem',
+          padding: '1.2rem 1.2rem 1rem',
           border: '2px solid var(--border)',
           overflow: 'hidden',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>📢</span>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>お知らせ</h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <span style={{ fontSize: '1.2rem' }}>📢</span>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>お知らせ</h3>
             </div>
             <button 
               onClick={() => setShowNewsModal(true)}
               style={{
                 background: 'var(--accent-light)', border: 'none', color: 'var(--primary)', 
-                fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer',
-                padding: '0.3rem 0.6rem', borderRadius: '6px',
+                fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer',
+                padding: '0.2rem 0.5rem', borderRadius: '6px',
                 display: 'flex', alignItems: 'center', gap: '0.2rem', transition: 'all 0.2s'
               }}
               onMouseOver={e => e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.15)'}
@@ -218,8 +226,8 @@ const Portal = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.1rem' }}>
                   <span style={{ 
                     fontSize: '0.6rem', fontWeight: 800, 
-                    color: item.type === 'econ' ? 'var(--color-econ)' : 'var(--color-info)', 
-                    background: item.type === 'econ' ? 'rgba(18, 118, 54, 0.1)' : 'rgba(226, 4, 11, 0.08)', 
+                    color: item.type === 'econ' ? 'var(--color-econ)' : item.type === 'info' ? 'var(--color-info)' : 'var(--text-main)', 
+                    background: item.type === 'econ' ? 'rgba(18, 118, 54, 0.1)' : item.type === 'info' ? 'rgba(226, 4, 11, 0.08)' : 'var(--border)', 
                     padding: '1px 5px', borderRadius: '3px' 
                   }}>
                     {item.title}
@@ -246,7 +254,7 @@ const Portal = () => {
               opacity: fac.ready ? 1 : 0.5,
               display: 'flex',
               flexDirection: 'column',
-              padding: '1.8rem 1.5rem 1.5rem',
+              padding: '1.2rem 1.2rem 1rem',
               position: 'relative',
               overflow: 'hidden',
               transition: 'border-color 0.2s, box-shadow 0.2s',
@@ -272,7 +280,7 @@ const Portal = () => {
             )}
 
             {/* アイコン */}
-            <div className="faculty-card-emoji" style={{ fontSize: '2.5rem', lineHeight: 1, marginBottom: '1rem' }}>
+            <div className="faculty-card-emoji" style={{ fontSize: '2.2rem', lineHeight: 1, marginBottom: '0.75rem' }}>
               {fac.emoji}
             </div>
 
@@ -300,7 +308,7 @@ const Portal = () => {
             </div>
 
             {/* ボタン */}
-            <div className="faculty-actions" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1.2rem' }}>
+            <div className="faculty-actions" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.75rem' }}>
               {fac.ready ? (
                 <>
                   <button
