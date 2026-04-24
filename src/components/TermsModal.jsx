@@ -80,8 +80,18 @@ const TermsModal = ({ onAgree, viewOnly = false }) => {
             
             <section style={{ marginBottom: '1.5rem' }}>
               <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '0.5rem' }}>
+                <ShieldCheck size={18} color="var(--primary)" />
+                1. 利用対象者
+              </h4>
+              <p style={{ fontSize: '0.9rem' }}>
+                本ツールの利用は、<strong>周南公立大学に在籍する学生および教職員</strong>に限られます。それ以外の方のご利用はご遠慮ください。
+              </p>
+            </section>
+
+            <section style={{ marginBottom: '1.5rem' }}>
+              <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '0.5rem' }}>
                 <AlertTriangle size={18} color="var(--primary)" />
-                1. 本ツールの位置づけと免責事項
+                2. 本ツールの位置づけと免責事項
               </h4>
               <p style={{ fontSize: '0.9rem' }}>
                 本ツールは、学生が独自に開発した<strong>非公式の支援ツール</strong>であり、周南公立大学が公式に提供・保証するシステムではありません。<br/>
@@ -156,7 +166,7 @@ const TermsModal = ({ onAgree, viewOnly = false }) => {
               opacity: canAgree ? 1 : 0.7
             }}
           >
-            {viewOnly ? "閉じる" : "以上の利用規約およびプライバシーポリシーに同意して利用する"}
+            {viewOnly ? "閉じる" : "私は周南公立大学の学生・教員であり、上記に同意して利用する"}
           </button>
         </div>
       </div>
