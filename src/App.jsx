@@ -9,6 +9,7 @@ import pkg from '../package.json';
 import changelogEcon from './data/changelog_econ.json';
 import changelogInfo from './data/changelog_info.json';
 import changelogPortal from './data/changelog_portal.json';
+import TermsModal from './components/TermsModal';
 
 // --- メンテナンスモード設定 ---
 // true にするとメンテナンス画面が表示されます
@@ -283,6 +284,9 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
 }
 
 function App() {
+  const [agreedToTos, setAgreedToTos] = useState(() => {
+    return localStorage.getItem('agreedToTos') === 'true';
+  });
   const [theme, setTheme] = useState(() => {
     // Check local storage or default to light
     return localStorage.getItem('theme') || 'light';
@@ -301,7 +305,7 @@ function App() {
 
   // モーダル表示時の背景スクロールロック
   useEffect(() => {
-    if (showChangelog || showPdfInfo) {
+    if (showChangelog || showPdfInfo || !agreedToTos) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -309,10 +313,15 @@ function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showChangelog, showPdfInfo]);
+  }, [showChangelog, showPdfInfo, agreedToTos]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  const handleAgreeToTos = () => {
+    localStorage.setItem('agreedToTos', 'true');
+    setAgreedToTos(true);
   };
 
   if (MAINTENANCE_MODE) {
@@ -321,6 +330,7 @@ function App() {
 
   return (
     <HashRouter>
+      {!agreedToTos && <TermsModal onAgree={handleAgreeToTos} />}
       <LayoutWrapper 
         theme={theme} 
         toggleTheme={toggleTheme} 
