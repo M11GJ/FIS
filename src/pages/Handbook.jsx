@@ -5,13 +5,14 @@ import handbookEcon from '../data/handbook_econ.json';
 import coursesInfo from '../data/courses_info.json';
 import coursesEcon from '../data/courses_economics.json';
 import { formatTerm } from '../utils/formatTerm';
+import { mergeRooms } from '../utils/mergeRooms';
 import { BookOpen, Calendar, GraduationCap, ListTree, Hash, AlertTriangle } from 'lucide-react';
 
 function Handbook() {
   const { faculty: facultyId = 'info' } = useParams();
   
   const hData = facultyId === 'econ' ? handbookEcon : handbookInfo;
-  const cData = facultyId === 'econ' ? coursesEcon : coursesInfo;
+  const cData = mergeRooms(facultyId === 'econ' ? coursesEcon : coursesInfo);
 
   const groupedCourses = useMemo(() => {
     const groups = facultyId === 'econ' ? {

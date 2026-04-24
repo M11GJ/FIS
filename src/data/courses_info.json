@@ -16,7 +16,6 @@
     "required": true,
     "marks": "",
     "schedule": "火3",
-    "room": "1125",
     "instructor": "喜入 暁"
   },
   {
@@ -28,7 +27,6 @@
     "required": false,
     "marks": "",
     "schedule": "火5",
-    "room": "1125",
     "instructor": "呉 贇 他"
   },
   {
@@ -40,7 +38,6 @@
     "required": true,
     "marks": "",
     "schedule": "水4",
-    "room": "記念館 他",
     "instructor": "複数教員"
   },
   {
@@ -52,7 +49,6 @@
     "required": false,
     "marks": "",
     "schedule": "金34",
-    "room": "S1401・S1402",
     "instructor": "羽生 貞親"
   },
   {
@@ -64,7 +60,6 @@
     "required": false,
     "marks": "",
     "schedule": "水45",
-    "room": "記念館 他",
     "instructor": "岡崎 祐介 他"
   },
   {
@@ -76,7 +71,6 @@
     "required": false,
     "marks": "",
     "schedule": "金2",
-    "room": "1125",
     "instructor": "松﨑 守利"
   },
   {
@@ -88,7 +82,6 @@
     "required": false,
     "marks": "",
     "schedule": "水4",
-    "room": "1125",
     "instructor": "大平 光子 他"
   },
   {
@@ -100,7 +93,6 @@
     "required": false,
     "marks": "",
     "schedule": "火1",
-    "room": "1125",
     "instructor": "田中 数恵 他"
   },
   {
@@ -112,7 +104,6 @@
     "required": true,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "喜入 暁"
   },
   {
@@ -124,7 +115,6 @@
     "required": false,
     "marks": "",
     "schedule": "水45",
-    "room": "1125",
     "instructor": "北村 光子"
   },
   {
@@ -136,7 +126,6 @@
     "required": false,
     "marks": "",
     "schedule": "木5",
-    "room": "1141",
     "instructor": "渡邉 洋心"
   },
   {
@@ -148,8 +137,7 @@
     "required": false,
     "marks": "",
     "schedule": "木3",
-    "instructor": "百武 仁志",
-    "room": "1125"
+    "instructor": "百武 仁志"
   },
   {
     "id": "c_9b198a7c",
@@ -160,7 +148,6 @@
     "required": false,
     "marks": "",
     "schedule": "火3",
-    "room": "1125",
     "instructor": "中嶋 克政"
   },
   {
@@ -172,7 +159,6 @@
     "required": false,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "木村 玲欧"
   },
   {
@@ -184,7 +170,6 @@
     "required": false,
     "marks": "",
     "schedule": "木2",
-    "room": "S1301",
     "instructor": "石谷 康人"
   },
   {
@@ -196,7 +181,6 @@
     "required": false,
     "marks": "",
     "schedule": "木34",
-    "room": "1124",
     "instructor": "林 浩喜"
   },
   {
@@ -208,7 +192,6 @@
     "required": false,
     "marks": "",
     "schedule": "火3",
-    "room": "S1302",
     "instructor": "大坂 遊 他"
   },
   {
@@ -220,7 +203,6 @@
     "required": false,
     "marks": "",
     "schedule": "水45",
-    "room": "601",
     "instructor": "寺田 篤史 他"
   },
   {
@@ -232,7 +214,6 @@
     "required": false,
     "marks": "",
     "schedule": "-",
-    "room": "-",
     "instructor": "寺田 篤史 他"
   },
   {
@@ -244,7 +225,6 @@
     "required": false,
     "marks": "",
     "schedule": "金2",
-    "room": "S1302",
     "instructor": "渡部 明"
   },
   {
@@ -256,7 +236,6 @@
     "required": false,
     "marks": "",
     "schedule": "火1",
-    "room": "1125",
     "instructor": "新井 誠"
   },
   {
@@ -268,7 +247,6 @@
     "required": false,
     "marks": "",
     "schedule": "木1",
-    "room": "1141",
     "instructor": "稲垣 円"
   },
   {
@@ -280,7 +258,6 @@
     "required": false,
     "marks": "",
     "schedule": "火4",
-    "room": "521",
     "instructor": "長澤 賢一 他"
   },
   {
@@ -292,7 +269,6 @@
     "required": false,
     "marks": "",
     "schedule": "月金5",
-    "room": "1124",
     "instructor": "新枝 美帆"
   },
   {
@@ -304,7 +280,6 @@
     "required": false,
     "marks": "",
     "schedule": "火23",
-    "room": "521",
     "instructor": "河村 玉"
   },
   {
@@ -316,7 +291,6 @@
     "required": false,
     "marks": "",
     "schedule": "木34",
-    "room": "1121",
     "instructor": "李 萬善"
   },
   {
@@ -328,7 +302,6 @@
     "required": false,
     "marks": "",
     "schedule": "木34",
-    "room": "1122",
     "instructor": "李 萬善"
   },
   {
@@ -340,7 +313,6 @@
     "required": false,
     "marks": "",
     "schedule": "火23",
-    "room": "521",
     "instructor": "河村 玉"
   },
   {
@@ -352,7 +324,6 @@
     "required": false,
     "marks": "",
     "schedule": "月金5",
-    "room": "1124",
     "instructor": "新枝 美帆"
   },
   {
@@ -364,7 +335,6 @@
     "required": true,
     "marks": "",
     "schedule": "水3",
-    "room": "各演習室 / 他",
     "instructor": "複数教員"
   },
   {
@@ -376,7 +346,6 @@
     "required": false,
     "marks": "",
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "西村 浩子／田中 敦志"
   },
   {
@@ -388,7 +357,6 @@
     "required": false,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "日置 智子"
   },
   {
@@ -400,7 +368,6 @@
     "required": true,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "酒井 徹也"
   },
   {
@@ -412,7 +379,6 @@
     "required": true,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "Richard Sugg"
   },
   {
@@ -424,7 +390,6 @@
     "required": true,
     "marks": "",
     "schedule": "金3",
-    "room": "1125",
     "instructor": "寺田 篤史・中嶋 克成"
   },
   {
@@ -436,7 +401,6 @@
     "required": false,
     "marks": "",
     "schedule": "金2",
-    "room": "S1301",
     "instructor": "寺田 篤史"
   },
   {
@@ -448,7 +412,6 @@
     "required": true,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "Richard Sugg"
   },
   {
@@ -460,7 +423,6 @@
     "required": false,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "呉 靭"
   },
   {
@@ -472,7 +434,6 @@
     "required": true,
     "marks": "",
     "schedule": "水4",
-    "room": "S1303/S1304",
     "instructor": "渡部 明"
   },
   {
@@ -484,7 +445,6 @@
     "required": false,
     "marks": "",
     "schedule": "金45",
-    "room": "1121",
     "instructor": "Pauline Baldwin"
   },
   {
@@ -496,7 +456,6 @@
     "required": true,
     "marks": "",
     "schedule": "水4",
-    "room": "1142",
     "instructor": "渡部 明"
   },
   {
@@ -508,7 +467,6 @@
     "required": true,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "Richard Sugg"
   },
   {
@@ -520,7 +478,6 @@
     "required": false,
     "marks": "",
     "schedule": "金3又は4",
-    "room": "1125",
     "instructor": "寺田 篤史・中嶋 克成"
   },
   {
@@ -532,7 +489,6 @@
     "required": true,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "Richard Sugg"
   },
   {
@@ -544,7 +500,6 @@
     "required": false,
     "marks": "",
     "schedule": "火2",
-    "room": "1124",
     "instructor": "Pauline Baldwin"
   },
   {
@@ -556,7 +511,6 @@
     "required": false,
     "marks": "",
     "schedule": "月2",
-    "room": "1124",
     "instructor": "田中 数恵"
   },
   {
@@ -568,7 +522,6 @@
     "required": false,
     "marks": "",
     "schedule": "月2",
-    "room": "1124",
     "instructor": "田中 数恵"
   },
   {
@@ -580,7 +533,6 @@
     "required": false,
     "marks": "",
     "schedule": "金45",
-    "room": "1121",
     "instructor": "Pauline Baldwin"
   },
   {
@@ -592,7 +544,6 @@
     "required": true,
     "marks": "",
     "schedule": "火金2",
-    "room": "1142",
     "instructor": "小栁 淳二 他"
   },
   {
@@ -604,7 +555,6 @@
     "required": true,
     "marks": "",
     "schedule": "水12",
-    "room": "1142",
     "instructor": "矢島 安敏"
   },
   {
@@ -616,7 +566,6 @@
     "required": true,
     "marks": "",
     "schedule": "火金2",
-    "room": "1142",
     "instructor": "橋本・野村・髙藤"
   },
   {
@@ -628,7 +577,6 @@
     "required": true,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "酒井 徹也"
   },
   {
@@ -640,7 +588,6 @@
     "required": true,
     "marks": "",
     "schedule": "月木2",
-    "room": "1142",
     "instructor": "大島 和裕"
   },
   {
@@ -652,7 +599,6 @@
     "required": true,
     "marks": "",
     "schedule": "月木1",
-    "room": "1141",
     "instructor": "道山 知成"
   },
   {
@@ -664,7 +610,6 @@
     "required": false,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "呉 靭"
   },
   {
@@ -676,7 +621,6 @@
     "required": false,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "酒井 徹也"
   },
   {
@@ -688,7 +632,6 @@
     "required": false,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "谷村 琢也"
   },
   {
@@ -700,7 +643,6 @@
     "required": true,
     "marks": "",
     "schedule": "月木4",
-    "room": "1142",
     "instructor": "道山 知成"
   },
   {
@@ -712,7 +654,6 @@
     "required": false,
     "marks": "",
     "schedule": "水12",
-    "room": "1142",
     "instructor": "立部 文崇"
   },
   {
@@ -724,7 +665,6 @@
     "required": true,
     "marks": "",
     "schedule": "月木2",
-    "room": "1142",
     "instructor": "小栁 淳二"
   },
   {
@@ -736,7 +676,6 @@
     "required": false,
     "marks": "",
     "schedule": "火金1",
-    "room": "1142",
     "instructor": "松村 遼"
   },
   {
@@ -748,7 +687,6 @@
     "required": false,
     "marks": "",
     "schedule": "月木3",
-    "room": "1142",
     "instructor": "児玉 満"
   },
   {
@@ -760,7 +698,6 @@
     "required": false,
     "marks": "",
     "schedule": "月木1",
-    "room": "1142",
     "instructor": "立部 文崇"
   },
   {
@@ -772,7 +709,6 @@
     "required": false,
     "marks": "",
     "schedule": "月木3",
-    "room": "1142",
     "instructor": "児玉 満"
   },
   {
@@ -784,7 +720,6 @@
     "required": false,
     "marks": "",
     "schedule": "火金1",
-    "room": "1142",
     "instructor": "橋本 喜代太"
   },
   {
@@ -796,7 +731,6 @@
     "required": false,
     "marks": "",
     "schedule": "月木4",
-    "room": "1142",
     "instructor": "道山 知成"
   },
   {
@@ -808,7 +742,6 @@
     "required": false,
     "marks": "",
     "schedule": "月木1",
-    "room": "1141",
     "instructor": "橋本 喜代太"
   },
   {
@@ -820,7 +753,6 @@
     "required": false,
     "marks": "",
     "schedule": "月木2",
-    "room": "534",
     "instructor": "中山 季之"
   },
   {
@@ -832,7 +764,6 @@
     "required": false,
     "marks": "",
     "schedule": "火金5",
-    "room": "1142",
     "instructor": "内田 善彦"
   },
   {
@@ -844,7 +775,6 @@
     "required": false,
     "marks": "",
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "綿村 英一郎"
   },
   {
@@ -856,7 +786,6 @@
     "required": false,
     "marks": "",
     "schedule": "火金1",
-    "room": "オンライン",
     "instructor": "羽渕 由子"
   },
   {
@@ -868,7 +797,6 @@
     "required": false,
     "marks": "",
     "schedule": "火金3",
-    "room": "525",
     "instructor": "立部 文崇"
   },
   {
@@ -880,7 +808,6 @@
     "required": false,
     "marks": "",
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "児玉／立部／酒井／渡部"
   },
   {
@@ -897,7 +824,6 @@
       "ds": "必修"
     },
     "schedule": "火金4",
-    "room": "1142",
     "instructor": "矢島 安敏"
   },
   {
@@ -914,7 +840,6 @@
       "ds": "必修"
     },
     "schedule": "月木1",
-    "room": "1142",
     "instructor": "河村 拓実"
   },
   {
@@ -931,7 +856,6 @@
       "ds": "必修"
     },
     "schedule": "火金4",
-    "room": "1142",
     "instructor": "大島 和裕"
   },
   {
@@ -948,7 +872,6 @@
       "ds": "必修"
     },
     "schedule": "月木4",
-    "room": "1141",
     "instructor": "松村 遼"
   },
   {
@@ -966,7 +889,6 @@
       "ie": "選択"
     },
     "schedule": "月木5",
-    "room": "1142",
     "instructor": "河村 拓実"
   },
   {
@@ -983,7 +905,6 @@
       "ds": "選択"
     },
     "schedule": "火金1",
-    "room": "1142",
     "instructor": "日置 智子"
   },
   {
@@ -1001,7 +922,6 @@
       "ba": "選択"
     },
     "schedule": "月木2",
-    "room": "525",
     "instructor": "大島 和裕"
   },
   {
@@ -1019,7 +939,6 @@
       "ba": "選択"
     },
     "schedule": "火金3",
-    "room": "1141",
     "instructor": "矢敷 達朗"
   },
   {
@@ -1037,7 +956,6 @@
       "ba": "選択"
     },
     "schedule": "火金2",
-    "room": "オンライン",
     "instructor": "橋本 喜代太"
   },
   {
@@ -1054,7 +972,6 @@
       "ds": "選択"
     },
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "西郷 彰"
   },
   {
@@ -1071,7 +988,6 @@
       "ds": "選択"
     },
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "大島 和裕"
   },
   {
@@ -1088,8 +1004,7 @@
       "ds": "選択"
     },
     "schedule": "火金2",
-    "instructor": "松村 遼",
-    "room": "523"
+    "instructor": "松村 遼"
   },
   {
     "id": "c_b64c7072",
@@ -1106,7 +1021,6 @@
       "ba": "選択"
     },
     "schedule": "火金1",
-    "room": "523",
     "instructor": "羽渕 由子"
   },
   {
@@ -1123,7 +1037,6 @@
       "ie": "必修"
     },
     "schedule": "火金2",
-    "room": "1142",
     "instructor": "野村 典文"
   },
   {
@@ -1140,7 +1053,6 @@
       "ie": "必修"
     },
     "schedule": "火金2",
-    "room": "オンライン",
     "instructor": "野村 典文"
   },
   {
@@ -1157,7 +1069,6 @@
       "ie": "必修"
     },
     "schedule": "月4",
-    "room": "1141",
     "instructor": "髙藤 大介"
   },
   {
@@ -1174,7 +1085,6 @@
       "ie": "必修"
     },
     "schedule": "木4",
-    "room": "1142",
     "instructor": "髙藤 大介"
   },
   {
@@ -1191,7 +1101,6 @@
       "ie": "選択"
     },
     "schedule": "水12",
-    "room": "1141",
     "instructor": "内田・児玉"
   },
   {
@@ -1208,7 +1117,6 @@
       "ie": "選択"
     },
     "schedule": "火金2",
-    "room": "1142",
     "instructor": "田中 輝明"
   },
   {
@@ -1225,7 +1133,6 @@
       "ie": "選択"
     },
     "schedule": "月木3",
-    "room": "1142",
     "instructor": "呉 靭"
   },
   {
@@ -1242,7 +1149,6 @@
       "ie": "選択"
     },
     "schedule": "火金2",
-    "room": "1141",
     "instructor": "髙藤 大介"
   },
   {
@@ -1259,7 +1165,6 @@
       "ie": "選択"
     },
     "schedule": "月木3",
-    "room": "1141",
     "instructor": "酒井 徹也"
   },
   {
@@ -1277,8 +1182,7 @@
       "ba": "選択"
     },
     "schedule": "-",
-    "instructor": "久島 達明",
-    "room": "-"
+    "instructor": "久島 達明"
   },
   {
     "id": "c_858a9164",
@@ -1294,7 +1198,6 @@
       "ie": "選択"
     },
     "schedule": "月木1",
-    "room": "1124",
     "instructor": "河村 拓実"
   },
   {
@@ -1311,7 +1214,6 @@
       "ie": "選択"
     },
     "schedule": "水34",
-    "room": "1142",
     "instructor": "北須賀 輝明"
   },
   {
@@ -1328,7 +1230,6 @@
       "ba": "必修"
     },
     "schedule": "月木2",
-    "room": "1142",
     "instructor": "橋本・小栁"
   },
   {
@@ -1346,7 +1247,6 @@
       "ba": "選択"
     },
     "schedule": "月木3",
-    "room": "1142",
     "instructor": "河村 拓実"
   },
   {
@@ -1363,7 +1263,6 @@
       "ba": "必修"
     },
     "schedule": "水12",
-    "room": "1142",
     "instructor": "矢島 安敏"
   },
   {
@@ -1380,7 +1279,6 @@
       "ba": "選択"
     },
     "schedule": "火金2",
-    "room": "1141",
     "instructor": "小栁 淳二"
   },
   {
@@ -1397,7 +1295,6 @@
       "ba": "必修"
     },
     "schedule": "火金3",
-    "room": "1142",
     "instructor": "小栁 淳二"
   },
   {
@@ -1414,7 +1311,6 @@
       "ba": "選択"
     },
     "schedule": "オンデマンド",
-    "room": "オンデマンド・対面",
     "instructor": "西郷 彰"
   },
   {
@@ -1431,7 +1327,6 @@
       "ba": "必修"
     },
     "schedule": "月木3",
-    "room": "535",
     "instructor": "矢敷 達朗"
   },
   {
@@ -1449,7 +1344,6 @@
       "ba": "選択"
     },
     "schedule": "月木4",
-    "room": "1121",
     "instructor": "小栁 淳二"
   },
   {
@@ -1467,7 +1361,6 @@
       "ba": "選択"
     },
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "谷村 琢也"
   },
   {
@@ -1485,7 +1378,6 @@
       "ba": "選択"
     },
     "schedule": "火金4",
-    "room": "オンライン",
     "instructor": "内田 善彦"
   },
   {
@@ -1503,7 +1395,6 @@
       "ba": "選択"
     },
     "schedule": "月木4",
-    "room": "524",
     "instructor": "中山 季之"
   },
   {
@@ -1515,7 +1406,6 @@
     "required": false,
     "marks": "",
     "schedule": "月木2",
-    "room": "1142",
     "instructor": "橋本 喜代太"
   },
   {
@@ -1527,7 +1417,6 @@
     "required": false,
     "marks": "",
     "schedule": "火金3",
-    "room": "1142",
     "instructor": "小栁 淳二 他"
   },
   {
@@ -1539,7 +1428,6 @@
     "required": false,
     "marks": "",
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "日置 智子"
   },
   {
@@ -1578,8 +1466,7 @@
     "required": false,
     "marks": "",
     "schedule": "木4",
-    "instructor": "難波 利光",
-    "room": "1141"
+    "instructor": "難波 利光"
   },
   {
     "id": "c_8e19d5ca",
@@ -1590,7 +1477,6 @@
     "required": false,
     "marks": "",
     "schedule": "火1",
-    "room": "S1303/S1304",
     "instructor": "髙橋 真実"
   },
   {
@@ -1602,7 +1488,6 @@
     "required": false,
     "marks": "",
     "schedule": "木2",
-    "room": "522",
     "instructor": "伊藤 敏安"
   },
   {
@@ -1614,7 +1499,6 @@
     "required": false,
     "marks": "",
     "schedule": "月3",
-    "room": "611",
     "instructor": "中嶋 健"
   },
   {
@@ -1626,7 +1510,6 @@
     "required": false,
     "marks": "",
     "schedule": "月3",
-    "room": "534",
     "instructor": "中嶋 健"
   },
   {
@@ -1638,7 +1521,6 @@
     "required": false,
     "marks": "",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "小笠原 正志"
   },
   {
@@ -1650,7 +1532,6 @@
     "required": false,
     "marks": "",
     "schedule": "-",
-    "room": "-",
     "instructor": "守本 友美（主）、山岡 幸子"
   },
   {
@@ -1662,7 +1543,6 @@
     "required": false,
     "marks": "",
     "schedule": "-",
-    "room": "-",
     "instructor": "-"
   },
   {
@@ -1674,7 +1554,6 @@
     "required": false,
     "marks": "1 3 91 21 01 31-3-91-21-01",
     "schedule": "水3",
-    "room": "535",
     "instructor": "阿濱 志保里"
   },
   {
@@ -1686,7 +1565,6 @@
     "required": false,
     "marks": "1 3 91 21 02 31-3-91-21-02",
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "阿濱 茂樹"
   },
   {
@@ -1698,7 +1576,6 @@
     "required": false,
     "marks": "1 3 91 22 03 31-3-91-22-03",
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "阿濱 茂樹"
   },
   {
@@ -1710,7 +1587,6 @@
     "required": false,
     "marks": "1 1 92 21 01 31-1-92-21-01",
     "schedule": "月5",
-    "room": "1141",
     "instructor": "-"
   },
   {
@@ -1722,7 +1598,6 @@
     "required": false,
     "marks": "1 1 92 22 02 31-1-92-22-02",
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "安藤 和久"
   },
   {
@@ -1734,7 +1609,6 @@
     "required": false,
     "marks": "1 2 92 21 01 31-2-92-21-01",
     "schedule": "水5",
-    "room": "S1302",
     "instructor": "渡部 明"
   },
   {
@@ -1746,7 +1620,6 @@
     "required": false,
     "marks": "1 2 92 21 02 31-2-92-21-02",
     "schedule": "金5",
-    "room": "S1302",
     "instructor": "-"
   },
   {
@@ -1758,7 +1631,6 @@
     "required": false,
     "marks": "1 2 92 21 03 31-2-92-21-03",
     "schedule": "木4",
-    "room": "オンライン",
     "instructor": "前田 美穂/本田 真"
   },
   {
@@ -1770,7 +1642,6 @@
     "required": false,
     "marks": "1 2 92 21 04 31-2-92-21-04",
     "schedule": "火5",
-    "room": "1141",
     "instructor": "大坂・安藤"
   },
   {
@@ -1782,7 +1653,6 @@
     "required": false,
     "marks": "1 2 92 22 05 31-2-92-22-05",
     "schedule": "月5",
-    "room": "S1301",
     "instructor": "大坂・安藤"
   },
   {
@@ -1794,7 +1664,6 @@
     "required": false,
     "marks": "1 2 92 22 06 31-2-92-22-06",
     "schedule": "集中講義等",
-    "room": "対面・オンライン",
     "instructor": "前田 美穂／本田 真"
   },
   {
@@ -1806,7 +1675,6 @@
     "required": false,
     "marks": "1 2 92 22 07 31-2-92-22-07",
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "押尾 恵吾"
   },
   {
@@ -1818,7 +1686,6 @@
     "required": false,
     "marks": "1 3 92 21 01 31-3-92-21-01",
     "schedule": "月金5",
-    "room": "S1302",
     "instructor": "藤本 勇二"
   },
   {
@@ -1830,7 +1697,6 @@
     "required": false,
     "marks": "1 3 92 22 02 31-3-92-22-02",
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "川本 吉太郎"
   },
   {
@@ -1842,7 +1708,6 @@
     "required": false,
     "marks": "1 3 92 22 03 31-3-92-22-03",
     "schedule": "月4",
-    "room": "611",
     "instructor": "中嶋 克成"
   },
   {
@@ -1854,7 +1719,6 @@
     "required": false,
     "marks": "1 3 92 22 04 31-3-92-22-04",
     "schedule": "金5",
-    "room": "1141",
     "instructor": "渡部・大坂"
   },
   {
@@ -1902,7 +1766,6 @@
     "required": false,
     "marks": "",
     "schedule": "火金3",
-    "room": "1141",
     "instructor": "田中 輝明"
   },
   {
@@ -1918,7 +1781,6 @@
     },
     "marks": "",
     "schedule": "火金4",
-    "room": "521",
     "instructor": "田中 輝明"
   },
   {
@@ -1934,7 +1796,6 @@
     },
     "marks": "",
     "schedule": "月木4",
-    "room": "521",
     "instructor": "中山 季之"
   }
 ]

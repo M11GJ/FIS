@@ -8,7 +8,6 @@
     "subCategory": "A",
     "required": false,
     "schedule": "金3・金4",
-    "room": "51401/51402",
     "instructor": "羽生 貞親",
     "marks": "前期"
   },
@@ -21,7 +20,6 @@
     "subCategory": "A",
     "required": true,
     "schedule": "水3・水4",
-    "room": "記念館",
     "instructor": "未定",
     "marks": "前期"
   },
@@ -34,7 +32,6 @@
     "subCategory": "A",
     "required": false,
     "schedule": "火5",
-    "room": "1125",
     "instructor": "井上 浩 他",
     "marks": "前期"
   },
@@ -47,7 +44,6 @@
     "subCategory": "A",
     "required": true,
     "schedule": "火3",
-    "room": "1125",
     "instructor": "喜入 暁",
     "marks": "前期"
   },
@@ -60,7 +56,6 @@
     "subCategory": "A",
     "required": false,
     "schedule": "火1",
-    "room": "1125",
     "instructor": "田中 数恵 他",
     "marks": "後期"
   },
@@ -73,7 +68,6 @@
     "subCategory": "A",
     "required": false,
     "schedule": "水3・水4",
-    "room": "記念館",
     "instructor": "未定",
     "marks": "後期"
   },
@@ -86,7 +80,6 @@
     "subCategory": "A",
     "required": false,
     "schedule": "金2",
-    "room": "1125",
     "instructor": "松﨑 守利",
     "marks": "後期"
   },
@@ -99,7 +92,6 @@
     "subCategory": "A",
     "required": false,
     "schedule": "水4",
-    "room": "1125",
     "instructor": "大平 光子 他",
     "marks": "後期"
   },
@@ -112,7 +104,6 @@
     "subCategory": "A",
     "required": false,
     "schedule": "水4",
-    "room": "1125",
     "instructor": "北村　光子",
     "marks": "前期"
   },
@@ -125,7 +116,6 @@
     "subCategory": "A",
     "required": true,
     "schedule": "オンデマンド",
-    "room": "-",
     "instructor": "喜入 暁",
     "marks": "前期"
   },
@@ -138,7 +128,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "木5",
-    "room": "1141",
     "instructor": "渡邉 洋心",
     "marks": "後期"
   },
@@ -151,7 +140,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "木3",
-    "room": "51301",
     "instructor": "未定",
     "marks": "後期"
   },
@@ -164,7 +152,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "火3",
-    "room": "1125",
     "instructor": "中嶋 克成",
     "marks": "後期"
   },
@@ -177,7 +164,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "月5",
-    "room": "1141",
     "instructor": "堀田 円",
     "marks": "後期"
   },
@@ -190,7 +176,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -203,7 +188,6 @@
     "subCategory": "B",
     "required": true,
     "schedule": "対面",
-    "room": "-",
     "instructor": "梅田 勝利 / 難波 利光 / 伊藤 敏安 / 水﨑 佑毅 / 瀬尾 賢一郎",
     "marks": "通年"
   },
@@ -216,7 +200,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "木2",
-    "room": "51301",
     "instructor": "石谷 康人",
     "marks": "前期"
   },
@@ -229,7 +212,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "月4",
-    "room": "51301",
     "instructor": "堀田 円",
     "marks": "前期"
   },
@@ -242,7 +224,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "木3・木4",
-    "room": "1124",
     "instructor": "林 浩喜",
     "marks": "前期/後期"
   },
@@ -255,7 +236,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "水4・水5",
-    "room": "601",
     "instructor": "今井 篤史 他",
     "marks": "前期"
   },
@@ -268,7 +248,6 @@
     "subCategory": "C",
     "required": false,
     "schedule": "対面",
-    "room": "-",
     "instructor": "寺田 篤史",
     "marks": "後期"
   },
@@ -281,7 +260,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "木1",
-    "room": "1141",
     "instructor": "堀田 円",
     "marks": "前期"
   },
@@ -294,7 +272,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "金5",
-    "room": "1125",
     "instructor": "喜入 暁",
     "marks": "前期"
   },
@@ -307,7 +284,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "金1",
-    "room": "534",
     "instructor": "河田 正樹",
     "marks": "前期"
   },
@@ -320,7 +296,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "金2",
-    "room": "51302",
     "instructor": "渡部 明",
     "marks": "前期"
   },
@@ -333,7 +308,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "火1",
-    "room": "1125",
     "instructor": "新井 誠",
     "marks": "前期"
   },
@@ -346,7 +320,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "月4",
-    "room": "1125",
     "instructor": "寺田 篤史",
     "marks": "前期"
   },
@@ -359,7 +332,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "月5・金5",
-    "room": "1124",
     "instructor": "新枝 美帆",
     "marks": "後期"
   },
@@ -372,7 +344,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "木3・木4",
-    "room": "1121",
     "instructor": "李 萬善",
     "marks": "後期"
   },
@@ -385,7 +356,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "金2",
-    "room": "51303/51304",
     "instructor": "喜入 暁",
     "marks": "後期"
   },
@@ -398,7 +368,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "火2",
-    "room": "521/531",
     "instructor": "河村 玉",
     "marks": "前期/後期"
   },
@@ -411,7 +380,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "金1",
-    "room": "51303/51304",
     "instructor": "寺田 篤史",
     "marks": "後期"
   },
@@ -424,7 +392,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "月5・金5",
-    "room": "1124",
     "instructor": "新枝 美帆",
     "marks": "前期"
   },
@@ -437,7 +404,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "月3",
-    "room": "51302",
     "instructor": "藤村 泰夫",
     "marks": "前期"
   },
@@ -450,7 +416,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "木3",
-    "room": "オンライン",
     "instructor": "李 萬善",
     "marks": "前期"
   },
@@ -463,7 +428,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "木1",
-    "room": "531",
     "instructor": "佐藤 裕哉",
     "marks": "前期"
   },
@@ -476,7 +440,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "火3",
-    "room": "521",
     "instructor": "河村 玉",
     "marks": "前期"
   },
@@ -489,7 +452,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -502,7 +464,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "月3",
-    "room": "51302",
     "instructor": "藤村 泰夫",
     "marks": "後期"
   },
@@ -515,7 +476,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "木1",
-    "room": "531",
     "instructor": "佐藤 裕哉",
     "marks": "後期"
   },
@@ -528,7 +488,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "水4",
-    "room": "51301",
     "instructor": "藤村 泰夫",
     "marks": "後期"
   },
@@ -541,7 +500,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "木2",
-    "room": "521",
     "instructor": "佐藤 裕哉",
     "marks": "前期"
   },
@@ -554,7 +512,6 @@
     "subCategory": "B",
     "required": false,
     "schedule": "木4",
-    "room": "522",
     "instructor": "佐藤 裕哉",
     "marks": "後期"
   },
@@ -567,7 +524,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "金3",
-    "room": "1125",
     "instructor": "寺田 篤史・中嶋 克成",
     "marks": ""
   },
@@ -580,7 +536,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "酒井　徹也",
     "marks": "前期"
   },
@@ -593,7 +548,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "水1",
-    "room": "1121",
     "instructor": "Darcy　Dwyer",
     "marks": "前期"
   },
@@ -606,7 +560,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "月2又は3",
-    "room": "-",
     "instructor": "人による",
     "marks": "前期"
   },
@@ -619,7 +572,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "日置 智子",
     "marks": "前期"
   },
@@ -632,7 +584,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "月2又は3",
-    "room": "-",
     "instructor": "-",
     "marks": "前期"
   },
@@ -645,7 +596,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "対面",
-    "room": "-",
     "instructor": "田中 数恵・西村 浩子",
     "marks": "前期"
   },
@@ -658,7 +608,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "金2",
-    "room": "51301",
     "instructor": "寺田 篤史",
     "marks": "後期"
   },
@@ -671,7 +620,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "呉 靭",
     "marks": "後期"
   },
@@ -684,7 +632,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "水1",
-    "room": "1121",
     "instructor": "Darcy　Dwyer",
     "marks": "後期"
   },
@@ -697,7 +644,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "月2又は3",
-    "room": "-",
     "instructor": "-",
     "marks": "後期"
   },
@@ -710,7 +656,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "金3又は4",
-    "room": "1125",
     "instructor": "寺田 篤史・中嶋 克成",
     "marks": ""
   },
@@ -723,7 +668,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "金4・金5",
-    "room": "1121",
     "instructor": "Pauline Baldwin",
     "marks": "前期"
   },
@@ -736,7 +680,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "水4",
-    "room": "-",
     "instructor": "渡部 明",
     "marks": "前期"
   },
@@ -749,7 +692,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "金2又は4",
-    "room": "-",
     "instructor": "-",
     "marks": "前期"
   },
@@ -762,7 +704,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "火2",
-    "room": "1124",
     "instructor": "Pauline Baldwin",
     "marks": "後期"
   },
@@ -775,7 +716,6 @@
     "subCategory": "D",
     "required": true,
     "schedule": "金2又は4",
-    "room": "-",
     "instructor": "-",
     "marks": "後期"
   },
@@ -788,7 +728,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "月2",
-    "room": "-",
     "instructor": "-",
     "marks": "前期"
   },
@@ -801,7 +740,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "金4・金5",
-    "room": "1121",
     "instructor": "Pauline Baldwin",
     "marks": "後期"
   },
@@ -814,7 +752,6 @@
     "subCategory": "D",
     "required": false,
     "schedule": "月2",
-    "room": "-",
     "instructor": "-",
     "marks": "後期"
   },
@@ -827,7 +764,6 @@
     "subCategory": "intro",
     "required": true,
     "schedule": "火4",
-    "room": "1125",
     "instructor": "佐藤 裕哉 他",
     "marks": "前期"
   },
@@ -840,7 +776,6 @@
     "subCategory": "intro",
     "required": true,
     "schedule": "木3",
-    "room": "1125",
     "instructor": "石谷　康人",
     "marks": "前期"
   },
@@ -853,7 +788,6 @@
     "subCategory": "intro",
     "required": true,
     "schedule": "木3",
-    "room": "1125",
     "instructor": "石谷　康人",
     "marks": "前期"
   },
@@ -866,7 +800,6 @@
     "subCategory": "intro",
     "required": true,
     "schedule": "木4",
-    "room": "1141",
     "instructor": "岩本 直",
     "marks": "後期"
   },
@@ -879,7 +812,6 @@
     "subCategory": "intro",
     "required": true,
     "schedule": "木1",
-    "room": "1125",
     "instructor": "石谷　康人",
     "marks": "後期"
   },
@@ -892,7 +824,6 @@
     "subCategory": "intro",
     "required": true,
     "schedule": "月3",
-    "room": "1125",
     "instructor": "伏木 貞文",
     "marks": ""
   },
@@ -905,7 +836,6 @@
     "subCategory": "intro",
     "required": true,
     "schedule": "オンデマンド",
-    "room": "オンデマンド",
     "instructor": "長澤　賢一",
     "marks": "前期"
   },
@@ -918,7 +848,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "水5",
-    "room": "S1301",
     "instructor": "長濱　幸一",
     "marks": "前期"
   },
@@ -931,7 +860,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "金3",
-    "room": "1142",
     "instructor": "河田 正樹",
     "marks": "前期"
   },
@@ -944,7 +872,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "火5",
-    "room": "1125",
     "instructor": "岩本 康",
     "marks": "後期"
   },
@@ -957,7 +884,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "月3",
-    "room": "523",
     "instructor": "高山 寛",
     "marks": "前期"
   },
@@ -970,7 +896,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "火4",
-    "room": "オンライン",
     "instructor": "長澤 賢一",
     "marks": "前期"
   },
@@ -983,7 +908,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "火5",
-    "room": "51302",
     "instructor": "田島 正士",
     "marks": "後期"
   },
@@ -996,7 +920,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "水3",
-    "room": "S1302",
     "instructor": "高山　寛",
     "marks": "後期"
   },
@@ -1009,7 +932,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "木1",
-    "room": "1142",
     "instructor": "岩本 直",
     "marks": "後期"
   },
@@ -1022,7 +944,6 @@
     "subCategory": "region",
     "required": false,
     "schedule": "月1",
-    "room": "51301",
     "instructor": "村岡 浩次",
     "marks": "後期"
   },
@@ -1035,7 +956,6 @@
     "subCategory": "econ",
     "required": false,
     "schedule": "金3",
-    "room": "51301",
     "instructor": "長澤 賢一",
     "marks": "後期"
   },
@@ -1048,7 +968,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "金2",
-    "room": "1125",
     "instructor": "矢野 沙織",
     "marks": "前期"
   },
@@ -1061,7 +980,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "未定",
-    "room": "-",
     "instructor": "未定",
     "marks": "後期"
   },
@@ -1074,7 +992,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "火1",
-    "room": "51303/51304",
     "instructor": "髙橋 真実",
     "marks": "前期"
   },
@@ -1087,7 +1004,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "木1",
-    "room": "オンライン",
     "instructor": "呉　贇",
     "marks": "前期"
   },
@@ -1100,7 +1016,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "火5",
-    "room": "オンライン",
     "instructor": "髙橋 真実",
     "marks": "前期"
   },
@@ -1113,7 +1028,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "木3",
-    "room": "51303/51304",
     "instructor": "石谷 康人",
     "marks": "前期"
   },
@@ -1126,7 +1040,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "火2",
-    "room": "51301",
     "instructor": "未定",
     "marks": "後期"
   },
@@ -1139,7 +1052,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "木1",
-    "room": "525",
     "instructor": "髙橋 真実",
     "marks": "後期"
   },
@@ -1152,7 +1064,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "火2",
-    "room": "51302",
     "instructor": "髙橋 真実",
     "marks": "前期"
   },
@@ -1165,7 +1076,6 @@
     "subCategory": "global",
     "required": false,
     "schedule": "月3",
-    "room": "1125",
     "instructor": "村岡　浩次",
     "marks": "後期"
   },
@@ -1178,7 +1088,6 @@
     "subCategory": "global",
     "required": false,
     "schedule": "木2",
-    "room": "531",
     "instructor": "岡本 次郎",
     "marks": "後期"
   },
@@ -1191,7 +1100,6 @@
     "subCategory": "global",
     "required": false,
     "schedule": "水3",
-    "room": "532",
     "instructor": "岡本　次郎",
     "marks": "前期"
   },
@@ -1204,7 +1112,6 @@
     "subCategory": "global",
     "required": false,
     "schedule": "火1",
-    "room": "532",
     "instructor": "WEI DI",
     "marks": "前期"
   },
@@ -1217,7 +1124,6 @@
     "subCategory": "region",
     "required": false,
     "schedule": "火2",
-    "room": "51303/51304",
     "instructor": "イノベーション（新任）",
     "marks": "前期"
   },
@@ -1230,7 +1136,6 @@
     "subCategory": "region",
     "required": false,
     "schedule": "木4",
-    "room": "525",
     "instructor": "渡邉 洋心",
     "marks": "前期"
   },
@@ -1243,7 +1148,6 @@
     "subCategory": "region",
     "required": false,
     "schedule": "木2",
-    "room": "535",
     "instructor": "長澤 雅彦 他",
     "marks": "前期"
   },
@@ -1256,7 +1160,6 @@
     "subCategory": "region",
     "required": false,
     "schedule": "火4",
-    "room": "524",
     "instructor": "長澤 雅彦",
     "marks": "前期"
   },
@@ -1269,7 +1172,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "水5",
-    "room": "51301",
     "instructor": "長濱 幸一",
     "marks": "後期"
   },
@@ -1282,7 +1184,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "金3",
-    "room": "51303/51304",
     "instructor": "河田 正樹",
     "marks": "後期"
   },
@@ -1295,7 +1196,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "火5",
-    "room": "1142",
     "instructor": "脇野 幸太郎",
     "marks": "前期"
   },
@@ -1308,7 +1208,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "火1",
-    "room": "526",
     "instructor": "新鞍",
     "marks": "後期"
   },
@@ -1321,7 +1220,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "火2",
-    "room": "532",
     "instructor": "河田 正樹",
     "marks": "前期"
   },
@@ -1334,7 +1232,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "水1",
-    "room": "S1301",
     "instructor": "村岡　浩次",
     "marks": "後期"
   },
@@ -1347,7 +1244,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "木4",
-    "room": "51301",
     "instructor": "難波 利光",
     "marks": "後期"
   },
@@ -1360,7 +1256,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "木4",
-    "room": "51303/51304",
     "instructor": "鈴木 純一",
     "marks": "後期"
   },
@@ -1373,7 +1268,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "金1",
-    "room": "521",
     "instructor": "河田 正樹",
     "marks": "後期"
   },
@@ -1386,7 +1280,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "金5",
-    "room": "521",
     "instructor": "田島 正士",
     "marks": "前期"
   },
@@ -1399,7 +1292,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "木1",
-    "room": "1125",
     "instructor": "伏木 貞文",
     "marks": "前期"
   },
@@ -1412,7 +1304,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "水3",
-    "room": "601",
     "instructor": "高山　寛",
     "marks": "前期"
   },
@@ -1425,7 +1316,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "金1",
-    "room": "1125",
     "instructor": "岩本 直",
     "marks": "前期"
   },
@@ -1438,7 +1328,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "金4",
-    "room": "523",
     "instructor": "堀田 円",
     "marks": "前期"
   },
@@ -1451,7 +1340,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "月5",
-    "room": "51301",
     "instructor": "村岡 浩次",
     "marks": "前期"
   },
@@ -1464,7 +1352,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "月3",
-    "room": "オンライン",
     "instructor": "長澤 賢一",
     "marks": "前期"
   },
@@ -1477,7 +1364,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "水1",
-    "room": "533",
     "instructor": "河田 正樹",
     "marks": "前期"
   },
@@ -1490,7 +1376,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "金2",
-    "room": "524",
     "instructor": "伏木　貞文",
     "marks": "後期"
   },
@@ -1503,7 +1388,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "月3",
-    "room": "524",
     "instructor": "田島 正士",
     "marks": "後期"
   },
@@ -1516,7 +1400,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "月1",
-    "room": "522",
     "instructor": "田島 正士",
     "marks": "後期"
   },
@@ -1529,7 +1412,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "月2",
-    "room": "522",
     "instructor": "高山 寛",
     "marks": "後期"
   },
@@ -1542,7 +1424,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "木4",
-    "room": "525",
     "instructor": "長澤 賢一",
     "marks": "後期"
   },
@@ -1555,7 +1436,6 @@
     "subCategory": "econ_s",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -1568,7 +1448,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "木2",
-    "room": "51302",
     "instructor": "矢野 沙織",
     "marks": "後期"
   },
@@ -1581,7 +1460,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "月1",
-    "room": "51303/51304",
     "instructor": "未定",
     "marks": "後期"
   },
@@ -1594,7 +1472,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "木3",
-    "room": "524",
     "instructor": "矢野 沙織",
     "marks": "前期"
   },
@@ -1607,7 +1484,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "金3",
-    "room": "522",
     "instructor": "矢野 沙織",
     "marks": "前期"
   },
@@ -1620,7 +1496,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "木5",
-    "room": "オンライン",
     "instructor": "下境 芳典",
     "marks": "前期"
   },
@@ -1633,7 +1508,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -1646,7 +1520,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "火2",
-    "room": "522",
     "instructor": "髙橋　真実",
     "marks": "後期"
   },
@@ -1659,7 +1532,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "木3",
-    "room": "S1303/S1304",
     "instructor": "石谷　康人",
     "marks": "後期"
   },
@@ -1672,7 +1544,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "火1",
-    "room": "531",
     "instructor": "髙橋 真実",
     "marks": "後期"
   },
@@ -1685,7 +1556,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "火4",
-    "room": "522",
     "instructor": "堀田 清司",
     "marks": "後期"
   },
@@ -1698,7 +1568,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "月4",
-    "room": "51302",
     "instructor": "矢野 沙織",
     "marks": "後期"
   },
@@ -1711,7 +1580,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "火4",
-    "room": "オンライン",
     "instructor": "髙橋 真実",
     "marks": "前期"
   },
@@ -1724,7 +1592,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "木1",
-    "room": "1121",
     "instructor": "長澤 賢一",
     "marks": "前期"
   },
@@ -1737,7 +1604,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "オンデマンド",
-    "room": "-",
     "instructor": "谷村 琢也",
     "marks": "3Q"
   },
@@ -1750,7 +1616,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "月1",
-    "room": "522",
     "instructor": "矢野 沙織",
     "marks": "前期"
   },
@@ -1763,7 +1628,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "金4",
-    "room": "524",
     "instructor": "中谷 淳",
     "marks": "前期"
   },
@@ -1776,7 +1640,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -1789,7 +1652,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "木4",
-    "room": "521",
     "instructor": "河田 正樹",
     "marks": "後期"
   },
@@ -1802,7 +1664,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "火1",
-    "room": "522",
     "instructor": "矢野 沙織",
     "marks": "後期"
   },
@@ -1815,7 +1676,6 @@
     "subCategory": "mgmt_s",
     "required": false,
     "schedule": "金4",
-    "room": "524",
     "instructor": "中谷 淳",
     "marks": "後期"
   },
@@ -1828,7 +1688,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "月4",
-    "room": "1125",
     "instructor": "川村 健一 他",
     "marks": "後期"
   },
@@ -1841,7 +1700,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "火1",
-    "room": "523",
     "instructor": "水谷 利亮",
     "marks": "前期"
   },
@@ -1854,7 +1712,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "月4",
-    "room": "1142",
     "instructor": "川村 健一 他",
     "marks": "前期"
   },
@@ -1867,7 +1724,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -1880,7 +1736,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "月3",
-    "room": "1125",
     "instructor": "村岡 浩次",
     "marks": "後期"
   },
@@ -1893,7 +1748,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "水2",
-    "room": "51302",
     "instructor": "岡本 次郎",
     "marks": "前期"
   },
@@ -1906,7 +1760,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "火5",
-    "room": "525",
     "instructor": "未定",
     "marks": "前期"
   },
@@ -1919,7 +1772,6 @@
     "subCategory": "global",
     "required": false,
     "schedule": "木4",
-    "room": "531",
     "instructor": "岡本 次郎",
     "marks": "前期"
   },
@@ -1932,7 +1784,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -1945,7 +1796,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "火2",
-    "room": "522",
     "instructor": "岡本 次郎",
     "marks": "後期"
   },
@@ -1958,7 +1808,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "火1",
-    "room": "532",
     "instructor": "WEI DI",
     "marks": "後期"
   },
@@ -1971,7 +1820,6 @@
     "subCategory": "global_s",
     "required": false,
     "schedule": "火4",
-    "room": "532",
     "instructor": "WEI DI",
     "marks": "後期"
   },
@@ -1984,7 +1832,6 @@
     "subCategory": "region_s",
     "required": false,
     "schedule": "対面",
-    "room": "-",
     "instructor": "長澤 雅彦 他",
     "marks": "前期"
   },
@@ -1997,7 +1844,6 @@
     "subCategory": "region_s",
     "required": false,
     "schedule": "未定",
-    "room": "-",
     "instructor": "渡邉 洋心・能沢 和寛",
     "marks": "前期"
   },
@@ -2010,7 +1856,6 @@
     "subCategory": "region_s",
     "required": false,
     "schedule": "対面",
-    "room": "-",
     "instructor": "新任",
     "marks": "後期"
   },
@@ -2023,7 +1868,6 @@
     "subCategory": "law_s",
     "required": false,
     "schedule": "木2",
-    "room": "51302",
     "instructor": "清水 太郎",
     "marks": "前期"
   },
@@ -2036,7 +1880,6 @@
     "subCategory": "law_s",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2049,7 +1892,6 @@
     "subCategory": "law_s",
     "required": false,
     "schedule": "水1・金1",
-    "room": "525",
     "instructor": "清水 太郎",
     "marks": "前期"
   },
@@ -2062,7 +1904,6 @@
     "subCategory": "law_s",
     "required": false,
     "schedule": "金1",
-    "room": "525",
     "instructor": "清水 太郎",
     "marks": "前期"
   },
@@ -2075,7 +1916,6 @@
     "subCategory": "law_s",
     "required": false,
     "schedule": "金5",
-    "room": "525",
     "instructor": "清水 太郎",
     "marks": "後期"
   },
@@ -2088,7 +1928,6 @@
     "subCategory": "law_s",
     "required": false,
     "schedule": "火4",
-    "room": "601",
     "instructor": "清水 太郎",
     "marks": "後期"
   },
@@ -2101,7 +1940,6 @@
     "subCategory": "exercise_s",
     "required": true,
     "schedule": "木5 / 火3 / 木3 / 水3",
-    "room": "人による",
     "instructor": "人による",
     "marks": ""
   },
@@ -2114,7 +1952,6 @@
     "subCategory": "exercise_s",
     "required": true,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2127,7 +1964,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "水",
-    "room": "1142",
     "instructor": "立部 文崇",
     "marks": "通年"
   },
@@ -2140,7 +1976,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "木4",
-    "room": "1141",
     "instructor": "難波 利光",
     "marks": "前期"
   },
@@ -2153,7 +1988,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "木3",
-    "room": "51301",
     "instructor": "難波 利光・輪倉 一広",
     "marks": "前期"
   },
@@ -2166,7 +2000,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "木4",
-    "room": "1122",
     "instructor": "伊藤 敏安",
     "marks": "後期"
   },
@@ -2179,7 +2012,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "木2",
-    "room": "51301",
     "instructor": "守本 友美 他",
     "marks": "後期"
   },
@@ -2192,7 +2024,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "水12",
-    "room": "1142",
     "instructor": "矢島 安敏",
     "marks": "前期"
   },
@@ -2205,7 +2036,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "木3",
-    "room": "81301",
     "instructor": "難波 利光",
     "marks": "前期/後期"
   },
@@ -2218,7 +2048,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火3",
-    "room": "523",
     "instructor": "伊藤 敏安",
     "marks": "前期"
   },
@@ -2231,7 +2060,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "木2",
-    "room": "522",
     "instructor": "佐藤 裕哉",
     "marks": "前期"
   },
@@ -2244,7 +2072,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月木3",
-    "room": "1142",
     "instructor": "児玉 満",
     "marks": "3Q"
   },
@@ -2257,7 +2084,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火金3",
-    "room": "1142",
     "instructor": "小栁 淳二",
     "marks": "3Q"
   },
@@ -2270,7 +2096,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火金4",
-    "room": "1142",
     "instructor": "大島 和裕",
     "marks": "3Q"
   },
@@ -2283,7 +2108,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "オンデマンド",
-    "room": "オンデマンド・対面",
     "instructor": "西郷 彰",
     "marks": "4Q"
   },
@@ -2296,7 +2120,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月木3",
-    "room": "535",
     "instructor": "矢敷 達朗",
     "marks": "4Q"
   },
@@ -2309,7 +2132,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月3",
-    "room": "611",
     "instructor": "中嶋 健",
     "marks": ""
   },
@@ -2322,7 +2144,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火1",
-    "room": "51301",
     "instructor": "清原 泰治",
     "marks": "前期/後期"
   },
@@ -2335,7 +2156,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2348,7 +2168,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2361,7 +2180,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2374,7 +2192,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月木4",
-    "room": "524",
     "instructor": "中山 季之",
     "marks": "4Q"
   },
@@ -2387,7 +2204,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "集中講義等",
-    "room": "対面",
     "instructor": "児玉／立部／酒井／渡部",
     "marks": "4Q"
   },
@@ -2400,7 +2216,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2413,7 +2228,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2426,7 +2240,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火4",
-    "room": "523",
     "instructor": "大坂 遊",
     "marks": "前期"
   },
@@ -2439,7 +2252,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火3",
-    "room": "オンライン",
     "instructor": "黒田 圭介",
     "marks": "前期"
   },
@@ -2452,7 +2264,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火4",
-    "room": "523",
     "instructor": "大坂 遊",
     "marks": "後期"
   },
@@ -2465,7 +2276,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月4",
-    "room": "オンライン",
     "instructor": "黒田 圭介",
     "marks": "後期"
   },
@@ -2478,7 +2288,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "金1",
-    "room": "531",
     "instructor": "大坂 遊",
     "marks": "前期"
   },
@@ -2491,7 +2300,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "金3",
-    "room": "531",
     "instructor": "大坂 遊",
     "marks": "前期"
   },
@@ -2504,7 +2312,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火5",
-    "room": "522",
     "instructor": "福原 道照",
     "marks": "前期"
   },
@@ -2517,7 +2324,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "金3",
-    "room": "524",
     "instructor": "中谷 滋",
     "marks": "前期"
   },
@@ -2530,7 +2336,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "金1",
-    "room": "531",
     "instructor": "大坂 遊",
     "marks": "後期"
   },
@@ -2543,7 +2348,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "金3",
-    "room": "531",
     "instructor": "大坂 遊",
     "marks": "後期"
   },
@@ -2556,7 +2360,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "火5",
-    "room": "522",
     "instructor": "福原 道照",
     "marks": "後期"
   },
@@ -2569,7 +2372,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "中谷 滋",
     "marks": ""
   },
@@ -2582,7 +2384,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月5",
-    "room": "1141",
     "instructor": "大坂 遊・川本 吉太郎",
     "marks": "前期"
   },
@@ -2595,7 +2396,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "対面・オンライン",
-    "room": "-",
     "instructor": "安藤 和久",
     "marks": "後期"
   },
@@ -2608,7 +2408,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "水5",
-    "room": "51302",
     "instructor": "渡部 明",
     "marks": "前期"
   },
@@ -2621,7 +2420,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "大坂 遊・安藤 和久",
     "marks": ""
   },
@@ -2634,7 +2432,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "石橋 孝明・山崎 茜",
     "marks": ""
   },
@@ -2647,7 +2444,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "前田 美穂・本田 真",
     "marks": ""
   },
@@ -2660,7 +2456,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "オンデマンド",
-    "room": "-",
     "instructor": "押尾 恵吾",
     "marks": "後期"
   },
@@ -2673,7 +2468,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "水5",
-    "room": "51302",
     "instructor": "渡部 明",
     "marks": "後期"
   },
@@ -2686,7 +2480,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月5",
-    "room": "51301",
     "instructor": "大坂 遊・安藤 和久",
     "marks": "後期"
   },
@@ -2699,7 +2492,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "対面",
-    "room": "-",
     "instructor": "前田 美穂・本田 真",
     "marks": "後期"
   },
@@ -2712,7 +2504,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月5",
-    "room": "51302",
     "instructor": "藤本 勇二",
     "marks": "前期"
   },
@@ -2725,7 +2516,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "木4",
-    "room": "オンライン",
     "instructor": "岡本 次郎",
     "marks": "前期"
   },
@@ -2738,7 +2528,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月4",
-    "room": "611",
     "instructor": "中嶋 克成",
     "marks": "後期"
   },
@@ -2751,7 +2540,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "渡部 明・大坂 遊",
     "marks": ""
   },
@@ -2764,7 +2552,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "対面",
-    "room": "-",
     "instructor": "大坂 遊",
     "marks": "通年"
   },
@@ -2777,7 +2564,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "対面",
-    "room": "-",
     "instructor": "大坂 遊",
     "marks": "後期"
   },
@@ -2790,7 +2576,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "金5",
-    "room": "1141",
     "instructor": "渡部 明・大坂 遊",
     "marks": "前期/後期"
   },
@@ -2803,7 +2588,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2816,7 +2600,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -2829,7 +2612,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月2",
-    "room": "81301",
     "instructor": "大坂 遊・中嶋 克成",
     "marks": "前期"
   },
@@ -2842,7 +2624,6 @@
     "subCategory": "intl",
     "required": true,
     "schedule": "水2",
-    "room": "531",
     "instructor": "山本 晋也",
     "marks": "前期"
   },
@@ -2855,7 +2636,6 @@
     "subCategory": "intl",
     "required": true,
     "schedule": "火2",
-    "room": "524",
     "instructor": "山本 晋也",
     "marks": "前期"
   },
@@ -2868,7 +2648,6 @@
     "subCategory": "intl",
     "required": true,
     "schedule": "月1",
-    "room": "521",
     "instructor": "山本 晋也",
     "marks": "前期/後期"
   },
@@ -2881,7 +2660,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "木3",
-    "room": "1125",
     "instructor": "佐野 千亜紀",
     "marks": "後期"
   },
@@ -2894,7 +2672,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "山本 晋也",
     "marks": ""
   },
@@ -2907,7 +2684,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "木1",
-    "room": "1123",
     "instructor": "山本 貴子",
     "marks": "前期"
   },
@@ -2920,7 +2696,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "木2",
-    "room": "1123",
     "instructor": "山本 貴子",
     "marks": "前期"
   },
@@ -2933,7 +2708,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "木3",
-    "room": "533",
     "instructor": "佐野 千亜紀",
     "marks": "前期"
   },
@@ -2946,7 +2720,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "木1",
-    "room": "521",
     "instructor": "山本 晋也",
     "marks": "後期"
   },
@@ -2959,7 +2732,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "火1",
-    "room": "521",
     "instructor": "立部 文崇",
     "marks": "前期"
   },
@@ -2972,7 +2744,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "山本 晋也",
     "marks": ""
   },
@@ -2985,7 +2756,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "木2",
-    "room": "1124",
     "instructor": "山本 貴子",
     "marks": "後期"
   },
@@ -2998,7 +2768,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "木4",
-    "room": "533",
     "instructor": "佐野 千亜紀",
     "marks": "前期/後期"
   },
@@ -3011,7 +2780,6 @@
     "subCategory": "intl",
     "required": false,
     "schedule": "-",
-    "room": "-",
     "instructor": "山本 晋也",
     "marks": ""
   },
@@ -3024,7 +2792,6 @@
     "subCategory": "mgmt",
     "required": false,
     "schedule": "月2",
-    "room": "51303/51304",
     "instructor": "未定",
     "marks": ""
   },
@@ -3037,7 +2804,6 @@
     "subCategory": "",
     "required": false,
     "schedule": "月3",
-    "room": "611",
     "instructor": "未定",
     "marks": ""
   },
@@ -3050,7 +2816,6 @@
     "category": "general",
     "subCategory": "",
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -3063,7 +2828,6 @@
     "category": "specialized",
     "subCategory": "",
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   },
@@ -3076,7 +2840,6 @@
     "category": "specialized",
     "subCategory": "global_s",
     "schedule": "-",
-    "room": "-",
     "instructor": "-",
     "marks": ""
   }

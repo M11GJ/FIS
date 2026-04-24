@@ -6,6 +6,7 @@ import coursesEcon from '../data/courses_economics.json';
 import { useGraduationCheck } from '../hooks/useGraduationCheck';
 import { formatTerm } from '../utils/formatTerm';
 import { isCourseActiveInQuarter } from '../utils/parseSchedule';
+import { mergeRooms } from '../utils/mergeRooms';
 import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2, Info, AlertTriangle } from 'lucide-react';
 import Timetable from '../components/Timetable';
 
@@ -409,7 +410,8 @@ function Checker() {
   const facultyId = facultyParam || 'info';
   
   const coursesData = useMemo(() => {
-    return facultyId === 'econ' ? coursesEcon : coursesInfo;
+    const raw = facultyId === 'econ' ? coursesEcon : coursesInfo;
+    return mergeRooms(raw);
   }, [facultyId]);
 
   const sortedCourses = useMemo(() => getSortedCourses(coursesData), [coursesData]);

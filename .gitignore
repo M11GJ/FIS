@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# 教室情報（セキュリティ上、GitHubにアップロードしない）
+src/data/rooms.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
