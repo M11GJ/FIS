@@ -180,7 +180,7 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
   }
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isPortal ? 'portal-mode' : ''}`}>
       <header style={{ borderBottom: isPortal ? '1px solid var(--border)' : `3px solid ${info.colorName}` }}>
         {isPortal ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>

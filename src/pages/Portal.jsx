@@ -199,6 +199,7 @@ const Portal = () => {
           padding: '1.2rem 1.2rem 1rem',
           border: '2px solid var(--border)',
           overflow: 'hidden',
+          height: '100%',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -220,7 +221,15 @@ const Portal = () => {
             </button>
           </div>
           
-          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.6rem', paddingRight: '0.4rem' }} className="news-scroll">
+          <div style={{ 
+            flex: 1, 
+            minHeight: 0, 
+            overflowY: 'auto', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '0.4rem', 
+            paddingRight: '0.4rem' 
+          }} className="news-scroll">
             {NEWS.slice(0, 8).map((item, idx) => (
               <div key={idx} className="portal-news-item" style={{ paddingBottom: '0.5rem', borderBottom: idx !== Math.min(NEWS.length, 8) - 1 ? '1px solid var(--border)' : 'none' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.1rem' }}>
@@ -258,6 +267,7 @@ const Portal = () => {
               position: 'relative',
               overflow: 'hidden',
               transition: 'border-color 0.2s, box-shadow 0.2s',
+              height: '100%',
             }}
             onMouseOver={e => {
               if (!fac.ready) return;
@@ -280,7 +290,7 @@ const Portal = () => {
             )}
 
             {/* アイコン */}
-            <div className="faculty-card-emoji" style={{ fontSize: '2.2rem', lineHeight: 1, marginBottom: '0.75rem' }}>
+            <div className="faculty-card-emoji" style={{ fontSize: '2rem', lineHeight: 1, marginBottom: '0.5rem' }}>
               {fac.emoji}
             </div>
 
@@ -308,7 +318,7 @@ const Portal = () => {
             </div>
 
             {/* ボタン */}
-            <div className="faculty-actions" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.75rem' }}>
+            <div className="faculty-actions" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: 'auto' }}>
               {fac.ready ? (
                 <>
                   <button

@@ -81,9 +81,30 @@ a:hover {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 3vw 1rem;
+  padding: 1rem 3vw;
   min-height: 100vh;
   min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ポータル画面（1枚絵）専用の設定 */
+.app-container.portal-mode {
+  padding: 0.5rem 2vw 0.25rem;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 0.4rem;
+  overflow: hidden;
+}
+
+main {
+  flex: 1;
+}
+
+.portal-mode main {
+  height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
@@ -92,20 +113,18 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
+  padding: 0.4rem 0 0.8rem; /* 上下のパディングを微増 */
   border-bottom: 1px solid var(--border);
 }
 
 header h1 {
-  font-size: 1.5rem;
+  font-size: 1.35rem; /* ほんの少し大きく */
   font-weight: 700;
   color: var(--primary);
 }
 
 .site-footer {
-  margin-top: auto;
-  padding: 0.5rem 0 0.5rem;
+  padding: 0.4rem 0;
   text-align: center;
   font-size: 0.7rem;
   color: var(--text-muted);
@@ -286,33 +305,47 @@ input[type="number"]:focus, select:focus {
 
 /* Portal Layout */
 .portal-container {
-  margin: -1.5rem -3vw 0;
-  flex: 1; 
   display: flex;
   flex-direction: column;
-  padding: 0.75rem 3vw 0.5rem;
   box-sizing: border-box;
-  overflow: hidden; /* Prevent scrolling on desktop portal */
+  overflow: hidden; 
+  height: 100%;
+  min-height: 0;
 }
 
-
-
 .portal-grid {
-  flex: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, minmax(0, 1fr)); /* Use minmax to allow shrinking */
+  grid-template-rows: repeat(2, 1fr); 
   gap: 1rem;
+  height: 100%;
   min-height: 0;
 }
 
 
 
 @media (max-width: 1100px) {
+  .app-container {
+    height: 100dvh;
+    grid-template-rows: auto 1fr auto;
+    overflow: hidden;
+  }
   .portal-grid {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    height: 100%;
   }
+  .portal-container {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+/* 非常に低い画面（スマホの横持ちなど）や、本当に高さが足りない時だけスクロールを許可 */
+@media (max-height: 500px) {
+  .app-container, .portal-container { height: auto !important; overflow: auto !important; }
+  .portal-grid { grid-template-rows: auto !important; height: auto !important; }
 }
 
 .faculty-sub-text {
@@ -352,13 +385,14 @@ input[type="number"]:focus, select:focus {
   .portal-grid { gap: 0.4rem; }
 }
 
-/* Smart News Content Hiding */
-@media (max-height: 950px) { .portal-news-item:nth-child(n+7) { display: none; } }
-@media (max-height: 850px) { .portal-news-item:nth-child(n+6) { display: none; } }
-@media (max-height: 780px) { .portal-news-item:nth-child(n+5) { display: none; } }
-@media (max-height: 700px) { .portal-news-item:nth-child(n+4) { display: none; } }
-@media (max-height: 650px) { .portal-news-item:nth-child(n+3) { display: none; } }
-@media (max-height: 600px) { .portal-news-item:nth-child(n+2) { display: none; } }
+/* Smart News Content Hiding - 解像度に合わせて細かく件数を制御 */
+@media (max-height: 1150px) { .portal-news-item:nth-child(n+8) { display: none; } }
+@media (max-height: 1050px) { .portal-news-item:nth-child(n+7) { display: none; } }
+@media (max-height: 950px) { .portal-news-item:nth-child(n+6) { display: none; } }
+@media (max-height: 850px) { .portal-news-item:nth-child(n+5) { display: none; } }
+@media (max-height: 780px) { .portal-news-item:nth-child(n+4) { display: none; } }
+@media (max-height: 700px) { .portal-news-item:nth-child(n+3) { display: none; } }
+@media (max-height: 620px) { .portal-news-item:nth-child(n+2) { display: none; } }
 
 @media (max-width: 768px) {
   .portal-container {
