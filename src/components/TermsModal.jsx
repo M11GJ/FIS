@@ -3,6 +3,7 @@ import { ShieldCheck, AlertTriangle, Book, MapPinOff, X } from 'lucide-react';
 
 const TermsModal = ({ onAgree, viewOnly = false }) => {
   const [canAgree, setCanAgree] = useState(viewOnly);
+  const [isStudent, setIsStudent] = useState(viewOnly);
   const contentRef = useRef(null);
 
   const handleScroll = () => {
@@ -19,6 +20,7 @@ const TermsModal = ({ onAgree, viewOnly = false }) => {
   useEffect(() => {
     if (viewOnly) {
       setCanAgree(true);
+      setIsStudent(true);
       return;
     }
     // Check if the content is short enough that it doesn't need scrolling
@@ -80,18 +82,8 @@ const TermsModal = ({ onAgree, viewOnly = false }) => {
             
             <section style={{ marginBottom: '1.5rem' }}>
               <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '0.5rem' }}>
-                <ShieldCheck size={18} color="var(--primary)" />
-                1. 利用対象者
-              </h4>
-              <p style={{ fontSize: '0.9rem' }}>
-                本ツールの利用は、<strong>周南公立大学に在籍する学生および教職員</strong>に限られます。それ以外の方のご利用はご遠慮ください。
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '1.5rem' }}>
-              <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '0.5rem' }}>
                 <AlertTriangle size={18} color="var(--primary)" />
-                2. 本ツールの位置づけと免責事項
+                1. 本ツールの位置づけと免責事項
               </h4>
               <p style={{ fontSize: '0.9rem' }}>
                 本ツールは、学生が独自に開発した<strong>非公式の支援ツール</strong>であり、周南公立大学が公式に提供・保証するシステムではありません。<br/>
@@ -144,6 +136,20 @@ const TermsModal = ({ onAgree, viewOnly = false }) => {
           gap: '1rem',
           alignItems: 'center'
         }}>
+          {!viewOnly && (
+            <div style={{ width: '100%', padding: '1rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)', marginBottom: '0.5rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontWeight: 600, color: 'var(--text-main)' }}>
+                <input 
+                  type="checkbox" 
+                  checked={isStudent} 
+                  onChange={(e) => setIsStudent(e.target.checked)} 
+                  style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+                />
+                私は周南公立大学に在籍する学生、または教職員です。
+              </label>
+            </div>
+          )}
+
           {!canAgree && !viewOnly && (
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
               ※規約を一番下までスクロールすると同意できるようになります。
@@ -151,22 +157,22 @@ const TermsModal = ({ onAgree, viewOnly = false }) => {
           )}
           <button 
             onClick={onAgree}
-            disabled={!canAgree}
+            disabled={!canAgree || !isStudent}
             style={{
               width: '100%', 
               padding: '1rem', 
-              background: canAgree ? 'var(--primary)' : 'var(--border)', 
-              color: canAgree ? 'white' : 'var(--text-muted)',
+              background: (canAgree && isStudent) ? 'var(--primary)' : 'var(--border)', 
+              color: (canAgree && isStudent) ? 'white' : 'var(--text-muted)',
               border: 'none', 
               borderRadius: '8px', 
               fontWeight: 800, 
               fontSize: '1rem',
-              cursor: canAgree ? 'pointer' : 'not-allowed', 
+              cursor: (canAgree && isStudent) ? 'pointer' : 'not-allowed', 
               transition: 'all 0.2s',
-              opacity: canAgree ? 1 : 0.7
+              opacity: (canAgree && isStudent) ? 1 : 0.7
             }}
           >
-            {viewOnly ? "閉じる" : "私は周南公立大学の学生・教員であり、上記に同意して利用する"}
+            {viewOnly ? "閉じる" : "以上の利用規約およびプライバシーポリシーに同意して利用する"}
           </button>
         </div>
       </div>
