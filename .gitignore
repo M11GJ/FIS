@@ -25,3 +25,6 @@ src/data/rooms.json
 *.njsproj
 *.sln
 *.sw?
+
+# DCC Loginに紐づく履修データ（秘密情報）
+data/

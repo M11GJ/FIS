@@ -1766,7 +1766,8 @@
     "required": false,
     "marks": "",
     "schedule": "火金3",
-    "instructor": "田中 輝明"
+    "instructor": "田中 輝明",
+    "entryYears": [2026]
   },
   {
     "id": "c_3016f954",
@@ -1781,7 +1782,8 @@
     },
     "marks": "",
     "schedule": "火金4",
-    "instructor": "田中 輝明"
+    "instructor": "田中 輝明",
+    "entryYears": [2026]
   },
   {
     "id": "c_3c3e2630",
@@ -1796,6 +1798,21 @@
     },
     "marks": "",
     "schedule": "月木4",
-    "instructor": "中山 季之"
+    "instructor": "中山 季之",
+    "entryYears": [2026]
+  },
+  {
+    "id": "c_8a3e0b1c",
+    "name": "応用数値解析",
+    "term": "3③",
+    "credits": 2,
+    "category": "program",
+    "programType": "DS",
+    "programRequired": false,
+    "programMapping": {
+      "ds": "選択"
+    },
+    "marks": "",
+    "entryYears": [2026]
   }
 ]

@@ -7,3 +7,6 @@ README.md
 Dockerfile
 docker-compose.yml
 .dockerignore
+
+# Runtime personal data
+data

@@ -1,0 +1,22 @@
+services:
+  graduation-checker:
+    build:
+      context: .
+      dockerfile: Dockerfile.fis
+      args:
+        VITE_DCC_CLIENT_ID: ${VITE_DCC_CLIENT_ID:-}
+        VITE_DCC_REDIRECT_URI: ${VITE_DCC_REDIRECT_URI:-}
+        VITE_DCC_SCOPES: ${VITE_DCC_SCOPES:-openid profile}
+    depends_on:
+      - admin-api
+
+  admin-api:
+    build:
+      context: .
+      dockerfile: admin-api/Dockerfile.fis
+    volumes:
+      - ./data:/data
+    environment:
+      DCC_OIDC_CLIENT_ID: ${VITE_DCC_CLIENT_ID:-}
+      FIS_DATA_PATH: /data/course-profiles.json
+      FIS_ALLOWED_HOSTS: ${FIS_ALLOWED_HOSTS:-}

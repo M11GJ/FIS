@@ -50,7 +50,7 @@ export function getDccOidcConfig() {
     discoveryUrl: DISCOVERY_URL,
     clientId: getClientId(),
     redirectUri: configuredRedirect || defaultRedirect,
-    scopes: import.meta.env.VITE_DCC_SCOPES?.trim() || 'openid profile dcc.student',
+    scopes: import.meta.env.VITE_DCC_SCOPES?.trim() || 'openid profile',
   };
 }
 
@@ -59,20 +59,15 @@ export function isDccOidcConfigured() {
 }
 
 async function fetchDiscovery() {
-  const response = await fetch(DISCOVERY_URL, {
-    headers: { Accept: 'application/json' },
-    cache: 'no-store',
-  });
-  if (!response.ok) {
-    throw new Error(`DCC Loginの設定取得に失敗しました (${response.status})`);
-  }
-
-  const discovery = await response.json();
-  if (discovery.issuer !== ISSUER) throw new Error('DCC LoginのIssuerが一致しません');
-  if (!discovery.code_challenge_methods_supported?.includes('S256')) {
-    throw new Error('DCC LoginがPKCE S256を公開していません');
-  }
-  return discovery;
+  return {
+    issuer: ISSUER,
+    authorization_endpoint: `${ISSUER}/api/oidc/authorize`,
+    token_endpoint: `${ISSUER}/api/oidc/token`,
+    revocation_endpoint: `${ISSUER}/api/oidc/revoke`,
+    userinfo_endpoint: `${ISSUER}/api/oidc/userinfo`,
+    jwks_uri: `${import.meta.env.BASE_URL}api/auth/dcc/jwks`,
+    code_challenge_methods_supported: ['S256'],
+  };
 }
 
 async function verifyIdToken(idToken, discovery, transaction, clientId) {

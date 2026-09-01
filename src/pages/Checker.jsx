@@ -7,8 +7,10 @@ import { useGraduationCheck } from '../hooks/useGraduationCheck';
 import { formatTerm } from '../utils/formatTerm';
 import { isCourseActiveInQuarter } from '../utils/parseSchedule';
 import { mergeRooms } from '../utils/mergeRooms';
+import { getCoursesForEntryYear, normalizeEntryYear, SUPPORTED_ENTRY_YEARS } from '../../shared/curriculum.js';
 import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2, Info, AlertTriangle, HardDrive, Trash2 } from 'lucide-react';
 import Timetable from '../components/Timetable';
+import CloudSyncPanel from '../components/CloudSyncPanel';
 
 const ProgressBar = ({ label, current, target, minRequiredLabel, missingList, detail, subStatus, color }) => {
   const percent = target ? Math.min(100, (current / target) * 100) : 0;
@@ -409,11 +411,16 @@ function Checker() {
   const { faculty: facultyParam } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const facultyId = facultyParam || 'info';
-  
-  const coursesData = useMemo(() => {
+  const [entryYear, setEntryYear] = useState(2024);
+
+  const allCoursesData = useMemo(() => {
     const raw = facultyId === 'econ' ? coursesEcon : coursesInfo;
     return mergeRooms(raw);
   }, [facultyId]);
+
+  const coursesData = useMemo(() => (
+    facultyId === 'info' ? getCoursesForEntryYear(allCoursesData, entryYear) : allCoursesData
+  ), [facultyId, allCoursesData, entryYear]);
 
   const sortedCourses = useMemo(() => getSortedCourses(coursesData), [coursesData]);
 
@@ -438,23 +445,29 @@ function Checker() {
 
     const sParam = searchParams.get('s');
     const pParam = searchParams.get('p');
+    const yParam = searchParams.get('y');
+    const restoredEntryYear = normalizeEntryYear(yParam || saved?.entryYear);
+    setEntryYear(restoredEntryYear);
+    const restoredCourses = getSortedCourses(
+      facultyId === 'info' ? getCoursesForEntryYear(allCoursesData, restoredEntryYear) : allCoursesData,
+    );
     const restoredProgram = (pParam || saved?.program || 'DS').toUpperCase();
     setProgram(['DS', 'IE', 'BA'].includes(restoredProgram) ? restoredProgram : 'DS');
 
     if (sParam !== null) {
       try {
-        setSelectedCourses(decodeBits(sParam, sortedCourses));
+        setSelectedCourses(decodeBits(sParam, restoredCourses));
       } catch (decodeError) {
         console.error('Failed to decode share URL:', decodeError);
         setSelectedCourses(new Set());
       }
     } else {
-      const knownIds = new Set(sortedCourses.map(course => course.id));
+      const knownIds = new Set(restoredCourses.map(course => course.id));
       const savedIds = Array.isArray(saved?.courseIds) ? saved.courseIds : [];
       setSelectedCourses(new Set(savedIds.filter(id => knownIds.has(id))));
     }
     setIsLocalDataReady(true);
-  }, [searchParams, sortedCourses, localStorageKey]);
+  }, [searchParams, allCoursesData, localStorageKey, facultyId]);
 
   // 匿名利用時は履修状況をこのブラウザ内だけに保存する
   useEffect(() => {
@@ -462,6 +475,7 @@ function Checker() {
     try {
       window.localStorage.setItem(localStorageKey, JSON.stringify({
         facultyId,
+        entryYear,
         program,
         courseIds: Array.from(selectedCourses),
         updatedAt: new Date().toISOString(),
@@ -469,7 +483,14 @@ function Checker() {
     } catch (storageError) {
       console.warn('Failed to save local checker data:', storageError);
     }
-  }, [isLocalDataReady, localStorageKey, facultyId, program, selectedCourses]);
+  }, [isLocalDataReady, localStorageKey, facultyId, entryYear, program, selectedCourses]);
+
+  const handleEntryYearChange = (value) => {
+    const nextYear = normalizeEntryYear(value);
+    const availableIds = new Set(getCoursesForEntryYear(allCoursesData, nextYear).map(course => course.id));
+    setSelectedCourses(previous => new Set([...previous].filter(id => availableIds.has(id))));
+    setEntryYear(nextYear);
+  };
 
   const handleToggle = (id) => {
     setSelectedCourses(prev => {
@@ -541,9 +562,21 @@ function Checker() {
     });
   };
 
+  const handleLoadCloudProfile = (profile) => {
+    const nextYear = normalizeEntryYear(profile?.entryYear);
+    const nextProgram = ['DS', 'IE', 'BA'].includes(profile?.program) ? profile.program : 'DS';
+    const availableIds = new Set(getCoursesForEntryYear(allCoursesData, nextYear).map(course => course.id));
+    const nextIds = Array.isArray(profile?.courseIds) ? profile.courseIds.filter(id => availableIds.has(id)) : [];
+    setEntryYear(nextYear);
+    setProgram(nextProgram);
+    setSelectedCourses(new Set(nextIds));
+    setSearchParams({}, { replace: true });
+  };
+
   const handleResetLocalData = () => {
     setSelectedCourses(new Set());
     setProgram('DS');
+    setEntryYear(2024);
     setSearchParams({}, { replace: true });
     try {
       window.localStorage.removeItem(localStorageKey);
@@ -556,7 +589,7 @@ function Checker() {
     const shardData = encodeBits(selectedCourses, sortedCourses);
     const p = program;
     const baseUrl = window.location.origin + window.location.pathname;
-    const shareUrl = `${baseUrl}#/${facultyId}/checker?p=${p}&s=${shardData}`;
+    const shareUrl = `${baseUrl}#/${facultyId}/checker?y=${entryYear}&p=${p}&s=${shardData}`;
     
     navigator.clipboard.writeText(shareUrl).then(() => {
       setShareCopied(true);
@@ -628,13 +661,22 @@ function Checker() {
           <div style={{ flex: 1 }}>
             <strong style={{ display: 'block', color: 'var(--text-main)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>ログインなしで利用できます</strong>
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.55 }}>
-              選択した履修情報はこの端末内だけに自動保存され、DCCアカウントとは結び付きません。将来、クラウド保存・同期を明示的に選択した場合のみDCC Loginを使用します。
+              選択した履修情報はこの端末内だけに自動保存され、DCCアカウントとは結び付きません。クラウド保存・同期を明示的に選択した場合のみDCC Loginを使用します。
             </p>
           </div>
           <button type="button" onClick={handleResetLocalData} title="この端末の履修情報をリセット" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', border: '1px solid var(--border)', borderRadius: '6px', background: 'var(--surface)', color: 'var(--text-muted)', padding: '0.4rem 0.55rem', cursor: 'pointer', fontSize: '0.72rem', whiteSpace: 'nowrap' }}>
             <Trash2 size={14} /> リセット
           </button>
         </div>
+
+        {facultyId === 'info' && (
+          <CloudSyncPanel
+            entryYear={entryYear}
+            program={program}
+            selectedCourses={selectedCourses}
+            onLoadProfile={handleLoadCloudProfile}
+          />
+        )}
 
         <div style={{ marginBottom: '1.25rem', display: 'flex', gap: '0.5rem' }}>
           <button
@@ -656,6 +698,11 @@ function Checker() {
 
         {facultyId === 'info' && (
           <div style={{ marginBottom: '1.5rem', background: 'var(--surface-hover)', padding: '1rem', borderRadius: '8px' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: 600 }}>入学年度</label>
+            <select value={entryYear} onChange={event => handleEntryYearChange(event.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--surface)', marginBottom: '1rem' }}>
+              {SUPPORTED_ENTRY_YEARS.map(year => <option key={year} value={year}>{year}年度入学</option>)}
+            </select>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem', lineHeight: 1.5, margin: '-0.5rem 0 1rem' }}>選んだ年度の学生便覧にある科目と卒業要件で判定します。</div>
             <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: 600 }}>所属プログラム</label>
             <select value={program} onChange={e => setProgram(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--surface)' }}>
               <option value="DS">データサイエンス (DS)</option>
@@ -711,9 +758,9 @@ function Checker() {
               </div>
               <p style={{ color: status.total.ok ? '#10B981' : (missingCredits === 0 ? '#EF4444' : 'var(--text-muted)'), marginTop: '0.75rem', fontWeight: 600, fontSize: '1rem' }}>
                 {status.total.ok 
-                  ? '🎉 卒業要件を見事クリア！' 
-                  : (missingCredits === 0 && missingList.length > 0
-                      ? '⚠️ 単位数は足っていますが、未取得の必修科目があります' 
+                  ? '🎉 単位要件をクリア（卒業論文は別途確認）'
+                  : (missingCredits === 0
+                      ? '⚠️ 総単位数は足っていますが、区分別単位または必修科目が不足しています'
                       : `卒業まであと ${missingCredits} 単位`
                     )
                 }
@@ -795,7 +842,7 @@ function Checker() {
                 {status.total.current}
               </span>
               <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                {status.total.ok ? '卒業OK' : `あと ${missingCredits} 単位`}
+                {status.total.ok ? '単位要件OK' : (missingCredits === 0 ? '区分要件を確認' : `あと ${missingCredits} 単位`)}
               </span>
             </div>
             <ChevronDown 

@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+WORKDIR /app/admin-api
+
+COPY admin-api/package*.json ./
+RUN npm ci --omit=dev
+
+COPY admin-api/*.js ./
+COPY src/data/courses_info.json ../src/data/courses_info.json
+COPY shared ../shared
+
+EXPOSE 3000
+
+CMD ["node", "fisServer.js"]

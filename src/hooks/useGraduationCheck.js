@@ -1,8 +1,13 @@
 import { useMemo } from 'react';
+import { calculateInformationGraduation } from '../../shared/graduation.js';
 
 export function useGraduationCheck(facultyId, selectedCourseIds, targetProgram, coursesData) {
   return useMemo(() => {
     if (!coursesData || coursesData.length === 0) return null;
+
+    if (facultyId === 'info') {
+      return calculateInformationGraduation(selectedCourseIds, targetProgram, coursesData);
+    }
 
     const selectedSet = new Set(selectedCourseIds);
     const selectedCourses = selectedCourseIds.map(id => coursesData.find(c => c.id === id)).filter(Boolean);
