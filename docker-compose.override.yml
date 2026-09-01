@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile.fis
       args:
-        VITE_DCC_CLIENT_ID: ${VITE_DCC_CLIENT_ID:-}
-        VITE_DCC_REDIRECT_URI: ${VITE_DCC_REDIRECT_URI:-}
+        VITE_DCC_CLIENT_ID: ${VITE_DCC_CLIENT_ID:-dcc_0yneIL16eyD4Z-VzkEO69kA6}
+        VITE_DCC_REDIRECT_URI: ${VITE_DCC_REDIRECT_URI:-https://app.shu-dcc.net/shu-binran/}
         VITE_DCC_SCOPES: ${VITE_DCC_SCOPES:-openid profile}
     depends_on:
       - admin-api
@@ -17,6 +17,6 @@ services:
     volumes:
       - ./data:/data
     environment:
-      DCC_OIDC_CLIENT_ID: ${VITE_DCC_CLIENT_ID:-}
+      DCC_OIDC_CLIENT_ID: ${VITE_DCC_CLIENT_ID:-dcc_0yneIL16eyD4Z-VzkEO69kA6}
       FIS_DATA_PATH: /data/course-profiles.json
       FIS_ALLOWED_HOSTS: ${FIS_ALLOWED_HOSTS:-}
