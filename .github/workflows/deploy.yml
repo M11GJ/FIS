@@ -28,6 +28,9 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Build
+        env:
+          VITE_DCC_CLIENT_ID: ${{ vars.DCC_LOGIN_CLIENT_ID }}
+          VITE_DCC_REDIRECT_URI: ${{ vars.DCC_LOGIN_REDIRECT_URI }}
         run: npm run build
 
       - name: Setup Pages

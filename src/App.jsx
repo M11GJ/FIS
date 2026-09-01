@@ -10,6 +10,8 @@ import changelogEcon from './data/changelog_econ.json';
 import changelogInfo from './data/changelog_info.json';
 import changelogPortal from './data/changelog_portal.json';
 import TermsModal from './components/TermsModal';
+import RequireDccLogin from './components/RequireDccLogin';
+import { DccAuthProvider } from './auth/DccAuthContext';
 
 // --- メンテナンスモード設定 ---
 // true にするとメンテナンス画面が表示されます
@@ -268,7 +270,7 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
           <Route path="/" element={<Portal />} />
           <Route path="/admin" element={<AdminPortal />} />
           <Route path="/:faculty/handbook" element={<Handbook />} />
-          <Route path="/:faculty/checker" element={<Checker />} />
+          <Route path="/:faculty/checker" element={<RequireDccLogin><Checker /></RequireDccLogin>} />
           {/* 旧URLからのリダイレクト設定 */}
           <Route path="/checker" element={<Navigate to="/info/checker" replace />} />
           <Route path="/handbook" element={<Navigate to="/info/handbook" replace />} />
@@ -339,6 +341,7 @@ function App() {
   }
 
   return (
+    <DccAuthProvider>
     <HashRouter>
       {(!agreedToTos || showTerms) && (
         <TermsModal 
@@ -463,6 +466,7 @@ function App() {
         </div>
       )}
     </HashRouter>
+    </DccAuthProvider>
   );
 }
 
