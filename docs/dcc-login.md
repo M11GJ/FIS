@@ -33,10 +33,12 @@ DCC Loginを使うのは、利用者がクラウド保存・端末間同期な�
 - PKCE: S256必須
 - Grant: authorization_code
 - Scope: openid profile
-- Redirect URI: DCC GitでホスティングするFISの実URLと完全一致
+- Redirect URI: `https://fis--gunn0511.shu-dcc.net/shu-binran/`
 - ローカルRedirect URI: http://localhost:5173/shu-binran/
 
 払い出されたClient IDを `VITE_DCC_CLIENT_ID` に、登録したRedirect URIを `VITE_DCC_REDIRECT_URI` に設定します。Client Secretは静的フロントエンドへ置きません。Web版では `offline_access` を要求せず、Refresh Tokenも保持しません。
+
+DCC Hubの `/shu-binran/` はFIS本体をiframeで表示する入口です。OIDCのstate・PKCE verifierをFIS本体と同じオリジンで復元できるよう、Redirect URIにはHub URLではなく上記のFIS本体URLを登録します。
 
 ## OIDCのブラウザ互換対応
 

@@ -268,7 +268,7 @@ function LayoutWrapper({ theme, toggleTheme, showChangelog, setShowChangelog, sh
           <Route path="/" element={<Portal />} />
           <Route path="/admin" element={<AdminPortal />} />
           <Route path="/:faculty/handbook" element={<Handbook />} />
-          <Route path="/:faculty/checker" element={<DccAuthProvider><Checker /></DccAuthProvider>} />
+          <Route path="/:faculty/checker" element={<Checker />} />
           {/* 旧URLからのリダイレクト設定 */}
           <Route path="/checker" element={<Navigate to="/info/checker" replace />} />
           <Route path="/handbook" element={<Navigate to="/info/handbook" replace />} />
@@ -349,15 +349,17 @@ function App() {
           viewOnly={agreedToTos} 
         />
       )}
-      <LayoutWrapper 
-        theme={theme} 
-        toggleTheme={toggleTheme} 
-        showChangelog={showChangelog}
-        setShowChangelog={setShowChangelog}
-        showPdfInfo={showPdfInfo}
-        setShowPdfInfo={setShowPdfInfo}
-        setShowTerms={setShowTerms}
-      />
+      <DccAuthProvider>
+        <LayoutWrapper
+          theme={theme}
+          toggleTheme={toggleTheme}
+          showChangelog={showChangelog}
+          setShowChangelog={setShowChangelog}
+          showPdfInfo={showPdfInfo}
+          setShowPdfInfo={setShowPdfInfo}
+          setShowTerms={setShowTerms}
+        />
+      </DccAuthProvider>
       
       {showChangelog && (
         <div className="modal-overlay" onClick={() => setShowChangelog(false)}>

@@ -5,7 +5,7 @@ FISは、情報科学部の卒業要件・科目データ・判定機能を、�
 ## エンドポイント
 
 ```text
-https://<FISの公開ホスト>/shu-binran/mcp
+https://fis--gunn0511.shu-dcc.net/mcp
 ```
 
 ローカルのDocker Composeでは次のURLです。
@@ -20,7 +20,7 @@ MCPクライアントには、上記URLをStreamable HTTPサーバーとして�
 
 - `list_supported_entry_years`: 対応する入学年度を取得
 - `get_graduation_requirements`: 年度・プログラム別の要件を取得
-- `search_courses`: 年度別の科目を検索
+- `search_courses`: 年度別の科目を検索（`offset`・`limit`で最大200件まで取得可能）
 - `check_graduation`: 科目IDまたは完全な科目名から卒業要件を判定
 - `plan_remaining_courses`: 残り必修を配当年次別に整理し、不足単位と選択候補を取得
 
@@ -44,10 +44,12 @@ DCC Loginによる保存は同一Webアプリ内の `/api/me/course-profile` に
 
 ## 運用
 
-標準の `docker compose up --build` は `docker-compose.override.yml` を自動的に読み込み、MCP対応のDockerfileを使用します。本番では次を環境変数に設定します。
+DCC Gitのサーバーアプリ公開では、リポジトリ直下の `Dockerfile` がWeb・API・MCPを単一コンテナで起動します。公開先は内部ポート80を指定し、履修情報を再デプロイ後も保持するには `/data` を永続storageとして設定します。
+
+ローカルの `docker compose up --build` は `docker-compose.override.yml` を自動的に読み込み、WebとAPIを分けた開発用構成を使用します。本番設定は次のとおりです。
 
 - `VITE_DCC_CLIENT_ID`: DCC Loginで登録したPublic Client ID。バックエンドのAudience検証にも同じ値を使用
-- `VITE_DCC_REDIRECT_URI`: 登録済みRedirect URIと完全一致する公開URL
+- `VITE_DCC_REDIRECT_URI`: `https://fis--gunn0511.shu-dcc.net/shu-binran/`（登録済みRedirect URIと完全一致させる）
 - `FIS_ALLOWED_HOSTS`: `.shu-dcc.net` 以外の追加公開ホストをカンマ区切りで指定
 
-保存ファイルはホスト側の `./data/course-profiles.json` です。`data/` はGitとDockerビルドコンテキストから除外し、バックアップ・アクセス権はホスティング側で管理してください。
+保存ファイルはコンテナ内の `/data/course-profiles.json` です。`/data` はDCC Gitの公開画面で永続storageとして設定し、バックアップ・アクセス権はホスティング側で管理してください。

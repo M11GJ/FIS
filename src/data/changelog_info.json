@@ -1,5 +1,16 @@
 [
   {
+    "version": "2.0.2",
+    "date": "2026.09.02",
+    "description": "本番MCP・クラウド保存APIの公開対応",
+    "changes": [
+      "DCC Gitの単一サーバーアプリでWeb・API・MCPを同時起動する構成へ変更",
+      "FIS本体の公開オリジンから匿名・読み取り専用MCPを利用可能に変更",
+      "DCC Hubのiframeから安全にDCC Loginを開始するための遷移処理を追加",
+      "2024・2025・2026年度の科目候補から更新履歴レコードを除外"
+    ]
+  },
+  {
     "version": "2.0.1",
     "date": "2026.09.02",
     "description": "DCC Login設定と公開バージョンの更新",

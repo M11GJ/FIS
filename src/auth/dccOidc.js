@@ -58,6 +58,13 @@ export function isDccOidcConfigured() {
   return Boolean(getClientId());
 }
 
+export function getDccLoginBridgeReturnTo() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('dcc_login') !== '1') return null;
+  const returnTo = params.get('return_to') || '#/';
+  return returnTo.startsWith('#/') ? returnTo : '#/';
+}
+
 async function fetchDiscovery() {
   return {
     issuer: ISSUER,
@@ -137,13 +144,23 @@ export async function beginDccLogin(returnTo = window.location.hash || '#/') {
   const config = getDccOidcConfig();
   if (!config.clientId) throw new Error('VITE_DCC_CLIENT_IDが設定されていません');
 
+  const safeReturnTo = returnTo.startsWith('#/') ? returnTo : '#/';
+  if (window.self !== window.top) {
+    const bridgeUrl = new URL(import.meta.env.BASE_URL, window.location.origin);
+    bridgeUrl.searchParams.set('dcc_login', '1');
+    bridgeUrl.searchParams.set('return_to', safeReturnTo);
+    bridgeUrl.hash = safeReturnTo.slice(1);
+    window.top.location.assign(bridgeUrl.toString());
+    return;
+  }
+
   const discovery = await fetchDiscovery();
   const verifier = createRandomValue(64);
   const transaction = {
     state: createRandomValue(),
     nonce: createRandomValue(),
     verifier,
-    returnTo: returnTo.startsWith('#/') ? returnTo : '#/',
+    returnTo: safeReturnTo,
     createdAt: Date.now(),
   };
   sessionStorage.setItem(TRANSACTION_KEY, JSON.stringify(transaction));

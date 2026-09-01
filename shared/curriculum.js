@@ -24,6 +24,16 @@ export function isCourseAvailableForEntryYear(course, entryYear) {
   return !Array.isArray(course.entryYears) || course.entryYears.includes(year);
 }
 
+export function isCourseRecord(course) {
+  return Boolean(
+    course
+    && typeof course.id === 'string'
+    && typeof course.name === 'string'
+    && typeof course.credits === 'number'
+    && typeof course.category === 'string',
+  );
+}
+
 export function getCoursesForEntryYear(courses, entryYear) {
-  return courses.filter(course => isCourseAvailableForEntryYear(course, entryYear));
+  return courses.filter(course => isCourseRecord(course) && isCourseAvailableForEntryYear(course, entryYear));
 }

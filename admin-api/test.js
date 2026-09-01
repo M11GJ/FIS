@@ -8,6 +8,13 @@ const courses2025 = getCoursesForEntryYear(courses, 2025);
 const courses2026 = getCoursesForEntryYear(courses, 2026);
 const additions2026 = ['オブジェクト指向プログラミング', '応用数値解析', 'データベース応用', '金融工学'];
 
+assert.equal(courses2024.length, 143);
+assert.equal(courses2025.length, 143);
+assert.equal(courses2026.length, 147);
+[courses2024, courses2025, courses2026].forEach(list => {
+  assert.equal(list.every(course => course.id && course.name && Number.isFinite(course.credits) && course.category), true);
+});
+
 additions2026.forEach(name => {
   assert.equal(courses2024.some(course => course.name === name), false);
   assert.equal(courses2025.some(course => course.name === name), false);
@@ -15,9 +22,11 @@ additions2026.forEach(name => {
 });
 
 [courses2024, courses2025, courses2026].forEach(list => {
-  const result = calculateInformationGraduation(list.map(course => course.id), 'DS', list);
-  assert.equal(result.status.total.ok, true);
-  assert.equal(result.missingList.length, 0);
+  ['DS', 'IE', 'BA'].forEach(program => {
+    const result = calculateInformationGraduation(list.map(course => course.id), program, list);
+    assert.equal(result.status.total.ok, true);
+    assert.equal(result.missingList.length, 0);
+  });
 });
 
 process.env.FIS_DATA_PATH = '/tmp/fis-profile-store-test.json';

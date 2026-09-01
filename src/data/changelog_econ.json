@@ -1,5 +1,14 @@
 [
   {
+    "version": "2.0.2",
+    "date": "2026.09.02",
+    "description": "本番API基盤の公開対応",
+    "changes": [
+      "DCC Gitの単一サーバーアプリでWeb・APIを同時起動する構成へ変更",
+      "DCC Hubのiframe環境に対応する認証遷移基盤を追加"
+    ]
+  },
+  {
     "version": "2.0.1",
     "date": "2026.09.02",
     "description": "DCC Login設定と公開バージョンの更新",

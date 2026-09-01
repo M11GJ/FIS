@@ -29,3 +29,12 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Install API dependencies
+        run: npm ci --prefix admin-api
+
+      - name: Test curriculum, graduation checks, and profile storage
+        run: npm test --prefix admin-api
+
+      - name: Verify production single-container image
+        run: docker build -t fis-production-check .

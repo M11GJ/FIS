@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import {
   beginDccLogin,
   completeDccLogin,
+  getDccLoginBridgeReturnTo,
   hasOidcCallbackParameters,
   isDccOidcConfigured,
   loadDccSession,
@@ -25,6 +26,11 @@ export function DccAuthProvider({ children }) {
           const completed = await completeDccLogin();
           if (!cancelled) setSession(completed);
         } else {
+          const bridgeReturnTo = getDccLoginBridgeReturnTo();
+          if (bridgeReturnTo) {
+            await beginDccLogin(bridgeReturnTo);
+            return;
+          }
           const saved = loadDccSession();
           if (saved) {
             const validated = await revalidateDccSession(saved);

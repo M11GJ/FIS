@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.fis
       args:
         VITE_DCC_CLIENT_ID: ${VITE_DCC_CLIENT_ID:-dcc_0yneIL16eyD4Z-VzkEO69kA6}
-        VITE_DCC_REDIRECT_URI: ${VITE_DCC_REDIRECT_URI:-https://app.shu-dcc.net/shu-binran/}
+        VITE_DCC_REDIRECT_URI: ${VITE_DCC_REDIRECT_URI:-https://fis--gunn0511.shu-dcc.net/shu-binran/}
         VITE_DCC_SCOPES: ${VITE_DCC_SCOPES:-openid profile}
     depends_on:
       - admin-api

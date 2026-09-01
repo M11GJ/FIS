@@ -54,7 +54,7 @@ function resolveCompletedCourses(values, availableCourses) {
 }
 
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.0.1' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.0.2' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',
@@ -84,16 +84,28 @@ export function createFisMcpServer() {
       program: programSchema.default('DS'),
       query: z.string().max(100).optional(),
       category: z.enum(['general', 'basic', 'basic_english', 'program', 'exercise', 'other', 'teaching']).optional(),
+      offset: z.number().int().min(0).default(0),
+      limit: z.number().int().min(1).max(200).default(100),
     }),
     annotations: { readOnlyHint: true, openWorldHint: false },
-  }, async ({ entryYear, program, query, category }) => {
+  }, async ({ entryYear, program, query, category, offset, limit }) => {
     const normalizedQuery = normalizeName(query || '');
-    const matches = getCoursesForEntryYear(courses, entryYear)
+    const filtered = getCoursesForEntryYear(courses, entryYear)
       .filter(course => !category || course.category === category)
-      .filter(course => !normalizedQuery || normalizeName(course.name).includes(normalizedQuery))
-      .slice(0, 100)
+      .filter(course => !normalizedQuery || normalizeName(course.name).includes(normalizedQuery));
+    const matches = filtered
+      .slice(offset, offset + limit)
       .map(course => publicCourse(course, program));
-    return textResult({ entryYear, program, count: matches.length, courses: matches });
+    return textResult({
+      entryYear,
+      program,
+      total: filtered.length,
+      offset,
+      limit,
+      count: matches.length,
+      hasMore: offset + matches.length < filtered.length,
+      courses: matches,
+    });
   });
 
   registerPlanningTool(server);

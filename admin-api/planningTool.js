@@ -67,7 +67,6 @@ export function registerPlanningTool(server) {
     );
     const electiveCandidates = availableCourses
       .filter(course => !selected.has(course.id) && !isRequired(course) && course.category !== 'teaching')
-      .filter(course => course.category !== 'program' || course.programMapping?.[programKey])
       .map(course => courseSummary(course, program));
 
     const output = {

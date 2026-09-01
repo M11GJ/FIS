@@ -1,5 +1,7 @@
 import { createMcpExpressApp } from '@modelcontextprotocol/express';
+import express from 'express';
 import fs from 'node:fs';
+import path from 'node:path';
 import courses from '../src/data/courses_info.json' with { type: 'json' };
 import { getCoursesForEntryYear, INFO_PROGRAMS, SUPPORTED_ENTRY_YEARS } from '../shared/curriculum.js';
 import { proxyDccJwks, verifyDccAccessToken } from './dccAuth.js';
@@ -11,6 +13,8 @@ const PORT = Number(process.env.PORT) || 3000;
 const ACCESS_LOG_PATH = '/var/log/nginx/access.log';
 const HISTORY_LOG_PATH = '/stats/update_history.log';
 const configuredHosts = new Set((process.env.FIS_ALLOWED_HOSTS || '').split(',').map(value => value.trim()).filter(Boolean));
+const publicDirectory = process.env.FIS_PUBLIC_DIR?.trim();
+const withPublicBase = pathName => [pathName, `/shu-binran${pathName}`];
 
 function isTrustedPublicHostname(hostname) {
   return ['localhost', '127.0.0.1', '::1'].includes(hostname)
@@ -32,8 +36,13 @@ function protectPublicEndpoint(req, res, next) {
   next();
 }
 
-app.get('/api/health', (_req, res) => res.json({ ok: true, mcp: '/mcp' }));
-app.get('/api/auth/dcc/jwks', proxyDccJwks);
+app.get(withPublicBase('/api/health'), (_req, res) => res.json({
+  ok: true,
+  version: '2.0.2',
+  mcp: '/mcp',
+  supportedEntryYears: SUPPORTED_ENTRY_YEARS,
+}));
+app.get(withPublicBase('/api/auth/dcc/jwks'), proxyDccJwks);
 
 function validateProfile(body) {
   const entryYear = Number(body?.entryYear);
@@ -47,7 +56,7 @@ function validateProfile(body) {
   return { profile: { facultyId: 'info', entryYear, program, courseIds } };
 }
 
-app.get('/api/me/course-profile', verifyDccAccessToken, async (req, res, next) => {
+app.get(withPublicBase('/api/me/course-profile'), verifyDccAccessToken, async (req, res, next) => {
   try {
     const stored = await getCourseProfile(req.dccIdentity.sub);
     if (!stored) return res.status(404).json({ error: 'profile_not_found' });
@@ -58,7 +67,7 @@ app.get('/api/me/course-profile', verifyDccAccessToken, async (req, res, next) =
   }
 });
 
-app.put('/api/me/course-profile', verifyDccAccessToken, async (req, res, next) => {
+app.put(withPublicBase('/api/me/course-profile'), verifyDccAccessToken, async (req, res, next) => {
   try {
     const validation = validateProfile(req.body);
     if (validation.error) return res.status(400).json({ error: validation.error });
@@ -70,7 +79,7 @@ app.put('/api/me/course-profile', verifyDccAccessToken, async (req, res, next) =
   }
 });
 
-app.delete('/api/me/course-profile', verifyDccAccessToken, async (req, res, next) => {
+app.delete(withPublicBase('/api/me/course-profile'), verifyDccAccessToken, async (req, res, next) => {
   try {
     await deleteCourseProfile(req.dccIdentity.sub);
     res.status(204).end();
@@ -79,7 +88,7 @@ app.delete('/api/me/course-profile', verifyDccAccessToken, async (req, res, next
   }
 });
 
-app.post(['/mcp', '/mcp/'], protectPublicEndpoint, async (req, res, next) => {
+app.post(['/mcp', '/mcp/', '/shu-binran/mcp', '/shu-binran/mcp/'], protectPublicEndpoint, async (req, res, next) => {
   try {
     await handleMcpRequest(req, res);
   } catch (error) {
@@ -100,7 +109,7 @@ function parseNginxLog(line) {
   return { ip: match[1], timestamp: match[2], request: requestLine, path: requestPath, status: Number(match[4]) };
 }
 
-app.get('/api/admin/stats', (_req, res) => {
+app.get(withPublicBase('/api/admin/stats'), (_req, res) => {
   try {
     if (!fs.existsSync(ACCESS_LOG_PATH)) return res.json({ totalHits: 0, uniqueIps: 0, dailyHits: [], topIps: [] });
     const rawLogs = fs.readFileSync(ACCESS_LOG_PATH, 'utf8').split('\n').filter(Boolean).map(parseNginxLog).filter(Boolean);
@@ -127,7 +136,7 @@ app.get('/api/admin/stats', (_req, res) => {
   }
 });
 
-app.get('/api/admin/history', (_req, res) => {
+app.get(withPublicBase('/api/admin/history'), (_req, res) => {
   try {
     if (!fs.existsSync(HISTORY_LOG_PATH) || fs.statSync(HISTORY_LOG_PATH).size === 0) return res.json({ history: [] });
     const history = fs.readFileSync(HISTORY_LOG_PATH, 'utf8').split('\n').filter(Boolean).reverse();
@@ -137,6 +146,21 @@ app.get('/api/admin/history', (_req, res) => {
     res.status(500).json({ error: 'failed_to_read_history' });
   }
 });
+
+if (publicDirectory && fs.existsSync(publicDirectory)) {
+  app.use('/shu-binran', express.static(publicDirectory, {
+    index: 'index.html',
+    maxAge: 0,
+  }));
+  app.get('/', (_req, res) => res.redirect(302, '/shu-binran/'));
+  app.get(['/shu-binran', '/shu-binran/*'], (req, res, next) => {
+    if (req.path.startsWith('/shu-binran/api/') || req.path.startsWith('/shu-binran/mcp')) {
+      return next();
+    }
+    res.set('Cache-Control', 'no-cache');
+    res.sendFile(path.join(publicDirectory, 'index.html'));
+  });
+}
 
 app.use((error, _req, res, _next) => {
   console.error(error);
