@@ -1,5 +1,14 @@
 [
   {
+    "version": "2.0.1",
+    "date": "2026.09.02",
+    "description": "DCC Login設定と公開バージョンの更新",
+    "changes": [
+      "DCC Loginの本番用Public Client IDとRedirect URIを設定",
+      "公開画面のバージョン表示を2.0.1へ更新し、デプロイ反映を判別可能に変更"
+    ]
+  },
+  {
     "version": "2.0.0",
     "date": "2026.09.01",
     "description": "入学年度別判定・MCP・任意クラウド保存",

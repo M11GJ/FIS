@@ -5,7 +5,6 @@ import Checker from './pages/Checker';
 import Portal from './pages/Portal';
 import AdminPortal from './pages/AdminPortal';
 import { BookOpen, CheckSquare, Sun, Moon, ExternalLink, X, ArrowLeft, AlertTriangle, Hammer } from 'lucide-react';
-import pkg from '../package.json';
 import changelogEcon from './data/changelog_econ.json';
 import changelogInfo from './data/changelog_info.json';
 import changelogPortal from './data/changelog_portal.json';
