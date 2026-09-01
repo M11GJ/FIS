@@ -7,7 +7,7 @@ import { useGraduationCheck } from '../hooks/useGraduationCheck';
 import { formatTerm } from '../utils/formatTerm';
 import { isCourseActiveInQuarter } from '../utils/parseSchedule';
 import { mergeRooms } from '../utils/mergeRooms';
-import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2, Info, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2, Info, AlertTriangle, HardDrive, Trash2 } from 'lucide-react';
 import Timetable from '../components/Timetable';
 
 const ProgressBar = ({ label, current, target, minRequiredLabel, missingList, detail, subStatus, color }) => {
@@ -84,6 +84,7 @@ const normalizeCourseName = (name) => {
 const getSortedCourses = (courses) => [...courses].sort((a, b) => a.id.localeCompare(b.id));
 
 const B64_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+const getLocalStorageKey = (facultyId) => 'fis.checker.local.v1.' + facultyId;
 
 const encodeBits = (selectedIds, sortedCourses) => {
   let bits = '';
@@ -406,7 +407,7 @@ const AutoImportPanel = ({ facultyId, selectedCourses, setSelectedCourses, cours
 
 function Checker() {
   const { faculty: facultyParam } = useParams();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const facultyId = facultyParam || 'info';
   
   const coursesData = useMemo(() => {
@@ -421,27 +422,54 @@ function Checker() {
   const [activeTab, setActiveTab] = useState('progress');
   const [shareCopied, setShareCopied] = useState(false);
   const [isDrawerExpanded, setIsDrawerExpanded] = useState(false);
+  const [isLocalDataReady, setIsLocalDataReady] = useState(false);
+  const localStorageKey = useMemo(() => getLocalStorageKey(facultyId), [facultyId]);
 
-  // URL共有データの復元
+  // 共有URLを優先し、指定がなければこの端末に保存した履修状況を復元する
   useEffect(() => {
+    setIsLocalDataReady(false);
+    let saved = null;
+    try {
+      const raw = window.localStorage.getItem(localStorageKey);
+      saved = raw ? JSON.parse(raw) : null;
+    } catch (storageError) {
+      console.warn('Failed to load local checker data:', storageError);
+    }
+
     const sParam = searchParams.get('s');
     const pParam = searchParams.get('p');
+    const restoredProgram = (pParam || saved?.program || 'DS').toUpperCase();
+    setProgram(['DS', 'IE', 'BA'].includes(restoredProgram) ? restoredProgram : 'DS');
 
-    if (pParam) {
-      setProgram(pParam.toUpperCase());
-    }
-
-    if (sParam) {
+    if (sParam !== null) {
       try {
-        const decodedSet = decodeBits(sParam, sortedCourses);
-        if (decodedSet.size > 0) {
-          setSelectedCourses(decodedSet);
-        }
-      } catch (err) {
-        console.error('Failed to decode share URL:', err);
+        setSelectedCourses(decodeBits(sParam, sortedCourses));
+      } catch (decodeError) {
+        console.error('Failed to decode share URL:', decodeError);
+        setSelectedCourses(new Set());
       }
+    } else {
+      const knownIds = new Set(sortedCourses.map(course => course.id));
+      const savedIds = Array.isArray(saved?.courseIds) ? saved.courseIds : [];
+      setSelectedCourses(new Set(savedIds.filter(id => knownIds.has(id))));
     }
-  }, [searchParams, sortedCourses]);
+    setIsLocalDataReady(true);
+  }, [searchParams, sortedCourses, localStorageKey]);
+
+  // 匿名利用時は履修状況をこのブラウザ内だけに保存する
+  useEffect(() => {
+    if (!isLocalDataReady) return;
+    try {
+      window.localStorage.setItem(localStorageKey, JSON.stringify({
+        facultyId,
+        program,
+        courseIds: Array.from(selectedCourses),
+        updatedAt: new Date().toISOString(),
+      }));
+    } catch (storageError) {
+      console.warn('Failed to save local checker data:', storageError);
+    }
+  }, [isLocalDataReady, localStorageKey, facultyId, program, selectedCourses]);
 
   const handleToggle = (id) => {
     setSelectedCourses(prev => {
@@ -511,6 +539,17 @@ function Checker() {
       }
       return next;
     });
+  };
+
+  const handleResetLocalData = () => {
+    setSelectedCourses(new Set());
+    setProgram('DS');
+    setSearchParams({}, { replace: true });
+    try {
+      window.localStorage.removeItem(localStorageKey);
+    } catch (storageError) {
+      console.warn('Failed to clear local checker data:', storageError);
+    }
   };
 
   const handleShare = () => {
@@ -584,6 +623,19 @@ function Checker() {
           <CheckCircle2 /> 修得科目を選択
         </h2>
         
+        <div style={{ marginBottom: '1.25rem', padding: '0.9rem', borderRadius: '8px', background: 'var(--surface-hover)', border: '1px solid var(--border)', display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+          <HardDrive size={20} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ flex: 1 }}>
+            <strong style={{ display: 'block', color: 'var(--text-main)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>ログインなしで利用できます</strong>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.55 }}>
+              選択した履修情報はこの端末内だけに自動保存され、DCCアカウントとは結び付きません。将来、クラウド保存・同期を明示的に選択した場合のみDCC Loginを使用します。
+            </p>
+          </div>
+          <button type="button" onClick={handleResetLocalData} title="この端末の履修情報をリセット" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', border: '1px solid var(--border)', borderRadius: '6px', background: 'var(--surface)', color: 'var(--text-muted)', padding: '0.4rem 0.55rem', cursor: 'pointer', fontSize: '0.72rem', whiteSpace: 'nowrap' }}>
+            <Trash2 size={14} /> リセット
+          </button>
+        </div>
+
         <div style={{ marginBottom: '1.25rem', display: 'flex', gap: '0.5rem' }}>
           <button
             onClick={handleShare}

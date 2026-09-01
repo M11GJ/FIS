@@ -23,7 +23,7 @@ export default function DccLoginScreen() {
         </div>
         <h2 style={{ margin: '0 0 0.75rem', color: 'var(--text-main)' }}>DCC Loginで本人確認</h2>
         <p style={{ color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-          単位チェックと今後のデータ連携は個人情報を扱うため、DCC部員向け共通ログインを使用します。
+          クラウド保存・端末間同期など、履修情報をDCCアカウントへ明示的に連携する場合だけ共通ログインを使用します。通常の単位チェックにログインは必要ありません。
           DCC Discordサーバーへの所属と <strong>@member</strong> ロールが必要です。
         </p>
 
