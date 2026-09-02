@@ -1,12 +1,13 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 const ISSUER = 'https://id.shu-dcc.net';
+const DEFAULT_CLIENT_ID = 'dcc_0yneIL16eyD4Z-VzkEO69kA6';
 const JWKS_URI = `${ISSUER}/api/oidc/jwks`;
 const USERINFO_URI = `${ISSUER}/api/oidc/userinfo`;
 const remoteJwks = createRemoteJWKSet(new URL(JWKS_URI));
 
 export async function verifyDccAccessToken(req, res, next) {
-  const clientId = process.env.DCC_OIDC_CLIENT_ID?.trim();
+  const clientId = process.env.DCC_OIDC_CLIENT_ID?.trim() || DEFAULT_CLIENT_ID;
   if (!clientId) {
     return res.status(503).json({ error: 'dcc_login_not_configured' });
   }

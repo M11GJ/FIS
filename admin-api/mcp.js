@@ -1,7 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { NodeStreamableHTTPServerTransport } from '@modelcontextprotocol/node';
 import * as z from 'zod/v4';
-import courses from '../src/data/courses_info.json' with { type: 'json' };
 import {
   getCoursesForEntryYear,
   INFO_GRADUATION_REQUIREMENTS,
@@ -9,6 +8,7 @@ import {
   SUPPORTED_ENTRY_YEARS,
 } from '../shared/curriculum.js';
 import { calculateInformationGraduation } from '../shared/graduation.js';
+import courses from './courseData.js';
 import { registerPlanningTool } from './planningTool.js';
 
 const yearSchema = z.union([z.literal(2024), z.literal(2025), z.literal(2026)]);
@@ -54,7 +54,7 @@ function resolveCompletedCourses(values, availableCourses) {
 }
 
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.0.2' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.0.3' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',

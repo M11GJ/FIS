@@ -1,5 +1,14 @@
 [
   {
+    "version": "2.0.3",
+    "date": "2026.09.02",
+    "description": "DCC動的サイト公開への起動方式統一",
+    "changes": [
+      "Dockerfileとnpm startの両方でWeb・APIを起動可能に変更",
+      "DCC動的サイトの標準設定に合わせて内部ポートを3000へ統一"
+    ]
+  },
+  {
     "version": "2.0.2",
     "date": "2026.09.02",
     "description": "本番API基盤の公開対応",

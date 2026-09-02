@@ -1,5 +1,6 @@
 const ISSUER = 'https://id.shu-dcc.net';
 const DISCOVERY_URL = `${ISSUER}/.well-known/openid-configuration`;
+const DEFAULT_CLIENT_ID = 'dcc_0yneIL16eyD4Z-VzkEO69kA6';
 
 const TRANSACTION_KEY = 'fis.dcc.oidc.transaction.v1';
 const SESSION_KEY = 'fis.dcc.oidc.session.v1';
@@ -39,7 +40,7 @@ async function createCodeChallenge(verifier) {
 }
 
 function getClientId() {
-  return import.meta.env.VITE_DCC_CLIENT_ID?.trim() || '';
+  return import.meta.env.VITE_DCC_CLIENT_ID?.trim() || DEFAULT_CLIENT_ID;
 }
 
 export function getDccOidcConfig() {

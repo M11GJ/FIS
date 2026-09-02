@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import courses from '../src/data/courses_info.json' with { type: 'json' };
 import { getCoursesForEntryYear } from '../shared/curriculum.js';
 import { calculateInformationGraduation } from '../shared/graduation.js';
+import courses from './courseData.js';
 
 const courses2024 = getCoursesForEntryYear(courses, 2024);
 const courses2025 = getCoursesForEntryYear(courses, 2025);

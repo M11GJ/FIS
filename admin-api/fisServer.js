@@ -2,8 +2,8 @@ import { createMcpExpressApp } from '@modelcontextprotocol/express';
 import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
-import courses from '../src/data/courses_info.json' with { type: 'json' };
 import { getCoursesForEntryYear, INFO_PROGRAMS, SUPPORTED_ENTRY_YEARS } from '../shared/curriculum.js';
+import courses from './courseData.js';
 import { proxyDccJwks, verifyDccAccessToken } from './dccAuth.js';
 import { deleteCourseProfile, getCourseProfile, saveCourseProfile } from './profileStore.js';
 import { handleMcpRequest } from './mcp.js';
@@ -13,7 +13,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const ACCESS_LOG_PATH = '/var/log/nginx/access.log';
 const HISTORY_LOG_PATH = '/stats/update_history.log';
 const configuredHosts = new Set((process.env.FIS_ALLOWED_HOSTS || '').split(',').map(value => value.trim()).filter(Boolean));
-const publicDirectory = process.env.FIS_PUBLIC_DIR?.trim();
+const publicDirectory = process.env.FIS_PUBLIC_DIR?.trim() || path.resolve(process.cwd(), 'dist');
 const withPublicBase = pathName => [pathName, `/shu-binran${pathName}`];
 
 function isTrustedPublicHostname(hostname) {
@@ -38,7 +38,7 @@ function protectPublicEndpoint(req, res, next) {
 
 app.get(withPublicBase('/api/health'), (_req, res) => res.json({
   ok: true,
-  version: '2.0.2',
+  version: '2.0.3',
   mcp: '/mcp',
   supportedEntryYears: SUPPORTED_ENTRY_YEARS,
 }));

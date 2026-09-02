@@ -3,18 +3,11 @@ services:
     build: .
     container_name: graduation-checker-app
     ports:
-      - "8080:80"
+      - "8080:3000"
     restart: always
     volumes:
-      - ./logs:/var/log/nginx
-      - ./stats:/usr/share/nginx/html/admin:ro
-
-  admin-api:
-    build: ./admin-api
-    container_name: graduation-checker-admin-api
-    restart: always
-    volumes:
-      - ./logs:/var/log/nginx:ro
-      - ./stats:/stats:ro
+      - ./data:/data
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
+      PORT: 3000
+      FIS_DATA_PATH: /data/course-profiles.json

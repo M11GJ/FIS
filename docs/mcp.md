@@ -44,7 +44,7 @@ DCC Loginによる保存は同一Webアプリ内の `/api/me/course-profile` に
 
 ## 運用
 
-DCC Gitのサーバーアプリ公開では、リポジトリ直下の `Dockerfile` がWeb・API・MCPを単一コンテナで起動します。公開先は内部ポート80を指定し、履修情報を再デプロイ後も保持するには `/data` を永続storageとして設定します。
+DCC Gitの「動的サイト」公開では、リポジトリ直下の `Dockerfile` または `npm start` がWeb・API・MCPを単一プロセスで起動します。どちらも内部ポート3000を使用します。履修情報を再デプロイ後も保持するには `/data` を永続storageとして設定します。
 
 ローカルの `docker compose up --build` は `docker-compose.override.yml` を自動的に読み込み、WebとAPIを分けた開発用構成を使用します。本番設定は次のとおりです。
 

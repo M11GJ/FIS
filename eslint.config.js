@@ -9,7 +9,10 @@ const commonRules = {
 
 export default [
   { ignores: ['dist', 'node_modules'] },
-  js.configs.recommended,
+  {
+    ...js.configs.recommended,
+    files: ['src/**/*.{js,jsx,cjs}', 'shared/**/*.js', 'admin-api/**/*.js', 'scripts/**/*.{js,cjs}', 'scratch/**/*.{js,cjs}', '*.{js,cjs}'],
+  },
   {
     files: ['src/**/*.{js,jsx}'],
     plugins: {
@@ -41,7 +44,7 @@ export default [
     rules: commonRules,
   },
   {
-    files: ['admin-api/**/*.js', 'scripts/**/*.{js,cjs}', 'src/scripts/**/*.{js,cjs}', '*.{js,cjs}'],
+    files: ['admin-api/**/*.js', 'scripts/**/*.{js,cjs}', 'src/scripts/**/*.{js,cjs}', 'scratch/**/*.{js,cjs}', '*.{js,cjs}'],
     languageOptions: {
       ecmaVersion: 'latest',
       globals: globals.node,

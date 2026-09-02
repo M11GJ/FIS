@@ -1,7 +1,7 @@
 import * as z from 'zod/v4';
-import courses from '../src/data/courses_info.json' with { type: 'json' };
 import { getCoursesForEntryYear } from '../shared/curriculum.js';
 import { calculateInformationGraduation } from '../shared/graduation.js';
+import courses from './courseData.js';
 
 const yearSchema = z.union([z.literal(2024), z.literal(2025), z.literal(2026)]);
 const programSchema = z.enum(['DS', 'IE', 'BA']);

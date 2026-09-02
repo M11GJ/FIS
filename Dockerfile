@@ -25,7 +25,7 @@ FROM node:20-alpine AS runtime
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=80
+ENV PORT=3000
 ENV FIS_PUBLIC_DIR=/app/public
 ENV FIS_DATA_PATH=/data/course-profiles.json
 ENV DCC_OIDC_CLIENT_ID=dcc_0yneIL16eyD4Z-VzkEO69kA6
@@ -41,9 +41,9 @@ COPY --from=frontend-build /app/dist ./public
 RUN mkdir -p /data
 VOLUME ["/data"]
 
-EXPOSE 80
+EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://127.0.0.1/api/health >/dev/null || exit 1
+  CMD wget -qO- http://127.0.0.1:3000/api/health >/dev/null || exit 1
 
 CMD ["node", "admin-api/fisServer.js"]
