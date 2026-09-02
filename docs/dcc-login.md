@@ -49,3 +49,29 @@ Discoveryの公開値は固定Issuerと本番エンドポイントを使用し�
 ## リポジトリとホスティング
 
 GitHubとDCC Gitは、常に同じコミットを保持する正本として扱います。公開ホスティングはDCC Git側で行い、GitHub側のワークフローはビルド検証だけを実行します。
+
+## 全体ログイン必須へ切り替える場合の設計案
+
+これは現行動作ではなく、将来の検討案です。Web画面とMCPではクライアントとログイン状態を共有しません。
+
+### Web画面
+
+1. 未ログイン利用者にはFIS内の「DCC Loginで続ける」画面だけを表示する。
+2. `/auth/login`がstate・nonce・PKCEを生成してDCC Loginへ遷移する。
+3. DCC LoginからFISの専用`/auth/callback`へ戻す。
+4. FISバックエンドがコードを交換し、ID Tokenを検証する。
+5. `HttpOnly`・`Secure`・`SameSite=Lax` CookieでFISセッションを発行し、元のページへ戻す。
+
+`/api/health`、`/auth/*`、OAuthの`/.well-known/*`だけは未認証でも到達可能にします。Web用クライアントのRedirect URIには、FIS本体オリジンのcallbackを完全一致で登録します。
+
+### ChatGPT・CodexからのMCP
+
+1. 未認証の`/mcp`は`401 Unauthorized`と`WWW-Authenticate`を返す。
+2. MCPクライアントがFISの保護リソースメタデータと認可サーバー情報を取得する。
+3. MCPクライアント上の「認証」操作からDCC Loginを開く。
+4. Authorization Code + PKCE完了後、MCPクライアントがBearer Tokenを保持する。
+5. FISは各MCP要求で署名・Issuer・Audience・期限・Scope・現在のDCC所属を検証する。
+
+MCP用にはWebとは別のOAuthクライアントを登録し、MCPクライアント管理画面に表示されたRedirect URIを完全一致で登録します。DCC Login側でMCPの`resource`パラメータ、Audience、クライアント登録方式を満たせない場合は、FIS側にDCC Loginを上流IdPとするOAuth仲介層が必要です。
+
+全体を必須にする場合でも、部員確認だけの共通機能は`openid profile dcc.ai.read`、学籍番号等と保存履修情報を結び付ける操作だけ`dcc.student`を要求する設計が望ましいです。
