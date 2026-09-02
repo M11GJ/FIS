@@ -4,7 +4,7 @@ WORKDIR /app
 
 # DCC Login is a Public Client. These values are public build-time settings;
 # no Client Secret is embedded in the browser bundle.
-ARG VITE_DCC_CLIENT_ID="dcc_0yneIL16eyD4Z-VzkEO69kA6"
+ARG VITE_DCC_CLIENT_ID="dcc_fy43DvLjb9qCQCiXE857GXGP"
 ARG VITE_DCC_REDIRECT_URI="https://fis--gunn0511.shu-dcc.net/shu-binran/"
 ARG VITE_DCC_SCOPES="openid profile"
 ENV VITE_DCC_CLIENT_ID=$VITE_DCC_CLIENT_ID
@@ -28,7 +28,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV FIS_PUBLIC_DIR=/app/public
 ENV FIS_DATA_PATH=/data/course-profiles.json
-ENV DCC_OIDC_CLIENT_ID=dcc_0yneIL16eyD4Z-VzkEO69kA6
+ENV DCC_OIDC_CLIENT_ID=dcc_fy43DvLjb9qCQCiXE857GXGP
 
 COPY admin-api/package*.json ./admin-api/
 RUN cd admin-api && npm ci --omit=dev

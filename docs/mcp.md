@@ -48,7 +48,7 @@ DCC Gitの「動的サイト」公開では、リポジトリ直下の `Dockerfi
 
 ローカルの `docker compose up --build` は `docker-compose.override.yml` を自動的に読み込み、WebとAPIを分けた開発用構成を使用します。本番設定は次のとおりです。
 
-- `VITE_DCC_CLIENT_ID`: DCC Loginで登録したPublic Client ID。バックエンドのAudience検証にも同じ値を使用
+- `VITE_DCC_CLIENT_ID`: DCC Loginで登録したPublic Client ID。バックエンドでもAccess Tokenの`client_id`照合に同じ値を使用
 - `VITE_DCC_REDIRECT_URI`: `https://fis--gunn0511.shu-dcc.net/shu-binran/`（登録済みRedirect URIと完全一致させる）
 - `FIS_ALLOWED_HOSTS`: `.shu-dcc.net` 以外の追加公開ホストをカンマ区切りで指定
 

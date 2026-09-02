@@ -1,5 +1,15 @@
 [
   {
+    "version": "2.0.4",
+    "date": "2026.09.02",
+    "description": "本番動的公開とDCC Login callbackの安定化",
+    "changes": [
+      "DCC Loginのcallback先を登録済み本番Redirect URIへ固定",
+      "Web・API・MCPを同一Nodeサーバーから提供する本番動的構成を検証",
+      "公開MCPの全5ツールと2024・2025・2026年度の卒業判定を本番確認"
+    ]
+  },
+  {
     "version": "2.0.3",
     "date": "2026.09.02",
     "description": "DCC動的サイト公開への起動方式統一",

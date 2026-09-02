@@ -62,7 +62,7 @@ Streamable HTTPの匿名・読み取り専用MCPを実装済みです。履修�
 
 ### DCC Login保存
 
-- Client ID: `dcc_0yneIL16eyD4Z-VzkEO69kA6`
+- Client ID: `dcc_fy43DvLjb9qCQCiXE857GXGP`
 - Issuer: `https://id.shu-dcc.net`
 - Flow: Authorization Code + PKCE S256
 - 要求scope: `openid profile`
@@ -71,7 +71,11 @@ Streamable HTTPの匿名・読み取り専用MCPを実装済みです。履修�
   - `GET /api/me/course-profile`
   - `PUT /api/me/course-profile`
   - `DELETE /api/me/course-profile`
-- Access TokenはES256署名、Issuer、Audience、UserInfoの`sub`と`dcc_member`で検証
+- Access TokenはES256署名、Issuer、UserInfo用Audience、`client_id`、UserInfoの`sub`と`dcc_member`で検証
+
+本番確認時、旧Client ID `dcc_0yneIL16eyD4Z-VzkEO69kA6` はDCC Hub側の
+`https://app.shu-dcc.net/shu-binran/` に登録されたままでした。FIS実体オリジンには、
+上記の登録済みPublic Clientを使用します。
 - 保存先: `/data/course-profiles.json`
 - 再デプロイ後も保持するにはDCC Git公開設定で`/data`を永続ストレージとして構成する必要あり
 

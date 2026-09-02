@@ -1,7 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 const ISSUER = 'https://id.shu-dcc.net';
-const DEFAULT_CLIENT_ID = 'dcc_0yneIL16eyD4Z-VzkEO69kA6';
+const DEFAULT_CLIENT_ID = 'dcc_fy43DvLjb9qCQCiXE857GXGP';
 const JWKS_URI = `${ISSUER}/api/oidc/jwks`;
 const USERINFO_URI = `${ISSUER}/api/oidc/userinfo`;
 const remoteJwks = createRemoteJWKSet(new URL(JWKS_URI));
@@ -19,10 +19,12 @@ export async function verifyDccAccessToken(req, res, next) {
     const token = match[1];
     const { payload } = await jwtVerify(token, remoteJwks, {
       issuer: ISSUER,
-      audience: clientId,
+      audience: USERINFO_URI,
       algorithms: ['ES256'],
     });
     if (!payload.sub) throw new Error('missing sub');
+    if (payload.token_use !== 'access') throw new Error('unexpected token_use');
+    if (payload.client_id !== clientId) throw new Error('unexpected client_id');
 
     const userInfoResponse = await fetch(USERINFO_URI, {
       headers: { Accept: 'application/json', Authorization: `Bearer ${token}` },

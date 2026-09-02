@@ -38,11 +38,13 @@ DCC Loginを使うのは、利用者がクラウド保存・端末間同期な�
 
 払い出されたClient IDを `VITE_DCC_CLIENT_ID` に、登録したRedirect URIを `VITE_DCC_REDIRECT_URI` に設定します。Client Secretは静的フロントエンドへ置きません。Web版では `offline_access` を要求せず、Refresh Tokenも保持しません。
 
+本番ではビルド環境がViteの`base`を上書きしても認証先が変わらないよう、上記FIS実体URLをRedirect URIの既定値として使用します。ローカル開発など別のRedirect URIを使う場合だけ、`VITE_DCC_REDIRECT_URI`で登録済みURIを明示します。
+
 DCC Hubの `/shu-binran/` はFIS本体をiframeで表示する入口です。OIDCのstate・PKCE verifierをFIS本体と同じオリジンで復元できるよう、Redirect URIにはHub URLではなく上記のFIS本体URLを登録します。
 
 ## OIDCのブラウザ互換対応
 
-Discoveryの公開値は固定Issuerと本番エンドポイントを使用し、JWKSはFISバックエンドの同一オリジンプロキシを経由します。ブラウザでもID TokenのES256署名検証は省略しません。保存API側でもAccess TokenのIssuer・Audience・署名を検証し、UserInfoで現在のDCC所属を再確認します。
+Discoveryの公開値は固定Issuerと本番エンドポイントを使用し、JWKSはFISバックエンドの同一オリジンプロキシを経由します。ブラウザでもID TokenのES256署名検証は省略しません。保存API側ではAccess TokenのIssuer・署名・UserInfo用Audienceを検証し、`client_id`がFISのPublic Client IDと一致すること、およびUserInfo上の現在のDCC所属を再確認します。
 
 ## リポジトリとホスティング
 

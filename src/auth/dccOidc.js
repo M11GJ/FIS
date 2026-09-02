@@ -1,9 +1,12 @@
 const ISSUER = 'https://id.shu-dcc.net';
 const DISCOVERY_URL = `${ISSUER}/.well-known/openid-configuration`;
-const DEFAULT_CLIENT_ID = 'dcc_0yneIL16eyD4Z-VzkEO69kA6';
+const DEFAULT_CLIENT_ID = 'dcc_fy43DvLjb9qCQCiXE857GXGP';
+const DEFAULT_REDIRECT_URI = 'https://fis--gunn0511.shu-dcc.net/shu-binran/';
 
 const TRANSACTION_KEY = 'fis.dcc.oidc.transaction.v1';
 const SESSION_KEY = 'fis.dcc.oidc.session.v1';
+const POPUP_COMPLETE = 'fis-dcc-login-complete';
+const POPUP_ERROR = 'fis-dcc-login-error';
 const textEncoder = new TextEncoder();
 
 function encodeBase64Url(bytes) {
@@ -45,12 +48,11 @@ function getClientId() {
 
 export function getDccOidcConfig() {
   const configuredRedirect = import.meta.env.VITE_DCC_REDIRECT_URI?.trim();
-  const defaultRedirect = `${window.location.origin}${import.meta.env.BASE_URL}`;
   return {
     issuer: ISSUER,
     discoveryUrl: DISCOVERY_URL,
     clientId: getClientId(),
-    redirectUri: configuredRedirect || defaultRedirect,
+    redirectUri: configuredRedirect || DEFAULT_REDIRECT_URI,
     scopes: import.meta.env.VITE_DCC_SCOPES?.trim() || 'openid profile',
   };
 }
@@ -141,19 +143,69 @@ async function fetchUserInfo(discovery, accessToken) {
   return response.json();
 }
 
+function openLoginPopup() {
+  const width = 520;
+  const height = 720;
+  const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - width) / 2));
+  const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - height) / 2));
+  return window.open('', 'fis-dcc-login', `popup=yes,width=${width},height=${height},left=${left},top=${top}`);
+}
+
+function waitForPopupResult(popup, channelName) {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const channel = 'BroadcastChannel' in window ? new BroadcastChannel(channelName) : null;
+    const timer = window.setTimeout(() => {
+      finish();
+      reject(new Error('DCC Loginの有効期限が切れました。もう一度お試しください'));
+    }, 10 * 60 * 1000);
+
+    const finish = () => {
+      if (settled) return false;
+      settled = true;
+      window.clearTimeout(timer);
+      channel?.close();
+      window.removeEventListener('message', handleWindowMessage);
+      return true;
+    };
+    const handleResult = payload => {
+      if (!payload || typeof payload !== 'object') return;
+      if (payload.type === POPUP_COMPLETE && payload.session?.user?.sub) {
+        if (!finish()) return;
+        sessionStorage.removeItem(TRANSACTION_KEY);
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(payload.session));
+        resolve(payload.session);
+      } else if (payload.type === POPUP_ERROR) {
+        if (!finish()) return;
+        sessionStorage.removeItem(TRANSACTION_KEY);
+        reject(new Error(String(payload.message || 'DCC Loginを完了できませんでした')));
+      }
+    };
+    const handleWindowMessage = event => {
+      if (event.origin !== window.location.origin || event.source !== popup) return;
+      handleResult(event.data);
+    };
+
+    channel?.addEventListener('message', event => handleResult(event.data));
+    window.addEventListener('message', handleWindowMessage);
+  });
+}
+
+function sendPopupResult(transaction, payload) {
+  if (transaction?.channelName && 'BroadcastChannel' in window) {
+    const channel = new BroadcastChannel(transaction.channelName);
+    channel.postMessage(payload);
+    window.setTimeout(() => channel.close(), 500);
+  }
+  if (window.opener) window.opener.postMessage(payload, window.location.origin);
+}
+
 export async function beginDccLogin(returnTo = window.location.hash || '#/') {
   const config = getDccOidcConfig();
   if (!config.clientId) throw new Error('VITE_DCC_CLIENT_IDが設定されていません');
 
   const safeReturnTo = returnTo.startsWith('#/') ? returnTo : '#/';
-  if (window.self !== window.top) {
-    const bridgeUrl = new URL(import.meta.env.BASE_URL, window.location.origin);
-    bridgeUrl.searchParams.set('dcc_login', '1');
-    bridgeUrl.searchParams.set('return_to', safeReturnTo);
-    bridgeUrl.hash = safeReturnTo.slice(1);
-    window.top.location.assign(bridgeUrl.toString());
-    return;
-  }
+  const popup = openLoginPopup();
 
   const discovery = await fetchDiscovery();
   const verifier = createRandomValue(64);
@@ -162,9 +214,17 @@ export async function beginDccLogin(returnTo = window.location.hash || '#/') {
     nonce: createRandomValue(),
     verifier,
     returnTo: safeReturnTo,
+    channelName: `fis-dcc-login-${createRandomValue(24)}`,
     createdAt: Date.now(),
   };
-  sessionStorage.setItem(TRANSACTION_KEY, JSON.stringify(transaction));
+  sessionStorage.setItem(TRANSACTION_KEY, JSON.stringify({ ...transaction, popup: false }));
+  if (popup) {
+    try {
+      popup.sessionStorage.setItem(TRANSACTION_KEY, JSON.stringify({ ...transaction, popup: true }));
+    } catch {
+      popup.close();
+    }
+  }
 
   const params = new URLSearchParams({
     response_type: 'code',
@@ -176,7 +236,23 @@ export async function beginDccLogin(returnTo = window.location.hash || '#/') {
     code_challenge: await createCodeChallenge(verifier),
     code_challenge_method: 'S256',
   });
-  window.location.assign(`${discovery.authorization_endpoint}?${params.toString()}`);
+  const authorizeUrl = `${discovery.authorization_endpoint}?${params.toString()}`;
+  if (popup && !popup.closed) {
+    const result = waitForPopupResult(popup, transaction.channelName);
+    popup.location.replace(authorizeUrl);
+    return result;
+  }
+
+  if (window.self !== window.top) {
+    const bridgeUrl = new URL(import.meta.env.BASE_URL, window.location.origin);
+    bridgeUrl.searchParams.set('dcc_login', '1');
+    bridgeUrl.searchParams.set('return_to', safeReturnTo);
+    bridgeUrl.hash = safeReturnTo.slice(1);
+    window.top.location.assign(bridgeUrl.toString());
+    return null;
+  }
+  window.location.assign(authorizeUrl);
+  return null;
 }
 
 export function hasOidcCallbackParameters() {
@@ -187,72 +263,91 @@ export function hasOidcCallbackParameters() {
 export async function completeDccLogin() {
   const config = getDccOidcConfig();
   const params = new URLSearchParams(window.location.search);
-  const error = params.get('error');
-  if (error) {
-    throw new Error(params.get('error_description') || `DCC Loginで認証できませんでした (${error})`);
-  }
-
-  const code = params.get('code');
-  const returnedState = params.get('state');
   const rawTransaction = sessionStorage.getItem(TRANSACTION_KEY);
-  if (!code || !returnedState || !rawTransaction) {
-    throw new Error('OIDC認証情報が不足しています。ログインをやり直してください');
+  let transaction = null;
+  try {
+    transaction = rawTransaction ? JSON.parse(rawTransaction) : null;
+    const error = params.get('error');
+    if (error) {
+      throw new Error(params.get('error_description') || `DCC Loginで認証できませんでした (${error})`);
+    }
+
+    const code = params.get('code');
+    const returnedState = params.get('state');
+    if (!code || !returnedState || !transaction) {
+      throw new Error('OIDC認証情報が不足しています。ログインをやり直してください');
+    }
+
+    sessionStorage.removeItem(TRANSACTION_KEY);
+    if (Date.now() - transaction.createdAt > 10 * 60 * 1000) {
+      throw new Error('OIDC認可リクエストの有効期限が切れています');
+    }
+    if (returnedState !== transaction.state) throw new Error('OIDC Stateが一致しません');
+
+    const discovery = await fetchDiscovery();
+    const tokenResponse = await fetch(discovery.token_endpoint, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: config.clientId,
+        code,
+        redirect_uri: config.redirectUri,
+        code_verifier: transaction.verifier,
+      }),
+    });
+    if (!tokenResponse.ok) {
+      throw new Error(`DCC Loginのトークン交換に失敗しました (${tokenResponse.status})`);
+    }
+
+    const tokens = await tokenResponse.json();
+    if (!tokens.access_token || !tokens.id_token) {
+      throw new Error('DCC Loginから必要なトークンが返されませんでした');
+    }
+
+    const idClaims = await verifyIdToken(tokens.id_token, discovery, transaction, config.clientId);
+    const userInfo = await fetchUserInfo(discovery, tokens.access_token);
+    if (userInfo.sub !== idClaims.sub) throw new Error('UserInfoとID Tokenの利用者が一致しません');
+    if (userInfo.dcc_member !== true && idClaims.dcc_member !== true) {
+      throw new Error('DCC部員であることを確認できませんでした');
+    }
+
+    const expiresIn = Number(tokens.expires_in) || 600;
+    const session = {
+      accessToken: tokens.access_token,
+      tokenType: tokens.token_type || 'Bearer',
+      expiresAt: Date.now() + expiresIn * 1000,
+      user: { ...idClaims, ...userInfo, sub: idClaims.sub },
+    };
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+
+    const callbackUrl = new URL(config.redirectUri);
+    window.history.replaceState(
+      {},
+      document.title,
+      `${callbackUrl.pathname}${callbackUrl.search}${transaction.returnTo}`,
+    );
+    if (transaction.popup === true) {
+      sendPopupResult(transaction, { type: POPUP_COMPLETE, session });
+      window.setTimeout(() => window.close(), 120);
+      return null;
+    }
+    return session;
+  } catch (error) {
+    if (transaction?.popup === true) {
+      sessionStorage.removeItem(TRANSACTION_KEY);
+      sendPopupResult(transaction, {
+        type: POPUP_ERROR,
+        message: error instanceof Error ? error.message : 'DCC Loginを完了できませんでした',
+      });
+      window.setTimeout(() => window.close(), 120);
+      return null;
+    }
+    throw error;
   }
-
-  const transaction = JSON.parse(rawTransaction);
-  sessionStorage.removeItem(TRANSACTION_KEY);
-  if (Date.now() - transaction.createdAt > 10 * 60 * 1000) {
-    throw new Error('OIDC認可リクエストの有効期限が切れています');
-  }
-  if (returnedState !== transaction.state) throw new Error('OIDC Stateが一致しません');
-
-  const discovery = await fetchDiscovery();
-  const tokenResponse = await fetch(discovery.token_endpoint, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      grant_type: 'authorization_code',
-      client_id: config.clientId,
-      code,
-      redirect_uri: config.redirectUri,
-      code_verifier: transaction.verifier,
-    }),
-  });
-  if (!tokenResponse.ok) {
-    throw new Error(`DCC Loginのトークン交換に失敗しました (${tokenResponse.status})`);
-  }
-
-  const tokens = await tokenResponse.json();
-  if (!tokens.access_token || !tokens.id_token) {
-    throw new Error('DCC Loginから必要なトークンが返されませんでした');
-  }
-
-  const idClaims = await verifyIdToken(tokens.id_token, discovery, transaction, config.clientId);
-  const userInfo = await fetchUserInfo(discovery, tokens.access_token);
-  if (userInfo.sub !== idClaims.sub) throw new Error('UserInfoとID Tokenの利用者が一致しません');
-  if (userInfo.dcc_member !== true && idClaims.dcc_member !== true) {
-    throw new Error('DCC部員であることを確認できませんでした');
-  }
-
-  const expiresIn = Number(tokens.expires_in) || 600;
-  const session = {
-    accessToken: tokens.access_token,
-    tokenType: tokens.token_type || 'Bearer',
-    expiresAt: Date.now() + expiresIn * 1000,
-    user: { ...idClaims, ...userInfo, sub: idClaims.sub },
-  };
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
-
-  const callbackUrl = new URL(config.redirectUri);
-  window.history.replaceState(
-    {},
-    document.title,
-    `${callbackUrl.pathname}${callbackUrl.search}${transaction.returnTo}`,
-  );
-  return session;
 }
 
 export function loadDccSession() {

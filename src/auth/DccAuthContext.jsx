@@ -24,7 +24,7 @@ export function DccAuthProvider({ children }) {
       try {
         if (hasOidcCallbackParameters()) {
           const completed = await completeDccLogin();
-          if (!cancelled) setSession(completed);
+          if (!cancelled && completed) setSession(completed);
         } else {
           const bridgeReturnTo = getDccLoginBridgeReturnTo();
           if (bridgeReturnTo) {
@@ -68,7 +68,8 @@ export function DccAuthProvider({ children }) {
   const login = useCallback(async returnTo => {
     setError('');
     try {
-      await beginDccLogin(returnTo);
+      const completed = await beginDccLogin(returnTo);
+      if (completed) setSession(completed);
     } catch (loginError) {
       setError(loginError.message || 'DCC Loginを開始できませんでした');
     }

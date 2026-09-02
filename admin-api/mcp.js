@@ -54,7 +54,7 @@ function resolveCompletedCourses(values, availableCourses) {
 }
 
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.0.3' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.0.4' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',
