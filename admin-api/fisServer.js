@@ -38,7 +38,7 @@ function protectPublicEndpoint(req, res, next) {
 
 app.get(withPublicBase('/api/health'), (_req, res) => res.json({
   ok: true,
-  version: '2.1.0',
+  version: '2.1.1',
   mcp: '/mcp',
   supportedEntryYears: SUPPORTED_ENTRY_YEARS,
 }));

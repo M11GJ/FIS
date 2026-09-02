@@ -21,7 +21,7 @@ MCPクライアントには、上記URLをStreamable HTTPサーバーとして�
 - `list_supported_entry_years`: 対応する入学年度を取得
 - `get_graduation_requirements`: 年度・プログラム別の要件を取得
 - `search_courses`: 入学年度別の科目を検索し、2026年度の開講期・曜日・時限・授業形態・確認済み先修条件を取得
-- `check_course_eligibility`: 学生年次、先修条件、既修得、年間48単位上限、同時計画科目との重複から履修可否を判定
+- `check_course_eligibility`: 学生年次、先修条件、既修得、半期24・年間48単位のCAP制、例外条件、同時計画科目との重複から履修可否を判定
 - `check_schedule_conflicts`: 同じ開講期間・曜日・時限の科目を検出。オンデマンドは除外し、集中講義・未定は要確認として返却
 - `assess_progression_risk`: 専門ゼミ1と卒業研究の履修条件を満たすか確認し、4年卒業が遅れる可能性を説明
 - `check_graduation`: 科目IDまたは完全な科目名から卒業要件を判定
@@ -48,6 +48,18 @@ MCPクライアントには、上記URLをStreamable HTTPサーバーとして�
 - `studentYear`: 情報科学部での現在年次。便覧上、修得状況で定義されるため、`academicYear - entryYear + 1`から自動決定しません。
 
 配当年次は「履修できる最低学年」として扱います。たとえば2年以上の科目は、4年次でも、先修条件・時間重複・既修得・年間履修上限に問題がなければ原則履修可能です。
+
+### CAP制の入力と判定
+
+`check_course_eligibility`には、対象科目を追加する前の次の単位数を渡します。
+
+- `plannedCreditsFirstSemester`: 前期（第1・第2クォーターを含む）の履修登録単位数
+- `plannedCreditsSecondSemester`: 後期（第3・第4クォーターを含む）の履修登録単位数
+- `plannedCreditsThisAcademicYear`: 年間の履修登録単位数
+
+通常は半期24単位・年間48単位を超えると履修不可として返します。教職課程履修者は`teacherTrainingEnrollment: true`、前年度年間GPAが判明している場合は`previousYearGpa`を渡すと、履修規程上の例外候補も判定します。入力は本人申告なので、例外の適用可否はActive Academy Advanceまたは学務課で確認してください。
+
+通年科目は半期上限への算入先をFISだけでは確定できません。上限に触れる可能性がある場合は`requiresCreditCapConfirmation: true`を返し、年間48単位の判定とは分けて案内します。
 
 ## 先修条件と進行条件
 

@@ -10,15 +10,29 @@ export const COURSE_RULE_SOURCES = Object.freeze({
   verifiedAt: '2026-09-02',
 });
 export const REGISTRATION_RULES = Object.freeze({
+  semesterCreditCap: 24,
   annualCreditCap: 48,
+  capExceptions: Object.freeze({
+    teacherTrainingEnrollment: '教職課程履修者は履修上限を超えて履修できる場合があります。',
+    previousYearGpa: Object.freeze({
+      threshold: 3.5,
+      note: '前年度の年間GPAが3.5以上の場合は履修上限を超えて履修できます。学部・学科が別条件を定めた場合は最新案内を優先します。',
+    }),
+  }),
   prerequisiteCompletionRequired: true,
   duplicateCompletedCourseAllowed: false,
   overlappingTimedCoursesAllowed: false,
   notes: Object.freeze([
-    '年間履修登録上限は原則48単位です。成績等による例外は大学の最新案内を確認してください。',
+    '履修登録上限は原則として半期24単位、年間48単位です。',
+    '教職課程履修者、または前年度の年間GPAが3.5以上の学生には上限超過の例外があります。学部・学科の最新条件を優先してください。',
+    '通年科目を半期上限へどのように算入するかは、Active Academy Advanceまたは学務課で確認してください。',
     '単位修得済み科目は再履修できません。',
     '授業時間が重複する科目は原則として同時履修できません。',
     '先修条件を満たしていない科目は履修できません。',
+  ]),
+  sources: Object.freeze([
+    '情報科学部学生便覧（2024・2025・2026年度入学生用）',
+    '周南公立大学履修規程 第11条',
   ]),
 });
 

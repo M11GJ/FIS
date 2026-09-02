@@ -76,7 +76,7 @@ function resolveOneCourse(value, availableCourses) {
 }
 
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.1.0' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.1.1' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',
@@ -144,7 +144,7 @@ export function createFisMcpServer() {
 
   server.registerTool('check_course_eligibility', {
     title: '科目の履修可否確認',
-    description: '配当年次、既修得、先修条件、年間48単位上限、同時に計画する科目との時間重複から、指定科目の履修可否を確認します。4年次から2年次配当科目を履修する場合も判定できます。',
+    description: '配当年次、既修得、先修条件、半期24・年間48単位のCAP制、例外条件、同時計画科目との時間重複から履修可否を確認します。4年次から2年次配当科目を履修する場合も判定できます。',
     inputSchema: z.object({
       entryYear: yearSchema,
       academicYear: academicYearSchema.default(COURSE_RULES_ACADEMIC_YEAR),
@@ -156,7 +156,15 @@ export function createFisMcpServer() {
         .describe('シラバスが同等知識を認める場合に、本人が修得相当と申告する先修科目名'),
       otherPlannedCourses: z.array(z.string().min(1).max(200)).max(50).default([]),
       plannedCreditsThisAcademicYear: z.number().min(0).max(100).default(0)
-        .describe('判定対象科目を追加する前の当該年度の履修計画単位数'),
+        .describe('判定対象科目を追加する前の当該年度の履修登録単位数'),
+      plannedCreditsFirstSemester: z.number().min(0).max(100).default(0)
+        .describe('判定対象科目を追加する前の前期（第1・第2クォーターを含む）の履修登録単位数'),
+      plannedCreditsSecondSemester: z.number().min(0).max(100).default(0)
+        .describe('判定対象科目を追加する前の後期（第3・第4クォーターを含む）の履修登録単位数'),
+      teacherTrainingEnrollment: z.boolean().default(false)
+        .describe('大学に認められた教職課程履修者である場合のみtrue'),
+      previousYearGpa: z.number().min(0).max(4).optional()
+        .describe('前年度の年間GPA。新入生または不明の場合は省略'),
     }),
     annotations: { readOnlyHint: true, openWorldHint: false },
   }, async ({
@@ -169,6 +177,10 @@ export function createFisMcpServer() {
     equivalentPrerequisites,
     otherPlannedCourses,
     plannedCreditsThisAcademicYear,
+    plannedCreditsFirstSemester,
+    plannedCreditsSecondSemester,
+    teacherTrainingEnrollment,
+    previousYearGpa,
   }) => {
     const availableCourses = getCoursesForEntryYear(courses, entryYear);
     const target = resolveOneCourse(courseInput, availableCourses);
@@ -197,6 +209,10 @@ export function createFisMcpServer() {
         otherPlannedCourses: planned.courses.filter(course => course.id !== target.id),
         studentYear,
         plannedCreditsThisAcademicYear,
+        plannedCreditsFirstSemester,
+        plannedCreditsSecondSemester,
+        teacherTrainingEnrollment,
+        previousYearGpa,
         academicYear,
       }),
       disclaimer: '参考判定です。例外承認、休学・留学、クラス指定、最新の開講変更は教務課・最新シラバスへ確認してください。',

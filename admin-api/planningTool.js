@@ -2,7 +2,7 @@ import * as z from 'zod/v4';
 import { getCoursesForEntryYear } from '../shared/curriculum.js';
 import { calculateInformationGraduation } from '../shared/graduation.js';
 import { describeCourseOffering } from '../shared/coursePlanning.js';
-import { COURSE_RULES_ACADEMIC_YEAR } from '../shared/courseRules.js';
+import { COURSE_RULES_ACADEMIC_YEAR, REGISTRATION_RULES } from '../shared/courseRules.js';
 import courses from './courseData.js';
 
 const yearSchema = z.union([z.literal(2024), z.literal(2025), z.literal(2026)]);
@@ -87,8 +87,10 @@ export function registerPlanningTool(server) {
       electiveCandidates,
       electiveCandidatesTruncated: electiveCandidates.length < allElectiveCandidates.length,
       currentStatus: result,
+      registrationRules: REGISTRATION_RULES,
       cautions: [
-        '配当年次は最低学年です。上級年次から下級年次配当科目を履修することは原則可能ですが、先修条件・時間割・既修得・履修上限を別途確認してください。',
+        '配当年次は最低学年です。上級年次から下級年次配当科目を履修することは原則可能ですが、先修条件・時間割・既修得を確認してください。',
+        '履修登録上限は原則として半期24単位・年間48単位です。個別科目の判定にはcheck_course_eligibilityを使用してください。',
         '曜日・時限は2026年度データです。開講変更やクラス指定は最新の時間割で確認してください。',
         '卒業論文の提出・合格は別途必要です。',
       ],

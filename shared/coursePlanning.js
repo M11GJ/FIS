@@ -116,6 +116,79 @@ function intersects(left, right) {
   return left.filter(value => rightSet.has(value));
 }
 
+function semesterFromOffering(offering) {
+  const periods = new Set(offering.academicPeriods);
+  const first = periods.has(1) || periods.has(2);
+  const second = periods.has(3) || periods.has(4);
+  if (first && second) return 'full_year';
+  if (first) return 'first';
+  if (second) return 'second';
+  return 'unknown';
+}
+
+function capExceptionFor({ course, teacherTrainingEnrollment, previousYearGpa }) {
+  const reasons = [];
+  if (course.category === 'teaching') reasons.push('teaching_course');
+  if (teacherTrainingEnrollment) reasons.push('teacher_training_enrollment');
+  if (
+    Number.isFinite(previousYearGpa)
+    && previousYearGpa >= REGISTRATION_RULES.capExceptions.previousYearGpa.threshold
+  ) {
+    reasons.push('previous_year_gpa');
+  }
+  return {
+    applied: reasons.length > 0,
+    reasons,
+    previousYearGpa: Number.isFinite(previousYearGpa) ? previousYearGpa : null,
+    teacherTrainingEnrollment,
+    note: reasons.length
+      ? '申告された条件ではCAP制の例外対象です。実際の登録可否はActive Academy Advanceまたは学務課で確認してください。'
+      : 'CAP制の例外条件は適用されていません。',
+  };
+}
+
+function semesterCapAssessment({
+  semester,
+  courseCredits,
+  plannedCreditsFirstSemester,
+  plannedCreditsSecondSemester,
+  exceptionApplied,
+}) {
+  const assessOne = (before, receivesCourse) => {
+    const after = before + (receivesCourse ? courseCredits : 0);
+    const exceeded = after > REGISTRATION_RULES.semesterCreditCap;
+    return {
+      before,
+      added: receivesCourse ? courseCredits : 0,
+      after,
+      exceeded,
+      blocking: exceeded && !exceptionApplied,
+    };
+  };
+  const firstReceivesCourse = semester === 'first';
+  const secondReceivesCourse = semester === 'second';
+  const allocationNeedsConfirmation = ['full_year', 'unknown'].includes(semester);
+  const first = assessOne(plannedCreditsFirstSemester, firstReceivesCourse);
+  const second = assessOne(plannedCreditsSecondSemester, secondReceivesCourse);
+  const worstCase = allocationNeedsConfirmation ? {
+    firstAfter: plannedCreditsFirstSemester + courseCredits,
+    secondAfter: plannedCreditsSecondSemester + courseCredits,
+    mayExceed: (
+      plannedCreditsFirstSemester + courseCredits > REGISTRATION_RULES.semesterCreditCap
+      || plannedCreditsSecondSemester + courseCredits > REGISTRATION_RULES.semesterCreditCap
+    ),
+  } : null;
+  return {
+    cap: REGISTRATION_RULES.semesterCreditCap,
+    targetSemester: semester,
+    first,
+    second,
+    allocationNeedsConfirmation,
+    worstCase,
+    blocking: first.blocking || second.blocking,
+  };
+}
+
 export function findScheduleConflicts(courseList, academicYear = COURSE_RULES_ACADEMIC_YEAR) {
   const described = courseList.map(course => ({
     course,
@@ -173,6 +246,10 @@ export function assessCourseEligibility({
   otherPlannedCourses = [],
   studentYear,
   plannedCreditsThisAcademicYear = 0,
+  plannedCreditsFirstSemester = 0,
+  plannedCreditsSecondSemester = 0,
+  teacherTrainingEnrollment = false,
+  previousYearGpa,
   academicYear = COURSE_RULES_ACADEMIC_YEAR,
 }) {
   const offering = describeCourseOffering(course, academicYear);
@@ -191,14 +268,25 @@ export function assessCourseEligibility({
   const targetConflicts = scheduleResult.conflicts.filter(conflict => (
     conflict.left.id === course.id || conflict.right.id === course.id
   ));
+  const capException = capExceptionFor({ course, teacherTrainingEnrollment, previousYearGpa });
   const totalAfterRegistration = plannedCreditsThisAcademicYear + course.credits;
-  const creditCapExceeded = totalAfterRegistration > REGISTRATION_RULES.annualCreditCap;
+  const annualCreditCapExceeded = totalAfterRegistration > REGISTRATION_RULES.annualCreditCap;
+  const annualCreditCapBlocking = annualCreditCapExceeded && !capException.applied;
+  const targetSemester = semesterFromOffering(offering);
+  const semesterCreditCap = semesterCapAssessment({
+    semester: targetSemester,
+    courseCredits: course.credits,
+    plannedCreditsFirstSemester,
+    plannedCreditsSecondSemester,
+    exceptionApplied: capException.applied,
+  });
   const hardRequirementsSatisfied = (
     yearEligible
     && !alreadyCompleted
     && missingRequiredPrerequisites.length === 0
     && !targetConflicts.some(conflict => conflict.severity === 'conflict')
-    && !creditCapExceeded
+    && !annualCreditCapBlocking
+    && !semesterCreditCap.blocking
   );
   const targetAcademicPeriods = new Set(offering.academicPeriods);
   const requiresScheduleConfirmation = (
@@ -208,15 +296,23 @@ export function assessCourseEligibility({
       || item.academicPeriods.some(period => targetAcademicPeriods.has(period))
     ))
   );
+  const requiresCreditCapConfirmation = (
+    semesterCreditCap.allocationNeedsConfirmation
+    && semesterCreditCap.worstCase?.mayExceed
+    && !capException.applied
+  );
+  const requiresConfirmation = requiresScheduleConfirmation || requiresCreditCapConfirmation;
   const status = !hardRequirementsSatisfied
     ? 'ineligible'
-    : (requiresScheduleConfirmation ? 'requires_confirmation' : 'eligible');
+    : (requiresConfirmation ? 'requires_confirmation' : 'eligible');
 
   return {
     status,
     eligible: status === 'eligible',
     provisionallyEligible: hardRequirementsSatisfied,
+    requiresConfirmation,
     requiresScheduleConfirmation,
+    requiresCreditCapConfirmation,
     studentYear,
     minimumStudentYear: offering.minimumStudentYear,
     yearEligible,
@@ -237,10 +333,13 @@ export function assessCourseEligibility({
     annualCreditCap: {
       cap: REGISTRATION_RULES.annualCreditCap,
       before: plannedCreditsThisAcademicYear,
+      added: course.credits,
       after: totalAfterRegistration,
-      exceeded: creditCapExceeded,
-      exceptionMayApply: creditCapExceeded,
+      exceeded: annualCreditCapExceeded,
+      blocking: annualCreditCapBlocking,
     },
+    semesterCreditCap,
+    capException,
     offering,
   };
 }

@@ -53,6 +53,57 @@ assert.equal(fourthYearEligibility.laterYearEnrollment, true);
 assert.equal(fourthYearEligibility.eligible, true);
 assert.equal(fourthYearEligibility.status, 'eligible');
 
+const firstSemesterCapEligibility = assessCourseEligibility({
+  course: find2026('周南Well-being創生入門'),
+  completedCourses: [],
+  studentYear: 4,
+  plannedCreditsThisAcademicYear: 23,
+  plannedCreditsFirstSemester: 23,
+  plannedCreditsSecondSemester: 0,
+});
+assert.equal(firstSemesterCapEligibility.status, 'ineligible');
+assert.equal(firstSemesterCapEligibility.semesterCreditCap.targetSemester, 'first');
+assert.equal(firstSemesterCapEligibility.semesterCreditCap.first.after, 25);
+assert.equal(firstSemesterCapEligibility.semesterCreditCap.first.exceeded, true);
+assert.equal(firstSemesterCapEligibility.semesterCreditCap.second.after, 0);
+
+const annualCapEligibility = assessCourseEligibility({
+  course: find2026('周南Well-being創生入門'),
+  completedCourses: [],
+  studentYear: 4,
+  plannedCreditsThisAcademicYear: 47,
+  plannedCreditsFirstSemester: 20,
+  plannedCreditsSecondSemester: 27,
+});
+assert.equal(annualCapEligibility.status, 'ineligible');
+assert.equal(annualCapEligibility.annualCreditCap.after, 49);
+assert.equal(annualCapEligibility.annualCreditCap.exceeded, true);
+
+const gpaCapExceptionEligibility = assessCourseEligibility({
+  course: find2026('周南Well-being創生入門'),
+  completedCourses: [],
+  studentYear: 4,
+  plannedCreditsThisAcademicYear: 48,
+  plannedCreditsFirstSemester: 24,
+  previousYearGpa: 3.5,
+});
+assert.equal(gpaCapExceptionEligibility.status, 'eligible');
+assert.equal(gpaCapExceptionEligibility.capException.applied, true);
+assert.deepEqual(gpaCapExceptionEligibility.capException.reasons, ['previous_year_gpa']);
+assert.equal(gpaCapExceptionEligibility.annualCreditCap.exceeded, true);
+assert.equal(gpaCapExceptionEligibility.annualCreditCap.blocking, false);
+
+const teachingCapExceptionEligibility = assessCourseEligibility({
+  course: find2026('情報社会と職業'),
+  completedCourses: [],
+  studentYear: 3,
+  plannedCreditsThisAcademicYear: 48,
+  plannedCreditsFirstSemester: 24,
+});
+assert.equal(teachingCapExceptionEligibility.status, 'eligible');
+assert.equal(teachingCapExceptionEligibility.capException.applied, true);
+assert.equal(teachingCapExceptionEligibility.capException.reasons.includes('teaching_course'), true);
+
 const missingPrerequisiteEligibility = assessCourseEligibility({
   course: communicationEnglish4,
   completedCourses: communicationPrerequisites.slice(0, 2),
