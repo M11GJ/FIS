@@ -14,6 +14,7 @@ import {
   findScheduleConflicts,
   normalizeCourseName,
 } from '../shared/coursePlanning.js';
+import courseOverviewData2026 from './courseOverviewData2026.js';
 import courses from './courseData.js';
 
 const courses2024 = getCoursesForEntryYear(courses, 2024);
@@ -49,6 +50,18 @@ const syllabusCodes = Object.values(prerequisiteAudit2026.courses).map(rule => r
 const syllabusUrls = Object.values(prerequisiteAudit2026.courses).map(rule => rule.sourceUrl);
 assert.equal(new Set(syllabusCodes).size, 139);
 assert.equal(new Set(syllabusUrls).size, 139);
+assert.equal(courseOverviewData2026.summarizer, 'gpt-6-luna');
+assert.equal(Object.keys(courseOverviewData2026.courses).length, 139);
+assert.deepEqual(
+  Object.keys(courseOverviewData2026.courses).sort(),
+  [...syllabusCodes].sort(),
+);
+Object.values(courseOverviewData2026.courses).forEach(overview => {
+  assert.equal(overview.summary.includes('\n'), false);
+  assert.equal(overview.summary.endsWith('。'), true);
+  assert.equal(overview.summary.match(/。/g)?.length, 2);
+  assert.equal(overview.summary.length >= 70 && overview.summary.length <= 180, true);
+});
 Object.values(prerequisiteAudit2026.courses).forEach(rule => {
   assert.equal(rule.sourceUrl.includes(`sk=2026_2_${rule.syllabusCode}`), true);
   assert.equal(
@@ -166,6 +179,47 @@ assert.equal(find2026('教育実習Ⅰ').room, '対面');
 
 const mcpModule = await import('./mcp.js');
 assert.equal(typeof mcpModule.publicCourse, 'function');
+assert.equal(typeof mcpModule.publicCourseOverview, 'function');
+assert.equal(typeof mcpModule.courseOverviewResult, 'function');
+if (typeof mcpModule.publicCourseOverview === 'function') {
+  const compactOverview = mcpModule.publicCourseOverview(find2026('金融工学'));
+  assert.equal(compactOverview.syllabusCode, '2105410A');
+  assert.equal(compactOverview.summary.length > 0, true);
+  assert.equal(compactOverview.summary.length <= 240, true);
+  assert.equal(compactOverview.officialDetails, undefined);
+  assert.equal(compactOverview.lessonPlan, undefined);
+
+  const detailedOverview = mcpModule.publicCourseOverview(find2026('金融工学'), {
+    includeOfficialDetails: true,
+    includeLessonPlan: true,
+  });
+  assert.equal(detailedOverview.officialDetails.officialOverview.includes('金融工学'), true);
+  assert.equal(detailedOverview.officialDetails.assessment.length > 0, true);
+  assert.equal(detailedOverview.lessonPlan.status, 'current_syllabus');
+  assert.equal(detailedOverview.lessonPlan.topics.length, 15);
+
+  const historicalLessonPlan = mcpModule.publicCourseOverview(find2026('周南地域文化講座'), {
+    includeLessonPlan: true,
+  });
+  assert.equal(historicalLessonPlan.lessonPlan.status, 'historical_reference');
+  assert.equal(historicalLessonPlan.lessonPlan.note.includes('2024年度実績'), true);
+
+  assert.equal(mcpModule.publicCourseOverview(find2026('教養ゼミ')).syllabusCode, '1009800IB');
+  assert.equal(mcpModule.publicCourseOverview(find2026('情報科学概論')).summary.includes('教員'), false);
+}
+if (typeof mcpModule.courseOverviewResult === 'function') {
+  const compactResult = mcpModule.courseOverviewResult(find2026('金融工学'), {
+    entryYear: 2026,
+    academicYear: 2026,
+    program: 'DS',
+  });
+  assert.deepEqual(compactResult.course, {
+    id: find2026('金融工学').id,
+    name: '金融工学',
+  });
+  assert.equal('instructor' in compactResult.course, false);
+  assert.equal('offering' in compactResult.course, false);
+}
 assert.equal(typeof mcpModule.filterExternalPrerequisites, 'function');
 if (typeof mcpModule.filterExternalPrerequisites === 'function') {
   assert.deepEqual(

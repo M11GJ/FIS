@@ -21,6 +21,7 @@ MCPクライアントには、上記URLをStreamable HTTPサーバーとして�
 - `list_supported_entry_years`: 対応する入学年度を取得
 - `get_graduation_requirements`: 年度・プログラム別の要件を取得
 - `search_courses`: 入学年度別の科目を検索し、2026年度の担当教員・教室・開講期・曜日・時限・授業形態・確認済み先修条件を取得
+- `get_course_overview`: 公式シラバスを基にした短い授業概要を1科目ずつ取得
 - `check_course_eligibility`: 学生年次、先修条件、既修得、半期24・年間48単位のCAP制、例外条件、同時計画科目との重複から履修可否を判定
 - `check_schedule_conflicts`: 同じ開講期間・曜日・時限の科目を検出。オンデマンドは除外し、集中講義・未定は要確認として返却
 - `assess_progression_risk`: 専門ゼミ1と卒業研究の履修条件を満たすか確認し、4年卒業が遅れる可能性を説明
@@ -28,6 +29,15 @@ MCPクライアントには、上記URLをStreamable HTTPサーバーとして�
 - `plan_remaining_courses`: 残り必修を配当年次別に整理し、不足単位と選択候補を取得
 
 大量応答を避けるため、`search_courses`は既定50件、`plan_remaining_courses`の選択候補は既定30件です。必要な場合だけ`offset`・`limit`または`electiveCandidateLimit`を指定してください。
+
+### 授業概要
+
+`get_course_overview` は、2026年度の公式シラバス139件から抽出した内容を基に、`gpt-6-luna`で事前生成・検証した2文の日本語要約を返します。通常は要約と出典だけを返し、MCP要求中に大学サイトや要約モデルへ接続しません。
+
+- `includeOfficialDetails: true`: テーマ・到達目標、公式概要、授業方法・形態、評価基準を追加
+- `includeLessonPlan: true`: 授業計画を追加。公式ページに過年度実績が掲載されている場合は `historical_reference` と注意書きを返す
+
+既定値は両方とも `false` です。通常の質問では短い要約だけを使用し、根拠確認が必要な場合だけ追加情報を取得してください。
 
 `check_graduation` の入力例です。
 

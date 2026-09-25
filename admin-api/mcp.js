@@ -13,6 +13,7 @@ import {
   assessProgression,
   describeCourseOffering,
   findScheduleConflicts,
+  getCourseRule,
   normalizeCourseName,
 } from '../shared/coursePlanning.js';
 import {
@@ -21,6 +22,7 @@ import {
   REGISTRATION_RULES,
 } from '../shared/courseRules.js';
 import courses from './courseData.js';
+import courseOverviewData2026 from './courseOverviewData2026.js';
 import { registerPlanningTool } from './planningTool.js';
 
 const yearSchema = z.union([z.literal(2024), z.literal(2025), z.literal(2026)]);
@@ -88,8 +90,67 @@ export function filterExternalPrerequisites(values, availableCourses) {
   }, { accepted: [], ignoredCatalogCourses: [] });
 }
 
+export function publicCourseOverview(course, {
+  includeOfficialDetails = false,
+  includeLessonPlan = false,
+} = {}) {
+  const syllabusCode = getCourseRule(course)?.syllabusCode;
+  const overview = syllabusCode ? courseOverviewData2026.courses[syllabusCode] : null;
+  if (!overview) return null;
+  const historicalLessonPlan = overview.lessonPlan.some(topic => /年度実績/.test(topic));
+
+  return {
+    syllabusCode,
+    summary: overview.summary,
+    source: {
+      url: overview.sourceUrl,
+      verifiedAt: courseOverviewData2026.verifiedAt,
+      summarizer: courseOverviewData2026.summarizer,
+    },
+    ...(includeOfficialDetails ? {
+      officialDetails: {
+        themeAndGoals: overview.themeAndGoals,
+        officialOverview: overview.officialOverview,
+        teachingMethod: overview.teachingMethod,
+        teachingFormat: overview.teachingFormat,
+        assessment: overview.assessment,
+      },
+    } : {}),
+    ...(includeLessonPlan ? {
+      lessonPlan: {
+        status: historicalLessonPlan ? 'historical_reference' : 'current_syllabus',
+        ...(historicalLessonPlan ? {
+          note: '公式シラバスに2024年度実績として掲載された参考計画です。現在年度の実施内容として扱わないでください。',
+        } : {}),
+        topics: [...overview.lessonPlan],
+      },
+    } : {}),
+  };
+}
+
+export function courseOverviewResult(target, {
+  entryYear,
+  academicYear,
+  program,
+  includeOfficialDetails = false,
+  includeLessonPlan = false,
+}) {
+  const overview = publicCourseOverview(target, { includeOfficialDetails, includeLessonPlan });
+  return {
+    found: true,
+    overviewAvailable: overview !== null,
+    faculty: '情報科学部',
+    entryYear,
+    academicYear,
+    program,
+    course: { id: target.id, name: target.name },
+    overview,
+    ...(!overview ? { message: 'この科目に対応する2026年度公式シラバスの授業概要は未登録です。' } : {}),
+  };
+}
+
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.2.0' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.3.0' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',
@@ -153,6 +214,39 @@ export function createFisMcpServer() {
       hasMore: offset + matches.length < filtered.length,
       courses: matches,
     });
+  });
+
+  server.registerTool('get_course_overview', {
+    title: '授業概要の取得',
+    description: '指定科目の公式シラバスを基にした短い授業概要を返します。公式詳細や授業計画は必要な場合だけ追加取得できます。',
+    inputSchema: z.object({
+      entryYear: yearSchema,
+      academicYear: academicYearSchema.default(COURSE_RULES_ACADEMIC_YEAR),
+      program: programSchema.default('DS'),
+      course: z.string().min(1).max(200),
+      includeOfficialDetails: z.boolean().default(false),
+      includeLessonPlan: z.boolean().default(false),
+    }),
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  }, async ({ entryYear, academicYear, program, course: courseInput, includeOfficialDetails, includeLessonPlan }) => {
+    const availableCourses = getCoursesForEntryYear(courses, entryYear);
+    const target = resolveOneCourse(courseInput, availableCourses);
+    if (!target) {
+      return textResult({
+        found: false,
+        course: courseInput,
+        entryYear,
+        message: '指定した入学年度の科目IDまたは完全な科目名に一致しません。search_coursesで確認してください。',
+      });
+    }
+
+    return textResult(courseOverviewResult(target, {
+      entryYear,
+      academicYear,
+      program,
+      includeOfficialDetails,
+      includeLessonPlan,
+    }));
   });
 
   server.registerTool('check_course_eligibility', {
