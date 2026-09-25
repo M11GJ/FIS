@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ShieldCheck, AlertTriangle, Book, MapPinOff, X } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, Book, MapPin, X } from 'lucide-react';
 
 const TermsModal = ({ onAgree, viewOnly = false }) => {
   const [canAgree, setCanAgree] = useState(viewOnly);
@@ -117,11 +117,11 @@ const TermsModal = ({ onAgree, viewOnly = false }) => {
 
             <section style={{ marginBottom: '1.5rem' }}>
               <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '0.5rem' }}>
-                <MapPinOff size={18} color="#16a34a" />
-                2. セキュリティリスクへの配慮
+                <MapPin size={18} color="#16a34a" />
+                2. 公開時間割情報の取扱い
               </h4>
               <p style={{ fontSize: '0.9rem' }}>
-                防犯およびプライバシー保護の観点から、教員や学生の居場所を特定できる可能性のある<strong>講義室番号や時間割の物理的な場所に関する情報は、システム内に一切保持・表示いたしません</strong>。
+                大学から配布された時間割に基づき、<strong>科目の担当教員、講義室、曜日・時限を参考情報として表示します</strong>。休講・補講・教室変更などが反映されていない場合があるため、履修時は大学の最新案内を確認してください。氏名・学籍番号・履修状況など、利用者個人の情報とは分離して扱います。
               </p>
             </section>
 

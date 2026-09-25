@@ -24,10 +24,12 @@ function resolve(values, availableCourses) {
   return { selected, unmatched };
 }
 
-function courseSummary(course, program, academicYear) {
+export function courseSummary(course, program, academicYear) {
   return {
     id: course.id,
     name: course.name,
+    instructor: course.instructor && course.instructor !== '-' ? course.instructor : null,
+    room: course.room && course.room !== '-' ? course.room : null,
     credits: course.credits,
     term: course.term,
     category: course.category,

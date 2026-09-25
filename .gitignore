@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-# 教室情報（セキュリティ上、GitHubにアップロードしない）
+# 任意のローカル教室上書き
 src/data/rooms.json
 
 # Editor directories and files

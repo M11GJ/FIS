@@ -36,6 +36,39 @@ additions2026.forEach(name => {
 });
 
 const find2026 = name => courses2026.find(course => course.name === name);
+const informationScienceOverview = find2026('情報科学概論');
+assert.equal(informationScienceOverview.instructor, '小栁 淳二 他');
+assert.equal(informationScienceOverview.room, '1142');
+
+const appliedNumericalAnalysis = find2026('応用数値解析');
+assert.equal(appliedNumericalAnalysis.schedule, '火金2');
+assert.equal(appliedNumericalAnalysis.instructor, '矢敷 達朗');
+assert.equal(appliedNumericalAnalysis.room, '525');
+
+assert.equal(find2026('人間とロボットの共生').room, '532');
+assert.equal(find2026('解析基礎').room, '1141');
+assert.equal(find2026('周南地域と産業').instructor, '渡邉洋心');
+assert.equal(find2026('教育実習Ⅰ').instructor, '大坂 遊/渡部 明');
+assert.equal(find2026('教育実習Ⅰ').room, '対面');
+
+const mcpModule = await import('./mcp.js');
+assert.equal(typeof mcpModule.publicCourse, 'function');
+if (typeof mcpModule.publicCourse === 'function') {
+  const publicInformationScienceOverview = mcpModule.publicCourse(informationScienceOverview, 'DS');
+  assert.equal(publicInformationScienceOverview.instructor, '小栁 淳二 他');
+  assert.equal(publicInformationScienceOverview.room, '1142');
+  assert.equal(mcpModule.publicCourse(find2026('医療情報システム'), 'DS').room, null);
+}
+
+const planningModule = await import('./planningTool.js');
+assert.equal(typeof planningModule.courseSummary, 'function');
+if (typeof planningModule.courseSummary === 'function') {
+  const plannedInformationScienceOverview = planningModule.courseSummary(informationScienceOverview, 'DS', 2026);
+  assert.equal(plannedInformationScienceOverview.instructor, '小栁 淳二 他');
+  assert.equal(plannedInformationScienceOverview.room, '1142');
+  assert.equal(planningModule.courseSummary(find2026('医療情報システム'), 'DS', 2026).room, null);
+}
+
 const communicationEnglish4 = find2026('コミュニケーション英語Ⅳ');
 const communicationPrerequisites = [
   find2026('コミュニケーション英語Ⅰ'),

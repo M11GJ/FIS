@@ -35,11 +35,13 @@ function textResult(value) {
   };
 }
 
-function publicCourse(course, program, academicYear = COURSE_RULES_ACADEMIC_YEAR) {
+export function publicCourse(course, program, academicYear = COURSE_RULES_ACADEMIC_YEAR) {
   const programType = course.programMapping?.[program.toLowerCase()] || null;
   return {
     id: course.id,
     name: course.name,
+    instructor: course.instructor && course.instructor !== '-' ? course.instructor : null,
+    room: course.room && course.room !== '-' ? course.room : null,
     credits: course.credits,
     term: course.term,
     category: course.category,
@@ -76,7 +78,7 @@ function resolveOneCourse(value, availableCourses) {
 }
 
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.1.1' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.1.2' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',

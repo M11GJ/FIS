@@ -1,7 +1,6 @@
 /**
- * 教室情報のローカルマージユーティリティ
- * rooms.json が存在する場合（ローカル環境）のみ、コースデータに教室情報を付与する。
- * Web版（GitHub Pages）では rooms.json が存在しないため、教室情報は表示されない。
+ * 教室情報の任意ローカル上書きユーティリティ
+ * 公開データの room を通常使用し、rooms.json が存在する環境だけ値を上書きする。
  */
 
 let roomsData = null;
@@ -17,7 +16,7 @@ try {
 /**
  * コース配列に教室情報をマージする
  * @param {Array} courses - コースデータの配列
- * @returns {Array} - room フィールドが付与されたコース配列（rooms.jsonがなければそのまま返す）
+ * @returns {Array} - rooms.jsonがあれば教室を上書きしたコース配列
  */
 export function mergeRooms(courses) {
   if (!roomsData) return courses;
