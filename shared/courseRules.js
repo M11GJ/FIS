@@ -1,3 +1,5 @@
+import prerequisiteAudit2026 from './coursePrerequisites2026.js';
+
 export const COURSE_RULES_ACADEMIC_YEAR = 2026;
 
 export const COURSE_RULE_SOURCES = Object.freeze({
@@ -7,7 +9,8 @@ export const COURSE_RULE_SOURCES = Object.freeze({
     2026: '令和8(2026)年度入学生学生便覧.pdf',
   }),
   syllabusSearchUrl: 'https://aaaweb.shunan-u.ac.jp/aa_web/syllabus/se0010.aspx?me=EU&opi=mt0010',
-  verifiedAt: '2026-09-02',
+  verifiedAt: prerequisiteAudit2026.verifiedAt,
+  auditedSyllabi: prerequisiteAudit2026.officialSyllabi,
 });
 export const REGISTRATION_RULES = Object.freeze({
   semesterCreditCap: 24,
@@ -40,7 +43,7 @@ const syllabusUrl = code => (
   `https://aaaweb.shunan-u.ac.jp/aa_web/syllabus/se0032.aspx?me=EU&opi=mt0010&sk=2026_2_${code}&opi=se0021&syw=1`
 );
 
-export const COURSE_RULES_2026 = Object.freeze({
+const COURSE_RULE_DETAILS_2026 = Object.freeze({
   'コミュニケーション英語Ⅰ': Object.freeze({
     syllabusCode: '1101200A',
     minimumStudentYear: 1,
@@ -121,4 +124,22 @@ export const COURSE_RULES_2026 = Object.freeze({
     recommendedPrerequisites: Object.freeze(['計算機概論', '情報エンジニアリング概論', 'データベース']),
     sourceUrl: syllabusUrl('2103900A'),
   }),
+});
+
+export const COURSE_RULES_2026 = Object.freeze(Object.fromEntries(
+  Object.entries(prerequisiteAudit2026.courses).map(([name, prerequisites]) => [
+    name,
+    Object.freeze({
+      ...(COURSE_RULE_DETAILS_2026[name] || {}),
+      syllabusCode: prerequisites.syllabusCode,
+      requiredPrerequisites: Object.freeze([...prerequisites.requiredPrerequisites]),
+      recommendedPrerequisites: Object.freeze([...prerequisites.recommendedPrerequisites]),
+      progressionRequirements: Object.freeze([...(prerequisites.progressionRequirements || [])]),
+      sourceUrl: prerequisites.sourceUrl,
+    }),
+  ]),
+));
+
+export const COURSE_RULE_ALIASES_2026 = Object.freeze({
+  ...prerequisiteAudit2026.catalogAliases,
 });

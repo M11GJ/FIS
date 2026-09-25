@@ -1,4 +1,6 @@
 import {
+  COURSE_RULE_ALIASES_2026,
+  COURSE_RULE_SOURCES,
   COURSE_RULES_2026,
   COURSE_RULES_ACADEMIC_YEAR,
   REGISTRATION_RULES,
@@ -8,7 +10,7 @@ const WEEKDAYS = Object.freeze(['月', '火', '水', '木', '金', '土', '日']
 const QUARTER_SYMBOLS = Object.freeze({ '①': 1, '②': 2, '③': 3, '④': 4 });
 
 export function normalizeCourseName(value) {
-  return String(value || '').replace(/\s+/g, '').replace(/[（）()]/g, '').toLowerCase();
+  return String(value || '').normalize('NFKC').replace(/\s+/g, '').replace(/[()]/g, '').toLowerCase();
 }
 
 export function minimumStudentYearFromTerm(term) {
@@ -73,7 +75,8 @@ export function parseCourseSchedule(schedule) {
 
 export function getCourseRule(course, academicYear = COURSE_RULES_ACADEMIC_YEAR) {
   if (Number(academicYear) !== COURSE_RULES_ACADEMIC_YEAR) return null;
-  const normalizedName = normalizeCourseName(course?.name || course);
+  const name = course?.name || course;
+  const normalizedName = normalizeCourseName(COURSE_RULE_ALIASES_2026[name] || name);
   const entry = Object.entries(COURSE_RULES_2026)
     .find(([name]) => normalizeCourseName(name) === normalizedName);
   return entry ? entry[1] : null;
@@ -96,6 +99,7 @@ export function describeCourseOffering(course, academicYear = COURSE_RULES_ACADE
       verificationStatus: rule ? 'verified' : 'not_verified',
       required: [...(rule?.requiredPrerequisites || [])],
       recommended: [...(rule?.recommendedPrerequisites || [])],
+      progressionRequirements: [...(rule?.progressionRequirements || [])],
       equivalentKnowledgeAllowed: rule?.equivalentKnowledgeAllowed === true,
     },
     ruleSource: rule ? {
@@ -103,6 +107,7 @@ export function describeCourseOffering(course, academicYear = COURSE_RULES_ACADE
       syllabusCode: rule.syllabusCode,
       url: rule.sourceUrl,
       verified: true,
+      verifiedAt: COURSE_RULE_SOURCES.verifiedAt,
     } : {
       kind: 'course_data_and_handbook',
       verified: false,
@@ -242,6 +247,7 @@ export function findScheduleConflicts(courseList, academicYear = COURSE_RULES_AC
 export function assessCourseEligibility({
   course,
   completedCourses,
+  completedPrerequisites = [],
   equivalentPrerequisites = [],
   otherPlannedCourses = [],
   studentYear,
@@ -255,14 +261,18 @@ export function assessCourseEligibility({
   const offering = describeCourseOffering(course, academicYear);
   const completedIds = new Set(completedCourses.map(item => item.id));
   const completedNames = new Set(completedCourses.map(item => normalizeCourseName(item.name)));
+  const prerequisiteCompletionNames = new Set([
+    ...completedNames,
+    ...completedPrerequisites.map(normalizeCourseName),
+  ]);
   const equivalentNames = new Set(equivalentPrerequisites.map(normalizeCourseName));
   const alreadyCompleted = completedIds.has(course.id) || completedNames.has(normalizeCourseName(course.name));
   const missingRequiredPrerequisites = offering.prerequisites.required.filter(name => {
-    if (completedNames.has(normalizeCourseName(name))) return false;
+    if (prerequisiteCompletionNames.has(normalizeCourseName(name))) return false;
     return !(offering.prerequisites.equivalentKnowledgeAllowed && equivalentNames.has(normalizeCourseName(name)));
   });
   const missingRecommendedPrerequisites = offering.prerequisites.recommended
-    .filter(name => !completedNames.has(normalizeCourseName(name)));
+    .filter(name => !prerequisiteCompletionNames.has(normalizeCourseName(name)));
   const yearEligible = offering.minimumStudentYear === null || studentYear >= offering.minimumStudentYear;
   const scheduleResult = findScheduleConflicts([course, ...otherPlannedCourses], academicYear);
   const targetConflicts = scheduleResult.conflicts.filter(conflict => (

@@ -77,8 +77,19 @@ function resolveOneCourse(value, availableCourses) {
   )) || null;
 }
 
+export function filterExternalPrerequisites(values, availableCourses) {
+  const catalogNames = new Set(availableCourses.map(course => normalizeCourseName(course.name)));
+  return values.reduce((result, value) => {
+    const target = catalogNames.has(normalizeCourseName(value))
+      ? result.ignoredCatalogCourses
+      : result.accepted;
+    target.push(value);
+    return result;
+  }, { accepted: [], ignoredCatalogCourses: [] });
+}
+
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.1.2' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.2.0' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',
@@ -154,6 +165,8 @@ export function createFisMcpServer() {
       program: programSchema.default('DS'),
       course: z.string().min(1).max(200),
       completedCourses: z.array(z.string().min(1).max(200)).max(300).default([]),
+      completedPrerequisites: z.array(z.string().min(1).max(200)).max(50).default([])
+        .describe('FISの科目一覧にない先修科目を修得済みとして申告する場合の正確な科目名。卒業単位には算入しません'),
       equivalentPrerequisites: z.array(z.string().min(1).max(200)).max(20).default([])
         .describe('シラバスが同等知識を認める場合に、本人が修得相当と申告する先修科目名'),
       otherPlannedCourses: z.array(z.string().min(1).max(200)).max(50).default([]),
@@ -176,6 +189,7 @@ export function createFisMcpServer() {
     program,
     course: courseInput,
     completedCourses,
+    completedPrerequisites,
     equivalentPrerequisites,
     otherPlannedCourses,
     plannedCreditsThisAcademicYear,
@@ -195,6 +209,7 @@ export function createFisMcpServer() {
       });
     }
     const completed = resolveCompletedCourses(completedCourses, availableCourses);
+    const prerequisiteCompletions = filterExternalPrerequisites(completedPrerequisites, availableCourses);
     const planned = resolveCompletedCourses(otherPlannedCourses, availableCourses);
     return textResult({
       faculty: '情報科学部',
@@ -203,10 +218,12 @@ export function createFisMcpServer() {
       program,
       course: publicCourse(target, program, academicYear),
       unmatchedCompletedCourses: completed.unmatched,
+      ignoredCompletedPrerequisiteCatalogCourses: prerequisiteCompletions.ignoredCatalogCourses,
       unmatchedPlannedCourses: planned.unmatched,
       assessment: assessCourseEligibility({
         course: target,
         completedCourses: completed.courses,
+        completedPrerequisites: prerequisiteCompletions.accepted,
         equivalentPrerequisites,
         otherPlannedCourses: planned.courses.filter(course => course.id !== target.id),
         studentYear,

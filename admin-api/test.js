@@ -1,11 +1,18 @@
 import assert from 'node:assert/strict';
 import { getCoursesForEntryYear } from '../shared/curriculum.js';
 import { calculateInformationGraduation } from '../shared/graduation.js';
+import prerequisiteAudit2026 from '../shared/coursePrerequisites2026.js';
+import {
+  COURSE_RULE_ALIASES_2026,
+  COURSE_RULES_2026,
+  COURSE_RULE_SOURCES,
+} from '../shared/courseRules.js';
 import {
   assessCourseEligibility,
   assessProgression,
   describeCourseOffering,
   findScheduleConflicts,
+  normalizeCourseName,
 } from '../shared/coursePlanning.js';
 import courses from './courseData.js';
 
@@ -36,6 +43,112 @@ additions2026.forEach(name => {
 });
 
 const find2026 = name => courses2026.find(course => course.name === name);
+assert.equal(COURSE_RULE_SOURCES.auditedSyllabi, 139);
+assert.equal(Object.keys(COURSE_RULES_2026).length, 139);
+const syllabusCodes = Object.values(prerequisiteAudit2026.courses).map(rule => rule.syllabusCode);
+const syllabusUrls = Object.values(prerequisiteAudit2026.courses).map(rule => rule.sourceUrl);
+assert.equal(new Set(syllabusCodes).size, 139);
+assert.equal(new Set(syllabusUrls).size, 139);
+Object.values(prerequisiteAudit2026.courses).forEach(rule => {
+  assert.equal(rule.sourceUrl.includes(`sk=2026_2_${rule.syllabusCode}`), true);
+  assert.equal(
+    [...rule.requiredPrerequisites, ...rule.recommendedPrerequisites]
+      .some(name => ['なし', '特に無し'].includes(name)),
+    false,
+  );
+});
+
+const catalogCourseNames = new Set(courses2026.map(course => normalizeCourseName(course.name)));
+const unresolvedRequiredPrerequisites = [...new Set(
+  Object.values(COURSE_RULES_2026)
+    .flatMap(rule => rule.requiredPrerequisites)
+    .filter(name => !catalogCourseNames.has(normalizeCourseName(name))),
+)];
+assert.deepEqual(unresolvedRequiredPrerequisites, []);
+
+const auditedNames = new Set(Object.keys(COURSE_RULES_2026).map(normalizeCourseName));
+courses2026.forEach(course => {
+  const officialName = COURSE_RULE_ALIASES_2026[course.name] || course.name;
+  if (auditedNames.has(normalizeCourseName(officialName))) {
+    assert.equal(describeCourseOffering(course).prerequisites.verificationStatus, 'verified');
+  }
+});
+assert.equal(
+  Object.values(COURSE_RULES_2026)
+    .filter(rule => (
+      rule.requiredPrerequisites.length
+      || rule.recommendedPrerequisites.length
+      || rule.progressionRequirements?.length
+    ))
+    .length,
+  39,
+);
+
+const financialEngineeringOffering = describeCourseOffering(find2026('金融工学'));
+assert.equal(financialEngineeringOffering.prerequisites.verificationStatus, 'verified');
+assert.deepEqual(financialEngineeringOffering.prerequisites.required, ['微分積分基礎', '確率統計基礎']);
+assert.equal(financialEngineeringOffering.ruleSource.verifiedAt, '2026-09-25');
+
+const financialDataAnalysisOffering = describeCourseOffering(find2026('金融データ解析'));
+assert.equal(financialDataAnalysisOffering.prerequisites.verificationStatus, 'verified');
+assert.deepEqual(financialDataAnalysisOffering.prerequisites.required, ['確率統計基礎', '多変量解析']);
+
+assert.equal(describeCourseOffering(find2026('情報科学概論')).prerequisites.verificationStatus, 'verified');
+[
+  '教養スポーツ実習Ⅰ',
+  '教養スポーツ実習Ⅱ',
+  '教養ゼミ',
+  '特別活動及び総合的な学習の時間',
+].forEach(name => {
+  assert.equal(describeCourseOffering(find2026(name)).prerequisites.verificationStatus, 'verified');
+});
+assert.deepEqual(describeCourseOffering(find2026('専門ゼミ１')).prerequisites.required, []);
+assert.deepEqual(
+  describeCourseOffering(find2026('専門ゼミ１')).prerequisites.progressionRequirements,
+  ['2 年次までの必修科目（基礎領域および選択プログラム）の履修'],
+);
+assert.deepEqual(
+  COURSE_RULES_2026['専門ゼミ1'].progressionRequirements,
+  ['2 年次までの必修科目（基礎領域および選択プログラム）の履修'],
+);
+
+const teachingPracticePrerequisites = assessCourseEligibility({
+  course: find2026('教育実習基礎講座Ⅰ'),
+  completedCourses: [
+    find2026('教師論'),
+    find2026('教育方法論Ⅰ(ICT活用の理論及び実践を含む。)'),
+    find2026('教育課程論'),
+  ],
+  studentYear: 3,
+});
+assert.deepEqual(teachingPracticePrerequisites.prerequisites.missingRequired, []);
+
+const missingFinancialEngineeringPrerequisites = assessCourseEligibility({
+  course: find2026('金融工学'),
+  completedCourses: [],
+  studentYear: 3,
+});
+assert.equal(missingFinancialEngineeringPrerequisites.status, 'ineligible');
+assert.deepEqual(
+  missingFinancialEngineeringPrerequisites.prerequisites.missingRequired,
+  ['微分積分基礎', '確率統計基礎'],
+);
+
+const completedFinancialEngineeringPrerequisites = assessCourseEligibility({
+  course: find2026('金融工学'),
+  completedCourses: [find2026('微分積分基礎'), find2026('確率統計基礎')],
+  studentYear: 3,
+});
+assert.equal(completedFinancialEngineeringPrerequisites.status, 'eligible');
+
+const externalRecommendedPrerequisite = assessCourseEligibility({
+  course: find2026('インターネットマーケティング'),
+  completedCourses: [find2026('Python入門')],
+  completedPrerequisites: ['機械学習入門'],
+  studentYear: 4,
+});
+assert.deepEqual(externalRecommendedPrerequisite.prerequisites.missingRecommended, []);
+
 const informationScienceOverview = find2026('情報科学概論');
 assert.equal(informationScienceOverview.instructor, '小栁 淳二 他');
 assert.equal(informationScienceOverview.room, '1142');
@@ -53,6 +166,19 @@ assert.equal(find2026('教育実習Ⅰ').room, '対面');
 
 const mcpModule = await import('./mcp.js');
 assert.equal(typeof mcpModule.publicCourse, 'function');
+assert.equal(typeof mcpModule.filterExternalPrerequisites, 'function');
+if (typeof mcpModule.filterExternalPrerequisites === 'function') {
+  assert.deepEqual(
+    mcpModule.filterExternalPrerequisites(
+      ['微分積分基礎', '機械学習入門'],
+      courses2026,
+    ),
+    {
+      accepted: ['機械学習入門'],
+      ignoredCatalogCourses: ['微分積分基礎'],
+    },
+  );
+}
 if (typeof mcpModule.publicCourse === 'function') {
   const publicInformationScienceOverview = mcpModule.publicCourse(informationScienceOverview, 'DS');
   assert.equal(publicInformationScienceOverview.instructor, '小栁 淳二 他');
