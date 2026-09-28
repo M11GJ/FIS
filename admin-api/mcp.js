@@ -22,6 +22,7 @@ import {
   REGISTRATION_RULES,
 } from '../shared/courseRules.js';
 import courses from './courseData.js';
+import courseAssessmentData2026 from './courseAssessmentData2026.js';
 import courseOverviewData2026 from './courseOverviewData2026.js';
 import { registerPlanningTool } from './planningTool.js';
 
@@ -128,6 +129,53 @@ export function publicCourseOverview(course, {
   };
 }
 
+export function publicCourseAssessment(course) {
+  const syllabusCode = typeof course === 'string' && courseAssessmentData2026.courses[course]
+    ? course
+    : getCourseRule(course)?.syllabusCode;
+  const percentages = syllabusCode ? courseAssessmentData2026.courses[syllabusCode] : null;
+  const overview = syllabusCode ? courseOverviewData2026.courses[syllabusCode] : null;
+  if (!percentages || !overview) return null;
+
+  return {
+    breakdown: Object.entries(courseAssessmentData2026.fields)
+      .filter(([type]) => Number.isFinite(percentages[type]) && percentages[type] > 0)
+      .map(([type, label]) => ({ type, label, percentage: percentages[type] })),
+    totalPercentage: percentages.totalPercentage,
+    criteriaText: overview.assessment,
+    source: {
+      syllabusCode,
+      url: overview.sourceUrl,
+      verifiedAt: courseAssessmentData2026.verifiedAt,
+    },
+  };
+}
+
+export function courseAssessmentResult(courseInput, availableCourses, { entryYear, academicYear }) {
+  const target = resolveOneCourse(courseInput, availableCourses);
+  const assessment = publicCourseAssessment(target || courseInput);
+  if (!assessment) {
+    return {
+      found: false,
+      course: courseInput,
+      entryYear,
+      message: '現在の科目マスタ、公式シラバス名または授業コードに一致しません。search_coursesで確認してください。',
+    };
+  }
+
+  const officialName = courseAssessmentData2026.courses[assessment.source.syllabusCode].name;
+  return {
+    found: true,
+    assessmentAvailable: true,
+    catalogCourse: target !== null,
+    faculty: '情報科学部',
+    entryYear,
+    academicYear,
+    course: target ? { id: target.id, name: target.name } : { name: officialName },
+    assessment,
+  };
+}
+
 export function courseOverviewResult(target, {
   entryYear,
   academicYear,
@@ -150,7 +198,7 @@ export function courseOverviewResult(target, {
 }
 
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.4.0' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.5.0' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',
@@ -247,6 +295,20 @@ export function createFisMcpServer() {
       includeOfficialDetails,
       includeLessonPlan,
     }));
+  });
+
+  server.registerTool('get_course_assessment', {
+    title: '成績評価基準の取得',
+    description: '指定科目の公式シラバスから、期末試験・小テスト・レポート・発表実技などの評価割合と評価基準文を返します。',
+    inputSchema: z.object({
+      entryYear: yearSchema,
+      academicYear: academicYearSchema.default(COURSE_RULES_ACADEMIC_YEAR),
+      course: z.string().min(1).max(200),
+    }),
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  }, async ({ entryYear, academicYear, course: courseInput }) => {
+    const availableCourses = getCoursesForEntryYear(courses, entryYear);
+    return textResult(courseAssessmentResult(courseInput, availableCourses, { entryYear, academicYear }));
   });
 
   server.registerTool('check_course_eligibility', {

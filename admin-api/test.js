@@ -14,6 +14,7 @@ import {
   findScheduleConflicts,
   normalizeCourseName,
 } from '../shared/coursePlanning.js';
+import courseAssessmentData2026 from './courseAssessmentData2026.js';
 import courseOverviewData2026 from './courseOverviewData2026.js';
 import courses from './courseData.js';
 
@@ -85,6 +86,18 @@ const syllabusUrls = Object.values(prerequisiteAudit2026.courses).map(rule => ru
 assert.equal(new Set(syllabusCodes).size, 139);
 assert.equal(new Set(syllabusUrls).size, 139);
 assert.equal(courseOverviewData2026.summarizer, 'gpt-6-luna');
+assert.equal(courseAssessmentData2026.verifiedAt, '2026-09-28');
+assert.equal(Object.keys(courseAssessmentData2026.courses).length, 139);
+assert.deepEqual(
+  Object.keys(courseAssessmentData2026.courses).sort(),
+  [...syllabusCodes].sort(),
+);
+Object.values(courseAssessmentData2026.courses).forEach(assessment => {
+  const componentTotal = Object.keys(courseAssessmentData2026.fields)
+    .reduce((sum, type) => sum + (assessment[type] || 0), 0);
+  assert.equal(componentTotal, 100);
+  assert.equal(assessment.totalPercentage, 100);
+});
 assert.equal(Object.keys(courseOverviewData2026.courses).length, 139);
 assert.deepEqual(
   Object.keys(courseOverviewData2026.courses).sort(),
@@ -214,6 +227,56 @@ assert.equal(find2026('教育実習Ⅰ').room, '対面');
 const mcpModule = await import('./mcp.js');
 assert.equal(typeof mcpModule.publicCourse, 'function');
 assert.equal(typeof mcpModule.publicCourseOverview, 'function');
+assert.equal(typeof mcpModule.publicCourseAssessment, 'function');
+assert.equal(typeof mcpModule.courseAssessmentResult, 'function');
+if (typeof mcpModule.courseAssessmentResult === 'function') {
+  const nonCatalogAssessment = mcpModule.courseAssessmentResult(
+    'ソーシャルワーク演習Ⅰ',
+    courses2024,
+    { entryYear: 2024, academicYear: 2026 },
+  );
+  assert.equal(nonCatalogAssessment.found, true);
+  assert.equal(nonCatalogAssessment.catalogCourse, false);
+  assert.deepEqual(nonCatalogAssessment.course, { name: 'ソーシャルワーク演習Ⅰ' });
+  assert.equal(nonCatalogAssessment.assessment.source.syllabusCode, '2027400A');
+  assert.deepEqual(nonCatalogAssessment.assessment.breakdown, [
+    { type: 'report', label: 'レポート', percentage: 30 },
+    { type: 'presentationOrPractical', label: '発表・実技', percentage: 70 },
+  ]);
+  Object.keys(courseAssessmentData2026.courses).forEach(syllabusCode => {
+    const result = mcpModule.courseAssessmentResult(
+      syllabusCode,
+      courses2024,
+      { entryYear: 2024, academicYear: 2026 },
+    );
+    assert.equal(result.found, true);
+    assert.equal(result.assessment.totalPercentage, 100);
+  });
+}
+if (typeof mcpModule.publicCourseAssessment === 'function') {
+  assert.deepEqual(mcpModule.publicCourseAssessment(find2026('金融工学')), {
+    breakdown: [
+      { type: 'quiz', label: '小テスト', percentage: 70 },
+      { type: 'report', label: 'レポート', percentage: 20 },
+      { type: 'other', label: 'その他', percentage: 10 },
+    ],
+    totalPercentage: 100,
+    criteriaText: '小テスト70%、レポート20%、授業貢献度10%（単なる参加にとどまりません）を原則として総合評価します。',
+    source: {
+      syllabusCode: '2105410A',
+      url: 'https://aaaweb.shunan-u.ac.jp/aa_web/syllabus/se0032.aspx?me=EU&opi=mt0010&sk=2026_2_2105410A&syw=1',
+      verifiedAt: '2026-09-28',
+    },
+  });
+  assert.deepEqual(
+    mcpModule.publicCourseAssessment(find2026('金融データ解析')).breakdown,
+    [
+      { type: 'report', label: 'レポート', percentage: 40 },
+      { type: 'presentationOrPractical', label: '発表・実技', percentage: 30 },
+      { type: 'other', label: 'その他', percentage: 30 },
+    ],
+  );
+}
 assert.equal(typeof mcpModule.courseOverviewResult, 'function');
 if (typeof mcpModule.publicCourseOverview === 'function') {
   const compactOverview = mcpModule.publicCourseOverview(find2026('金融工学'));
