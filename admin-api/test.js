@@ -15,6 +15,7 @@ import {
   normalizeCourseName,
 } from '../shared/coursePlanning.js';
 import courseAssessmentData2026 from './courseAssessmentData2026.js';
+import courseMaterialsData2026 from './courseMaterialsData2026.js';
 import courseOverviewData2026 from './courseOverviewData2026.js';
 import courses from './courseData.js';
 
@@ -97,6 +98,27 @@ Object.values(courseAssessmentData2026.courses).forEach(assessment => {
     .reduce((sum, type) => sum + (assessment[type] || 0), 0);
   assert.equal(componentTotal, 100);
   assert.equal(assessment.totalPercentage, 100);
+});
+assert.equal(courseMaterialsData2026.verifiedAt, '2026-09-28');
+assert.equal(Object.keys(courseMaterialsData2026.courses).length, 139);
+assert.deepEqual(
+  Object.keys(courseMaterialsData2026.courses).sort(),
+  [...syllabusCodes].sort(),
+);
+Object.values(courseMaterialsData2026.courses).forEach(materials => {
+  assert.equal(Array.isArray(materials.textbooks), true);
+  assert.equal(Array.isArray(materials.referenceBooks), true);
+  [...materials.textbooks, ...materials.referenceBooks].forEach(book => {
+    assert.equal(typeof book.title, 'string');
+    if (book.publicationYear !== undefined) {
+      assert.equal(Number.isInteger(book.publicationYear), true);
+      assert.equal(book.publicationYear >= 1900 && book.publicationYear <= 2026, true);
+    }
+    if (book.syllabusListedPriceYen !== undefined) {
+      assert.equal(Number.isInteger(book.syllabusListedPriceYen), true);
+    }
+    if (book.campusSale !== undefined) assert.equal(typeof book.campusSale, 'boolean');
+  });
 });
 assert.equal(Object.keys(courseOverviewData2026.courses).length, 139);
 assert.deepEqual(
@@ -228,6 +250,57 @@ const mcpModule = await import('./mcp.js');
 assert.equal(typeof mcpModule.publicCourse, 'function');
 assert.equal(typeof mcpModule.publicCourseOverview, 'function');
 assert.equal(typeof mcpModule.publicCourseAssessment, 'function');
+assert.equal(typeof mcpModule.publicCourseMaterials, 'function');
+assert.equal(typeof mcpModule.courseMaterialsResult, 'function');
+if (typeof mcpModule.courseMaterialsResult === 'function') {
+  Object.keys(courseMaterialsData2026.courses).forEach(syllabusCode => {
+    const result = mcpModule.courseMaterialsResult(
+      syllabusCode,
+      courses2024,
+      { entryYear: 2024, academicYear: 2026 },
+    );
+    assert.equal(result.found, true);
+  });
+}
+if (typeof mcpModule.publicCourseMaterials === 'function') {
+  const financialEngineeringMaterials = mcpModule.publicCourseMaterials(find2026('金融工学'));
+  assert.deepEqual(financialEngineeringMaterials.textbooks, []);
+  assert.equal(financialEngineeringMaterials.declaredNoTextbooks, true);
+  assert.deepEqual(financialEngineeringMaterials.referenceBooks, [
+    {
+      title: 'ファイナンスのための確率解析 1',
+      publicationYear: 2012,
+      authors: 'Steven E. Shreve',
+      publisher: '丸善出版',
+      syllabusListedPriceYen: 3850,
+      isbn: '978-4621061732',
+      campusSale: true,
+    },
+    {
+      title: 'ファイナンスのための確率解析 II',
+      publicationYear: 2012,
+      authors: 'Steven E. Shreve',
+      publisher: '丸善出版',
+      syllabusListedPriceYen: 7150,
+      isbn: '978-4621061572',
+      campusSale: true,
+    },
+  ]);
+  assert.equal(financialEngineeringMaterials.source.syllabusCode, '2105410A');
+  assert.deepEqual(mcpModule.publicCourseMaterials(find2026('日本国憲法')).textbooks, []);
+  assert.deepEqual(mcpModule.publicCourseMaterials(find2026('日本国憲法')).referenceBooks, []);
+  const practicalEnglishMaterials = mcpModule.publicCourseMaterials(find2026('実践英語(情報)'));
+  assert.deepEqual(
+    practicalEnglishMaterials.referenceBooks.map(book => book.title),
+    [
+      'The Currency Cold War: Cash and Cryptography, Hash Rates and Hegemony',
+      'The Blocksize War: The battle over who controls Bitcoin’s protocol rules',
+      'ロジカル・シンキング ―― 論理的な思考と構成のスキル',
+      '実践型クリティカルシンキング',
+    ],
+  );
+  assert.equal(practicalEnglishMaterials.source.supplementalDocument.issuedAt, '2026-09-25');
+}
 assert.equal(typeof mcpModule.courseAssessmentResult, 'function');
 if (typeof mcpModule.courseAssessmentResult === 'function') {
   const nonCatalogAssessment = mcpModule.courseAssessmentResult(
@@ -276,6 +349,14 @@ if (typeof mcpModule.publicCourseAssessment === 'function') {
       { type: 'other', label: 'その他', percentage: 30 },
     ],
   );
+  assert.deepEqual(
+    mcpModule.publicCourseAssessment(find2026('実践英語(情報)')).breakdown,
+    [
+      { type: 'finalExam', label: '期末試験', percentage: 40 },
+      { type: 'quiz', label: '小テスト', percentage: 30 },
+      { type: 'presentationOrPractical', label: '発表・実技', percentage: 30 },
+    ],
+  );
 }
 assert.equal(typeof mcpModule.courseOverviewResult, 'function');
 if (typeof mcpModule.publicCourseOverview === 'function') {
@@ -294,6 +375,22 @@ if (typeof mcpModule.publicCourseOverview === 'function') {
   assert.equal(detailedOverview.officialDetails.assessment.length > 0, true);
   assert.equal(detailedOverview.lessonPlan.status, 'current_syllabus');
   assert.equal(detailedOverview.lessonPlan.topics.length, 15);
+
+  const practicalEnglishOverview = mcpModule.publicCourseOverview(find2026('実践英語(情報)'), {
+    includeOfficialDetails: true,
+    includeLessonPlan: true,
+  });
+  assert.equal(practicalEnglishOverview.summary.includes('ロジカル'), true);
+  assert.equal(practicalEnglishOverview.officialDetails.officialOverview.includes('さらに、時間があれば'), true);
+  assert.equal(practicalEnglishOverview.officialDetails.officialOverview.includes('リクエストがあれば'), true);
+  assert.equal(practicalEnglishOverview.lessonPlan.topics[0], 'ガイダンス、ロジカルシンキング（1）');
+  assert.equal(practicalEnglishOverview.source.supplementalDocument.issuedAt, '2026-09-25');
+
+  const fintechOverview = mcpModule.publicCourseOverview(find2026('フィンテック・ブロックチェーン'), {
+    includeLessonPlan: true,
+  });
+  assert.equal(fintechOverview.lessonPlan.topics[9], '民法から見るトークンと権利移転');
+  assert.equal(fintechOverview.source.supplementalDocument.dateMismatch, true);
 
   const historicalLessonPlan = mcpModule.publicCourseOverview(find2026('周南地域文化講座'), {
     includeLessonPlan: true,

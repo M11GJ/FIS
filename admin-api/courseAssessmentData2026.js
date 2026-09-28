@@ -809,10 +809,10 @@ export default {
       "finalExam": 40,
       "quiz": 30,
       "report": null,
-      "presentationOrPractical": null,
+      "presentationOrPractical": 30,
       "thesisOrWork": null,
       "portfolio": null,
-      "other": 30,
+      "other": null,
       "totalPercentage": 100
     },
     "2101900A": {
@@ -1194,10 +1194,10 @@ export default {
       "finalExam": 40,
       "quiz": 30,
       "report": null,
-      "presentationOrPractical": null,
+      "presentationOrPractical": 30,
       "thesisOrWork": null,
       "portfolio": null,
-      "other": 30,
+      "other": null,
       "totalPercentage": 100
     },
     "2105300A": {

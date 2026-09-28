@@ -23,6 +23,7 @@ import {
 } from '../shared/courseRules.js';
 import courses from './courseData.js';
 import courseAssessmentData2026 from './courseAssessmentData2026.js';
+import courseMaterialsData2026 from './courseMaterialsData2026.js';
 import courseOverviewData2026 from './courseOverviewData2026.js';
 import { registerPlanningTool } from './planningTool.js';
 
@@ -107,6 +108,9 @@ export function publicCourseOverview(course, {
       url: overview.sourceUrl,
       verifiedAt: courseOverviewData2026.verifiedAt,
       summarizer: courseOverviewData2026.summarizer,
+      ...(overview.supplementalSource ? {
+        supplementalDocument: { ...overview.supplementalSource },
+      } : {}),
     },
     ...(includeOfficialDetails ? {
       officialDetails: {
@@ -147,6 +151,33 @@ export function publicCourseAssessment(course) {
       syllabusCode,
       url: overview.sourceUrl,
       verifiedAt: courseAssessmentData2026.verifiedAt,
+      ...(overview.supplementalSource ? {
+        supplementalDocument: { ...overview.supplementalSource },
+      } : {}),
+    },
+  };
+}
+
+export function publicCourseMaterials(course) {
+  const syllabusCode = typeof course === 'string' && courseMaterialsData2026.courses[course]
+    ? course
+    : getCourseRule(course)?.syllabusCode;
+  const materials = syllabusCode ? courseMaterialsData2026.courses[syllabusCode] : null;
+  const overview = syllabusCode ? courseOverviewData2026.courses[syllabusCode] : null;
+  if (!materials || !overview) return null;
+
+  return {
+    textbooks: materials.textbooks.map(book => ({ ...book })),
+    referenceBooks: materials.referenceBooks.map(book => ({ ...book })),
+    declaredNoTextbooks: materials.declaredNoTextbooks,
+    declaredNoReferenceBooks: materials.declaredNoReferenceBooks,
+    source: {
+      syllabusCode,
+      url: overview.sourceUrl,
+      verifiedAt: courseMaterialsData2026.verifiedAt,
+      ...(overview.supplementalSource ? {
+        supplementalDocument: { ...overview.supplementalSource },
+      } : {}),
     },
   };
 }
@@ -176,6 +207,31 @@ export function courseAssessmentResult(courseInput, availableCourses, { entryYea
   };
 }
 
+export function courseMaterialsResult(courseInput, availableCourses, { entryYear, academicYear }) {
+  const target = resolveOneCourse(courseInput, availableCourses);
+  const materials = publicCourseMaterials(target || courseInput);
+  if (!materials) {
+    return {
+      found: false,
+      course: courseInput,
+      entryYear,
+      message: '現在の科目マスタ、公式シラバス名または授業コードに一致しません。search_coursesで確認してください。',
+    };
+  }
+
+  const officialName = courseMaterialsData2026.courses[materials.source.syllabusCode].name;
+  return {
+    found: true,
+    materialsAvailable: true,
+    catalogCourse: target !== null,
+    faculty: '情報科学部',
+    entryYear,
+    academicYear,
+    course: target ? { id: target.id, name: target.name } : { name: officialName },
+    materials,
+  };
+}
+
 export function courseOverviewResult(target, {
   entryYear,
   academicYear,
@@ -198,7 +254,7 @@ export function courseOverviewResult(target, {
 }
 
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.5.0' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.6.0' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',
@@ -309,6 +365,20 @@ export function createFisMcpServer() {
   }, async ({ entryYear, academicYear, course: courseInput }) => {
     const availableCourses = getCoursesForEntryYear(courses, entryYear);
     return textResult(courseAssessmentResult(courseInput, availableCourses, { entryYear, academicYear }));
+  });
+
+  server.registerTool('get_course_materials', {
+    title: '教科書・参考図書の取得',
+    description: '指定科目の公式シラバスから、教科書・参考図書の書名、著者、出版社、発行年、ISBN、シラバス記載価格、学内販売情報を返します。',
+    inputSchema: z.object({
+      entryYear: yearSchema,
+      academicYear: academicYearSchema.default(COURSE_RULES_ACADEMIC_YEAR),
+      course: z.string().min(1).max(200),
+    }),
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  }, async ({ entryYear, academicYear, course: courseInput }) => {
+    const availableCourses = getCoursesForEntryYear(courses, entryYear);
+    return textResult(courseMaterialsResult(courseInput, availableCourses, { entryYear, academicYear }));
   });
 
   server.registerTool('check_course_eligibility', {
