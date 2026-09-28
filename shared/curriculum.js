@@ -19,9 +19,8 @@ export function normalizeEntryYear(value, fallback = 2024) {
   return SUPPORTED_ENTRY_YEARS.includes(year) ? year : fallback;
 }
 
-export function isCourseAvailableForEntryYear(course, entryYear) {
-  const year = normalizeEntryYear(entryYear);
-  return !Array.isArray(course.entryYears) || course.entryYears.includes(year);
+export function isCourseAvailableForEntryYear(course) {
+  return isCourseRecord(course);
 }
 
 export function isCourseRecord(course) {
@@ -34,6 +33,6 @@ export function isCourseRecord(course) {
   );
 }
 
-export function getCoursesForEntryYear(courses, entryYear) {
-  return courses.filter(course => isCourseRecord(course) && isCourseAvailableForEntryYear(course, entryYear));
+export function getCoursesForEntryYear(courses) {
+  return courses.filter(isCourseRecord);
 }

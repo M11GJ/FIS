@@ -38,7 +38,7 @@ function protectPublicEndpoint(req, res, next) {
 
 app.get(withPublicBase('/api/health'), (_req, res) => res.json({
   ok: true,
-  version: '2.3.0',
+  version: '2.4.0',
   mcp: '/mcp',
   supportedEntryYears: SUPPORTED_ENTRY_YEARS,
 }));
@@ -52,7 +52,7 @@ function validateProfile(body) {
   if (!INFO_PROGRAMS.includes(program)) return { error: 'invalid_program' };
   if (!courseIds || courseIds.length > 300 || courseIds.some(id => typeof id !== 'string')) return { error: 'invalid_course_ids' };
   const availableIds = new Set(getCoursesForEntryYear(courses, entryYear).map(course => course.id));
-  if (courseIds.some(id => !availableIds.has(id))) return { error: 'course_not_available_for_entry_year' };
+  if (courseIds.some(id => !availableIds.has(id))) return { error: 'course_not_in_current_catalog' };
   return { profile: { facultyId: 'info', entryYear, program, courseIds } };
 }
 

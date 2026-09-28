@@ -7,6 +7,13 @@ import { useGraduationCheck } from '../hooks/useGraduationCheck';
 import { formatTerm } from '../utils/formatTerm';
 import { isCourseActiveInQuarter } from '../utils/parseSchedule';
 import { mergeRooms } from '../utils/mergeRooms';
+import {
+  COURSE_SHARE_VERSION,
+  decodeCourseSelection,
+  encodeCourseSelection,
+  getShareDecodingCourses,
+  getSortedCourses,
+} from '../utils/courseShare';
 import { getCoursesForEntryYear, normalizeEntryYear, SUPPORTED_ENTRY_YEARS } from '../../shared/curriculum.js';
 import { CheckCircle2, AlertCircle, ChevronDown, ChevronRight, ClipboardPaste, Layout, Calendar, Share2, Info, AlertTriangle, HardDrive, Trash2 } from 'lucide-react';
 import Timetable from '../components/Timetable';
@@ -82,41 +89,7 @@ const normalizeCourseName = (name) => {
              .replace('※通年', ''); // 経済学部便覧用
 };
 
-// URL共有用の固定順ソート済みリスト生成関数
-const getSortedCourses = (courses) => [...courses].sort((a, b) => a.id.localeCompare(b.id));
-
-const B64_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 const getLocalStorageKey = (facultyId) => 'fis.checker.local.v1.' + facultyId;
-
-const encodeBits = (selectedIds, sortedCourses) => {
-  let bits = '';
-  sortedCourses.forEach(c => {
-    bits += selectedIds.has(c.id) ? '1' : '0';
-  });
-  let encoded = '';
-  for (let i = 0; i < bits.length; i += 6) {
-    const segment = bits.substring(i, i + 6).padEnd(6, '0');
-    encoded += B64_CHARS[parseInt(segment, 2)];
-  }
-  return encoded;
-};
-
-const decodeBits = (encoded, sortedCourses) => {
-  let bits = '';
-  for (let i = 0; i < encoded.length; i++) {
-    const val = B64_CHARS.indexOf(encoded[i]);
-    if (val === -1) continue;
-    bits += val.toString(2).padStart(6, '0');
-  }
-  
-  const selectedIds = new Set();
-  sortedCourses.forEach((c, index) => {
-    if (bits[index] === '1') {
-      selectedIds.add(c.id);
-    }
-  });
-  return selectedIds;
-};
 
 const CourseAccordion = ({ title, courses, selectedCourses, handleToggle, program, enableYearFilter, onBatchToggle, facultyId }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -444,19 +417,27 @@ function Checker() {
     }
 
     const sParam = searchParams.get('s');
+    const shareVersion = searchParams.get('v');
     const pParam = searchParams.get('p');
     const yParam = searchParams.get('y');
     const restoredEntryYear = normalizeEntryYear(yParam || saved?.entryYear);
     setEntryYear(restoredEntryYear);
-    const restoredCourses = getSortedCourses(
-      facultyId === 'info' ? getCoursesForEntryYear(allCoursesData, restoredEntryYear) : allCoursesData,
-    );
+    const currentCourses = facultyId === 'info'
+      ? getCoursesForEntryYear(allCoursesData, restoredEntryYear)
+      : allCoursesData;
+    const restoredCourses = sParam !== null && facultyId === 'info'
+      ? getShareDecodingCourses(currentCourses, {
+        entryYear: restoredEntryYear,
+        version: shareVersion,
+        encoded: sParam,
+      })
+      : getSortedCourses(currentCourses);
     const restoredProgram = (pParam || saved?.program || 'DS').toUpperCase();
     setProgram(['DS', 'IE', 'BA'].includes(restoredProgram) ? restoredProgram : 'DS');
 
     if (sParam !== null) {
       try {
-        setSelectedCourses(decodeBits(sParam, restoredCourses));
+        setSelectedCourses(decodeCourseSelection(sParam, restoredCourses));
       } catch (decodeError) {
         console.error('Failed to decode share URL:', decodeError);
         setSelectedCourses(new Set());
@@ -586,10 +567,10 @@ function Checker() {
   };
 
   const handleShare = () => {
-    const shardData = encodeBits(selectedCourses, sortedCourses);
+    const shardData = encodeCourseSelection(selectedCourses, sortedCourses);
     const p = program;
     const baseUrl = window.location.origin + window.location.pathname;
-    const shareUrl = `${baseUrl}#/${facultyId}/checker?y=${entryYear}&p=${p}&s=${shardData}`;
+    const shareUrl = `${baseUrl}#/${facultyId}/checker?y=${entryYear}&p=${p}&v=${COURSE_SHARE_VERSION}&s=${shardData}`;
     
     navigator.clipboard.writeText(shareUrl).then(() => {
       setShareCopied(true);
@@ -702,7 +683,7 @@ function Checker() {
             <select value={entryYear} onChange={event => handleEntryYearChange(event.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--surface)', marginBottom: '1rem' }}>
               {SUPPORTED_ENTRY_YEARS.map(year => <option key={year} value={year}>{year}年度入学</option>)}
             </select>
-            <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem', lineHeight: 1.5, margin: '-0.5rem 0 1rem' }}>選んだ年度の学生便覧にある科目と卒業要件で判定します。</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem', lineHeight: 1.5, margin: '-0.5rem 0 1rem' }}>入学年度はプロフィール情報として保存します。科目候補と卒業要件は全年度共通です。</div>
             <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: 600 }}>所属プログラム</label>
             <select value={program} onChange={e => setProgram(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--surface)' }}>
               <option value="DS">データサイエンス (DS)</option>

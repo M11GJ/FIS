@@ -20,19 +20,53 @@ import courses from './courseData.js';
 const courses2024 = getCoursesForEntryYear(courses, 2024);
 const courses2025 = getCoursesForEntryYear(courses, 2025);
 const courses2026 = getCoursesForEntryYear(courses, 2026);
-const additions2026 = ['オブジェクト指向プログラミング', '応用数値解析', 'データベース応用', '金融工学'];
+const shareModule = await import('../src/utils/courseShare.js').catch(() => ({}));
+assert.equal(typeof shareModule.decodeCourseSelection, 'function');
+assert.equal(typeof shareModule.encodeCourseSelection, 'function');
+assert.equal(typeof shareModule.getShareDecodingCourses, 'function');
+if (
+  typeof shareModule.decodeCourseSelection === 'function'
+  && typeof shareModule.encodeCourseSelection === 'function'
+  && typeof shareModule.getShareDecodingCourses === 'function'
+) {
+  const legacyEncoded = 'AEAAAAAAAAAAAAAAAAAAAAAA';
+  const legacyCourses = shareModule.getShareDecodingCourses(courses2024, {
+    entryYear: 2024,
+    version: null,
+    encoded: legacyEncoded,
+  });
+  const legacySelection = shareModule.decodeCourseSelection(legacyEncoded, legacyCourses);
+  assert.equal(legacyCourses.length, 143);
+  assert.equal(legacySelection.has('c_18b27513'), true);
+  assert.equal(legacySelection.has('c_14751b09'), false);
 
-assert.equal(courses2024.length, 143);
-assert.equal(courses2025.length, 143);
+  const currentCourses = shareModule.getShareDecodingCourses(courses2024, {
+    entryYear: 2024,
+    version: '2',
+    encoded: legacyEncoded,
+  });
+  assert.equal(currentCourses.length, 147);
+  const selectedIds = new Set(['c_18b27513', 'c_3c3e2630']);
+  const currentEncoded = shareModule.encodeCourseSelection(selectedIds, currentCourses);
+  assert.equal(currentEncoded.length, 25);
+  assert.deepEqual(
+    shareModule.decodeCourseSelection(currentEncoded, currentCourses),
+    selectedIds,
+  );
+}
+const currentCatalogAdditions = ['オブジェクト指向プログラミング', '応用数値解析', 'データベース応用', '金融工学'];
+
+assert.equal(courses2024.length, 147);
+assert.equal(courses2025.length, 147);
 assert.equal(courses2026.length, 147);
 [courses2024, courses2025, courses2026].forEach(list => {
   assert.equal(list.every(course => course.id && course.name && Number.isFinite(course.credits) && course.category), true);
 });
 
-additions2026.forEach(name => {
-  assert.equal(courses2024.some(course => course.name === name), false);
-  assert.equal(courses2025.some(course => course.name === name), false);
-  assert.equal(courses2026.some(course => course.name === name), true);
+currentCatalogAdditions.forEach(name => {
+  [courses2024, courses2025, courses2026].forEach(list => {
+    assert.equal(list.some(course => course.name === name), true);
+  });
 });
 
 [courses2024, courses2025, courses2026].forEach(list => {

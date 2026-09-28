@@ -1912,9 +1912,6 @@
     "marks": "",
     "schedule": "火金3",
     "instructor": "田中 輝明",
-    "entryYears": [
-      2026
-    ],
     "room": "1141"
   },
   {
@@ -1931,9 +1928,6 @@
     "marks": "",
     "schedule": "火金4",
     "instructor": "田中 輝明",
-    "entryYears": [
-      2026
-    ],
     "room": "521"
   },
   {
@@ -1950,9 +1944,6 @@
     "marks": "",
     "schedule": "月木4",
     "instructor": "中山 季之",
-    "entryYears": [
-      2026
-    ],
     "room": "521"
   },
   {
@@ -1967,9 +1958,6 @@
       "ds": "選択"
     },
     "marks": "",
-    "entryYears": [
-      2026
-    ],
     "schedule": "火金2",
     "instructor": "矢敷 達朗",
     "room": "525"

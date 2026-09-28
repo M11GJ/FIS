@@ -150,7 +150,7 @@ export function courseOverviewResult(target, {
 }
 
 export function createFisMcpServer() {
-  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.3.0' });
+  const server = new McpServer({ name: 'fis-graduation-checker', version: '2.4.0' });
 
   server.registerTool('list_supported_entry_years', {
     title: '対応入学年度一覧',
@@ -161,12 +161,12 @@ export function createFisMcpServer() {
     faculty: '情報科学部',
     entryYears: SUPPORTED_ENTRY_YEARS,
     scheduleAcademicYears: [COURSE_RULES_ACADEMIC_YEAR],
-    distinction: 'entryYearは卒業要件、academicYearは実際の開講・時間割、studentYearは修得状況上の年次です。',
+    distinction: 'entryYearはプロフィール属性です。現在は全入学年度で同じ卒業要件と2026年度科目マスタを使用します。academicYearは実際の開講・時間割、studentYearは修得状況上の年次です。',
   }));
 
   server.registerTool('get_graduation_requirements', {
     title: '卒業要件の取得',
-    description: '指定した入学年度とプログラムに対する情報科学部の卒業要件を返します。',
+    description: '情報科学部の卒業要件を返します。現在は対応する全入学年度で同じ要件です。',
     inputSchema: z.object({ entryYear: yearSchema, program: programSchema }),
     annotations: { readOnlyHint: true, openWorldHint: false },
   }, async ({ entryYear, program }) => textResult({
@@ -184,7 +184,7 @@ export function createFisMcpServer() {
 
   server.registerTool('search_courses', {
     title: '科目検索',
-    description: '指定入学年度の情報科学部科目を、科目名・区分・プログラムで検索します。',
+    description: '現在の2026年度情報科学部科目マスタを、科目名・区分・プログラムで検索します。入学年度による科目制限はありません。',
     inputSchema: z.object({
       entryYear: yearSchema,
       academicYear: academicYearSchema.default(COURSE_RULES_ACADEMIC_YEAR),
@@ -236,7 +236,7 @@ export function createFisMcpServer() {
         found: false,
         course: courseInput,
         entryYear,
-        message: '指定した入学年度の科目IDまたは完全な科目名に一致しません。search_coursesで確認してください。',
+        message: '現在の科目マスタの科目IDまたは完全な科目名に一致しません。search_coursesで確認してください。',
       });
     }
 
@@ -299,7 +299,7 @@ export function createFisMcpServer() {
         found: false,
         course: courseInput,
         entryYear,
-        message: '指定した入学年度の科目IDまたは完全な科目名に一致しません。search_coursesで確認してください。',
+        message: '現在の科目マスタの科目IDまたは完全な科目名に一致しません。search_coursesで確認してください。',
       });
     }
     const completed = resolveCompletedCourses(completedCourses, availableCourses);
@@ -398,7 +398,7 @@ export function createFisMcpServer() {
 
   server.registerTool('check_graduation', {
     title: '卒業要件判定',
-    description: '科目IDまたは完全な科目名の一覧から、指定年度の情報科学部卒業要件を決定論的に判定します。入力内容は保存しません。',
+    description: '科目IDまたは完全な科目名の一覧から、全入学年度共通の情報科学部卒業要件を決定論的に判定します。入力内容は保存しません。',
     inputSchema: z.object({
       entryYear: yearSchema,
       program: programSchema,

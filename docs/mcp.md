@@ -19,8 +19,8 @@ MCPクライアントには、上記URLをStreamable HTTPサーバーとして�
 ## ツール
 
 - `list_supported_entry_years`: 対応する入学年度を取得
-- `get_graduation_requirements`: 年度・プログラム別の要件を取得
-- `search_courses`: 入学年度別の科目を検索し、2026年度の担当教員・教室・開講期・曜日・時限・授業形態・確認済み先修条件を取得
+- `get_graduation_requirements`: 全入学年度共通の要件をプログラム別に取得
+- `search_courses`: 全入学年度共通の2026年度科目マスタを検索し、担当教員・教室・開講期・曜日・時限・授業形態・確認済み先修条件を取得
 - `get_course_overview`: 公式シラバスを基にした短い授業概要を1科目ずつ取得
 - `check_course_eligibility`: 学生年次、先修条件、既修得、半期24・年間48単位のCAP制、例外条件、同時計画科目との重複から履修可否を判定
 - `check_schedule_conflicts`: 同じ開講期間・曜日・時限の科目を検出。オンデマンドは除外し、集中講義・未定は要確認として返却
@@ -67,7 +67,7 @@ MCPクライアントには、上記URLをStreamable HTTPサーバーとして�
 
 ## 年度と年次の区別
 
-- `entryYear`: 入学年度。2024・2025・2026年度の学生便覧と卒業要件を選びます。
+- `entryYear`: 入学年度。プロフィール属性・API互換性のため保持しますが、現在は科目候補と卒業要件に年度差はありません。
 - `academicYear`: 実際の開講年度。曜日・時限・授業形態・シラバスの先修条件は現在2026年度だけを収録しています。
 - `studentYear`: 情報科学部での現在年次。便覧上、修得状況で定義されるため、`academicYear - entryYear + 1`から自動決定しません。
 
